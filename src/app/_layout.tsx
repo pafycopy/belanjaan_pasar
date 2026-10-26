@@ -1,5 +1,10 @@
 import { Stack } from "expo-router";
+import { AlamatProvider } from "@/context/alamat";
 
 export default function RootLayout() {
- return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <AlamatProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </AlamatProvider>
+  );
 }

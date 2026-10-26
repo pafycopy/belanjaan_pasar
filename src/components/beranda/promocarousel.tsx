@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -27,33 +27,65 @@ export type Promo = {
 type Props = {
   promos: Promo[];
   onPressPromo?: (promo: Promo) => void;
+  autoPlay?: boolean;                // bergeser otomatis (bawaan: aktif)
+  cardHeight?: number;                // ← baru: tinggi semua kartu
+  interval?: number;                 // jeda antar geseran, milidetik
   style?: StyleProp<ViewStyle>;      // gaya pembungkus
   cardStyle?: StyleProp<ViewStyle>;  // gaya tiap kartu
 };
 
-export default function PromoCarousel({ promos, onPressPromo, style, cardStyle }: Props) {
+export default function PromoCarousel({
+  promos,
+  onPressPromo,
+  autoPlay = true,
+  interval = 4000,
+  cardHeight = 170, 
+  style,
+  cardStyle,
+}: Props) {
   const [width, setWidth] = useState(0);
   const [index, setIndex] = useState(0);
+  const listRef = useRef<FlatList<Promo>>(null);
+  const touching = useRef(false);
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (width > 0) setIndex(Math.round(e.nativeEvent.contentOffset.x / width));
   };
 
+  // Geser otomatis. Timer dimulai ulang setiap kali index berubah,
+  // jadi setelah pengguna menggeser sendiri, hitungan 4 detik mulai dari awal.
+  useEffect(() => {
+    if (!autoPlay || promos.length < 2 || width === 0) return;
+    const timer = setTimeout(() => {
+      if (touching.current) {
+        setIndex((i) => i); // sedang disentuh: lewati, jadwalkan lagi
+        return;
+      }
+      const next = (index + 1) % promos.length;
+      listRef.current?.scrollToOffset({ offset: next * width, animated: true });
+      setIndex(next);
+    }, interval);
+    return () => clearTimeout(timer);
+  }, [index, autoPlay, interval, promos.length, width]);
+
   return (
     <View style={style} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
       {width > 0 ? (
         <FlatList
+          ref={listRef}
           data={promos}
           keyExtractor={(p) => p.id}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
+          onScrollBeginDrag={() => (touching.current = true)}
+          onScrollEndDrag={() => (touching.current = false)}
           onMomentumScrollEnd={onScrollEnd}
           renderItem={({ item }) => (
             <View style={{ width, paddingHorizontal: 16 }}>
               <Pressable
                 onPress={() => onPressPromo?.(item)}
-                style={[styles.card, cardStyle]}
+                style={[styles.card, { height: cardHeight }, cardStyle]}
               >
                 {item.image ? (
                   <>
@@ -69,12 +101,12 @@ export default function PromoCarousel({ promos, onPressPromo, style, cardStyle }
                 <View style={styles.content}>
                   <View style={styles.topRow}>
                     <View style={styles.tag}>
-                      <Ionicons name="flame" size={12} color="#fff" />
+                      <Ionicons name="flash" size={12} color="#fff" />
                       <Text style={styles.tagText}>{item.tag}</Text>
                     </View>
                     {item.until ? (
                       <View style={styles.timer}>
-                        <Ionicons name="time-outline" size={12} color="#fff" />
+                        <Ionicons name="alarm-outline" size={13} color="#fff" />
                         <Text style={styles.timerText}>{item.until}</Text>
                       </View>
                     ) : null}
@@ -94,8 +126,9 @@ export default function PromoCarousel({ promos, onPressPromo, style, cardStyle }
         />
       ) : null}
 
+      {/* Titik penanda: melayang di atas bagian bawah kartu */}
       {promos.length > 1 ? (
-        <View style={styles.dots}>
+        <View pointerEvents="none" style={styles.dots}>
           {promos.map((p, i) => (
             <View key={p.id} style={[styles.dot, i === index && styles.dotActive]} />
           ))}
@@ -109,9 +142,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#1b5e20",
     borderRadius: 14,
-    padding: 16,
-    minHeight: 180,
-    overflow: "hidden", // agar gambar ikut melengkung mengikuti borderRadius
+    padding: 14,
+    paddingBottom: 30, // ruang untuk titik penanda di dalam kartu
+    overflow: "hidden",
   },
   overlay: { backgroundColor: "rgba(0,0,0,0.45)" },
   content: { gap: 8 },
@@ -124,37 +157,39 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "#ef6c00",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    backgroundColor: "#9c5a12",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   tagText: { color: "#fff", fontSize: 10, fontWeight: "700" },
   timer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.6)",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   timerText: { color: "#fff", fontSize: 10, fontWeight: "600" },
   title: { color: "#fff", fontSize: 22, fontWeight: "800" },
-  subtitle: { fontSize: 14, fontWeight: "600" },
+  subtitle: { fontSize: 14, fontWeight: "600", color: "#ffe0b2" },
   description: { color: "#e8f5e9", fontSize: 12, lineHeight: 17 },
   dots: {
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     justifyContent: "center",
     gap: 5,
-    marginTop: 8,
   },
   dot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#bdbdbd",
+    backgroundColor: "rgba(255,255,255,0.45)",
   },
-  dotActive: { width: 16, backgroundColor: "#2e7d32" },
+  dotActive: { width: 16, backgroundColor: "#fff" },
 });

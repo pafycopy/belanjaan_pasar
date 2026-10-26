@@ -9,6 +9,9 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
+const OPEN_COLOR = colors.dark;   // hijau saat buka
+const CLOSED_COLOR = "#e53935";   // merah saat tutup
+
 const toMinutes = (t: string) => {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
@@ -21,6 +24,12 @@ function getWIB() {
   return { hours: d.getUTCHours(), minutes: d.getUTCMinutes() };
 }
 
+// Sisa menit sampai jam buka berikutnya (bisa besok pagi)
+function minutesUntilOpen(current: number, open: number) {
+  const diff = open - current;
+  return diff > 0 ? diff : diff + 24 * 60;
+}
+
 export default function KiosStatusCard({
   openAt = "06:00",
   closeAt = "10:00",
@@ -30,18 +39,30 @@ export default function KiosStatusCard({
   const [now, setNow] = useState(getWIB());
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(getWIB()), 30000);
+    const timer = setInterval(() => setNow(getWIB()), 1000);
     return () => clearInterval(timer);
   }, []);
 
   const current = now.hours * 60 + now.minutes;
-  const isOpen = current >= toMinutes(openAt) && current < toMinutes(closeAt);
+  const open = toMinutes(openAt);
+  const close = toMinutes(closeAt);
+  const isOpen = current >= open && current < close;
+
+  const remaining = minutesUntilOpen(current, open);
+  const remHours = Math.floor(remaining / 60);
+  const remMinutes = remaining % 60;
 
   return (
-    <View style={[styles.card, style]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: isOpen ? OPEN_COLOR : CLOSED_COLOR },
+        style,
+      ]}
+    >
       <View style={styles.topRow}>
         <Text style={styles.title}>
-          Kios {isOpen ? "Buka" : "Tutup"} ({openAt.replace(":", ".")} - {closeAt.replace(":", ".")} WIB)
+          Kios Buka ({openAt.replace(":", ".")} - {closeAt.replace(":", ".")} WIB)
         </Text>
         <View style={styles.clock}>
           <Text style={styles.clockText}>
@@ -50,16 +71,24 @@ export default function KiosStatusCard({
         </View>
       </View>
 
-      <Pressable onPress={onPress} style={[styles.button, !isOpen && { opacity: 0.7 }]}>
-        <Text style={styles.buttonText}>{isOpen ? "Sedang Buka" : "Sedang Tutup"}</Text>
-      </Pressable>
+      {isOpen ? (
+        <Pressable onPress={onPress} style={styles.box}>
+          <Text style={styles.openText}>Sedang Buka</Text>
+        </Pressable>
+      ) : (
+        <View style={styles.box}>
+          <Text style={styles.caption}>KIOS AKAN BUKA DALAM</Text>
+          <Text style={styles.countdown}>
+            {pad(remHours)} JAM : {pad(remMinutes)} MENIT
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.dark,
     borderRadius: 14,
     padding: 14,
     gap: 12,
@@ -72,16 +101,26 @@ const styles = StyleSheet.create({
   title: { flex: 1, marginRight: 8, color: "#fff", fontSize: 13, fontWeight: "600" },
   clock: {
     backgroundColor: "#fff",
-    borderRadius: 6,
-    paddingHorizontal: 8,
+    borderRadius: 999,
+    paddingHorizontal: 10,
     paddingVertical: 3,
   },
   clockText: { color: colors.dark, fontSize: 10, fontWeight: "700" },
-  button: {
+  box: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    paddingVertical: 12,
+    minHeight: 60,
+    paddingVertical: 8,
     alignItems: "center",
+    justifyContent: "center",
   },
-  buttonText: { color: colors.dark, fontSize: 16, fontWeight: "800" },
+  openText: { color: "#1f2937", fontSize: 16, fontWeight: "800" },
+  caption: { color: "#1f2937", fontSize: 10, fontWeight: "600", letterSpacing: 0.5 },
+  countdown: {
+    color: "#111827",
+    fontSize: 22,
+    fontWeight: "800",
+    letterSpacing: 1,
+    marginTop: 2,
+  },
 });
