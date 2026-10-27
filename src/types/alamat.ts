@@ -1,6 +1,6 @@
 export type Alamat = {
   id: string;
-  kategori: string;       // contoh: "Warung / Usaha"
+  kategori: string;       // label kategori, contoh: "Warung / Usaha" (lihat data/kategorialamat.ts)
   namaPenerima: string;
   noHp?: string;          // no. HP penerima (untuk kurir)
   jalan: string;          // alamat lengkap dan nomor
@@ -17,10 +17,3 @@ export type Alamat = {
 
 // Data yang diisi dari form. id dibuat oleh repository (nanti: oleh server).
 export type AlamatInput = Omit<Alamat, "id">;
-
-export const KATEGORI_ALAMAT = [
-  "Rumah Utama",
-  "Warung / Usaha",
-  "Dapur Katering",
-  "Kos / Kontrakan",
-] as const;

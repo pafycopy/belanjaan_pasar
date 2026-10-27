@@ -75,6 +75,15 @@ export async function koordinatDariTeks(teks: string): Promise<Koordinat | null>
   }
 }
 
+// Params route selalu string: ubah ke koordinat, atau null bila tidak valid
+export function parseKoordinat(lat?: string, lng?: string): Koordinat | null {
+  if (!lat || !lng) return null;
+  const latitude = Number(lat);
+  const longitude = Number(lng);
+  if (Number.isNaN(latitude) || Number.isNaN(longitude)) return null;
+  return { latitude, longitude };
+}
+
 export function samaTempat(a: Koordinat, b: Koordinat): boolean {
   return Math.abs(a.latitude - b.latitude) < 0.00005 && Math.abs(a.longitude - b.longitude) < 0.00005;
 }
