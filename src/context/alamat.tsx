@@ -1,73 +1,83 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { Alamat, AlamatInput } from "@/types/alamat";
+import { alamatRepository as repo } from "@/services/alamatrepository";
 
-export type Alamat = {
-  id: string;
-  kategori: string;       // contoh: "Warung / Usaha"
-  namaPenerima: string;
-  jalan: string;          // alamat lengkap dan nomor
-  wilayah: string;        // kecamatan dan kelurahan
-  kodePos?: string;
-  patokan?: string;
-  latitude: number;
-  longitude: number;
-  jarakKm?: number;
-};
-
-// Data contoh (koordinat perkiraan, hanya untuk uji tampilan)
-const contoh: Alamat[] = [
-  {
-    id: "1",
-    kategori: "Warung / Usaha",
-    namaPenerima: "Dapur Warung Soto Bu Ratna",
-    jalan: "Jl. Musyawarah No. 44, Joglo",
-    wilayah: "Kembangan, Joglo",
-    latitude: -6.2186,
-    longitude: 106.7409,
-    jarakKm: 1.8,
-  },
-  {
-    id: "2",
-    kategori: "Dapur Katering",
-    namaPenerima: "Dapur Katering Kembangan Baru",
-    jalan: "Komplek BPPT Blok C1 No. 8",
-    wilayah: "Kembangan, Meruya",
-    latitude: -6.1887,
-    longitude: 106.739,
-    jarakKm: 3.2,
-  },
-];
+// Tipe tetap bisa diimpor dari sini seperti sebelumnya
+export type { Alamat, AlamatInput } from "@/types/alamat";
 
 type AlamatContextValue = {
   daftar: Alamat[];
   terpilihId: string | null;
+  terpilih: Alamat | null;
+  memuat: boolean;
   pilih: (id: string) => void;
   hapus: (id: string) => void;
-  simpan: (alamat: Alamat) => void; // tambah baru, atau perbarui jika id sudah ada
+  // Tanpa id = tambah baru (otomatis jadi alamat terpilih). Dengan id = perbarui.
+  simpan: (data: AlamatInput, id?: string) => Promise<Alamat>;
 };
 
 const AlamatContext = createContext<AlamatContextValue | null>(null);
 
 export function AlamatProvider({ children }: { children: ReactNode }) {
-  const [daftar, setDaftar] = useState<Alamat[]>(contoh);
-  const [terpilihId, setTerpilihId] = useState<string | null>(contoh[0]?.id ?? null);
+  const [daftar, setDaftar] = useState<Alamat[]>([]);
+  const [terpilihId, setTerpilihId] = useState<string | null>(null);
+  const [memuat, setMemuat] = useState(true);
 
-  const pilih = (id: string) => setTerpilihId(id);
+  // Muat data dari penyimpanan saat app dibuka
+  useEffect(() => {
+    let aktif = true;
+    (async () => {
+      try {
+        const [semua, idTersimpan] = await Promise.all([repo.ambilSemua(), repo.ambilIdTerpilih()]);
+        if (!aktif) return;
+        const idValid = idTersimpan && semua.some((a) => a.id === idTersimpan) ? idTersimpan : null;
+        const idAkhir = idValid ?? semua[0]?.id ?? null;
+        setDaftar(semua);
+        setTerpilihId(idAkhir);
+        if (idAkhir !== idTersimpan) await repo.simpanIdTerpilih(idAkhir);
+      } finally {
+        if (aktif) setMemuat(false);
+      }
+    })();
+    return () => {
+      aktif = false;
+    };
+  }, []);
+
+  const pilih = (id: string) => {
+    setTerpilihId(id);
+    void repo.simpanIdTerpilih(id).catch(() => {});
+  };
 
   const hapus = (id: string) => {
-    setDaftar((list) => list.filter((a) => a.id !== id));
-    setTerpilihId((current) => (current === id ? null : current));
+    const sisa = daftar.filter((a) => a.id !== id);
+    setDaftar(sisa);
+    void repo.hapus(id).catch(() => {});
+    // Kalau yang dihapus sedang terpilih, pindah ke alamat pertama yang tersisa
+    if (terpilihId === id) {
+      const berikutnya = sisa[0]?.id ?? null;
+      setTerpilihId(berikutnya);
+      void repo.simpanIdTerpilih(berikutnya).catch(() => {});
+    }
   };
 
-  const simpan = (alamat: Alamat) => {
-    setDaftar((list) =>
-      list.some((a) => a.id === alamat.id)
-        ? list.map((a) => (a.id === alamat.id ? alamat : a))
-        : [...list, alamat]
-    );
+  const simpan = async (data: AlamatInput, id?: string) => {
+    if (id) {
+      const baru = await repo.perbarui(id, data);
+      setDaftar((list) => list.map((a) => (a.id === id ? baru : a)));
+      return baru;
+    }
+    const baru = await repo.buat(data);
+    setDaftar((list) => [...list, baru]);
+    setTerpilihId(baru.id);
+    await repo.simpanIdTerpilih(baru.id);
+    return baru;
   };
+
+  const terpilih = daftar.find((a) => a.id === terpilihId) ?? null;
 
   return (
-    <AlamatContext.Provider value={{ daftar, terpilihId, pilih, hapus, simpan }}>
+    <AlamatContext.Provider value={{ daftar, terpilihId, terpilih, memuat, pilih, hapus, simpan }}>
       {children}
     </AlamatContext.Provider>
   );

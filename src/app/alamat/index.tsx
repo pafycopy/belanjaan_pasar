@@ -1,9 +1,19 @@
 import { useState, ComponentProps } from "react";
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAlamat } from "@/context/alamat";
 import ConfirmDialog from "@/components/alamat/confirmdialog";
+import { koordinatDariTeks } from "@/services/lokasi";
 import { colors } from "@/theme";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
@@ -18,11 +28,35 @@ const fallbackStyle = { icon: "location" as IconName, bg: "#eeeeee", fg: "#55555
 
 export default function PilihLokasi() {
   const router = useRouter();
-  const { daftar, pilih, hapus } = useAlamat();
+  const { daftar, terpilihId, memuat, pilih, hapus } = useAlamat();
   const [kelola, setKelola] = useState(false);
   const [hapusId, setHapusId] = useState<string | null>(null);
+  const [cari, setCari] = useState("");
+  const [mencari, setMencari] = useState(false);
 
   const goToMap = () => router.push("/alamat/pinpoint");
+  // Buka peta di posisi pengguna (izin GPS diminta di layar peta)
+  const goToGps = () => router.push({ pathname: "/alamat/pinpoint", params: { gps: "1" } });
+  const goToEdit = (id: string) => router.push({ pathname: "/alamat/pinpoint", params: { id } });
+
+  const cariLokasi = async () => {
+    const q = cari.trim();
+    if (!q) return;
+    setMencari(true);
+    const c = await koordinatDariTeks(q);
+    setMencari(false);
+    if (!c) {
+      Alert.alert(
+        "Lokasi tidak ditemukan",
+        "Coba kata kunci lain, atau pilih titik langsung di peta."
+      );
+      return;
+    }
+    router.push({
+      pathname: "/alamat/pinpoint",
+      params: { lat: String(c.latitude), lng: String(c.longitude) },
+    });
+  };
 
   return (
     <View style={styles.screen}>
@@ -33,15 +67,19 @@ export default function PilihLokasi() {
             style={styles.searchInput}
             placeholder="Cari lokasi yang kamu tuju"
             placeholderTextColor="#9e9e9e"
+            value={cari}
+            onChangeText={setCari}
+            onSubmitEditing={cariLokasi}
+            returnKeyType="search"
           />
+          {mencari ? <ActivityIndicator size="small" color={colors.primary} /> : null}
         </View>
 
         <View style={styles.row}>
           <Pressable style={[styles.btn, styles.btnLight]} onPress={goToMap}>
             <Text style={styles.btnLightText}>Pilih Titik di Peta</Text>
           </Pressable>
-          {/* Nanti: minta izin GPS dulu, lalu buka peta di posisi pengguna */}
-          <Pressable style={[styles.btn, styles.btnDark]} onPress={goToMap}>
+          <Pressable style={[styles.btn, styles.btnDark]} onPress={goToGps}>
             <Ionicons name="navigate" size={14} color="#fff" />
             <Text style={styles.btnDarkText}>Lokasi Saya saat ini</Text>
           </Pressable>
@@ -57,6 +95,14 @@ export default function PilihLokasi() {
               <Text style={styles.manage}>{kelola ? "Selesai" : "Kelola"}</Text>
             </Pressable>
           </View>
+
+          {memuat ? <ActivityIndicator color={colors.primary} /> : null}
+
+          {!memuat && daftar.length === 0 ? (
+            <Text style={styles.empty}>
+              Belum ada alamat tersimpan. Pilih titik di peta untuk menambahkan alamat pertamamu.
+            </Text>
+          ) : null}
 
           {daftar.map((a) => {
             const s = kategoriStyle[a.kategori] ?? fallbackStyle;
@@ -77,9 +123,19 @@ export default function PilihLokasi() {
                 </View>
 
                 {kelola ? (
-                  <Pressable style={styles.trash} onPress={() => setHapusId(a.id)} hitSlop={8}>
-                    <Ionicons name="trash" size={16} color="#e53935" />
-                  </Pressable>
+                  <View style={styles.manageActions}>
+                    <Pressable style={styles.edit} onPress={() => goToEdit(a.id)} hitSlop={8}>
+                      <Ionicons name="pencil" size={16} color={colors.dark} />
+                    </Pressable>
+                    <Pressable style={styles.trash} onPress={() => setHapusId(a.id)} hitSlop={8}>
+                      <Ionicons name="trash" size={16} color="#e53935" />
+                    </Pressable>
+                  </View>
+                ) : a.id === terpilihId ? (
+                  <View style={styles.inUse}>
+                    <Ionicons name="checkmark-circle" size={14} color={colors.primary} />
+                    <Text style={styles.inUseText}>Dipakai</Text>
+                  </View>
                 ) : (
                   <Pressable
                     style={styles.use}
@@ -183,6 +239,18 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   useText: { fontSize: 11, fontWeight: "700", color: colors.text },
+  empty: { fontSize: 12, color: colors.muted, textAlign: "center", paddingVertical: 8 },
+  manageActions: { flexDirection: "row", gap: 8 },
+  edit: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: "#e8f5e9",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inUse: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 6 },
+  inUseText: { fontSize: 11, fontWeight: "700", color: colors.primary },
   trash: {
     width: 32,
     height: 32,

@@ -9,6 +9,7 @@ import KiosStatusCard from "@/components/beranda/kiosstatuscard";
 import WalletCard, { WalletItem } from "@/components/beranda/walletcard";
 import MenuGrid, { MenuItem } from "@/components/beranda/menugrid";
 import ProductCard from "@/components/product";
+import { useAlamat } from "@/context/alamat";
 
 const promos: Promo[] = [
   {
@@ -52,11 +53,18 @@ const menuItems: MenuItem[] = [
 
 export default function Beranda() {
   const router = useRouter();
+  const { terpilih, memuat } = useAlamat();
+
+  const alamatHeader = memuat
+    ? "Memuat alamat..."
+    : terpilih
+      ? terpilih.jalan
+      : "Pilih alamat pengantaran";
 
   return (
     <View style={styles.screen}>
       <HeaderAddress
-        address="Jl. Taman Alfa Indah Blok H2 No. 12, Jakarta"
+        address={alamatHeader}
         cartCount={2}
         hasNotification
         onPressAddress={() => router.push("/alamat")}
