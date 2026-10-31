@@ -103,7 +103,7 @@ export default function PilihLokasi() {
         </View>
       </ScrollView>
 
-      <FooterBar bordered={false} background={colors.surface}>
+      <FooterBar bordered={false} background={colors.surface} >
         <Button label={TEKS.daftar.tambahBaru} icon="add" onPress={keTambah} />
       </FooterBar>
 

@@ -1,4 +1,3 @@
-// Seluruh teks (copy) fitur alamat di satu tempat: mudah diubah dan siap untuk multi-bahasa nanti.
 export const TEKS = {
   hapus: "Hapus",
   batal: "Batal",
@@ -9,7 +8,10 @@ export const TEKS = {
   opsional: "Opsional",
   alamatTidakDitemukan: "Alamat tidak ditemukan.",
 
-  header: { memuat: "Memuat alamat...", kosong: "Pilih alamat pengantaran" },
+  header: {
+    memuat: "Memuat alamat...",
+    kosong: "Pilih alamat pengantaran",
+  },
 
   dialogHapus: {
     judul: "Hapus alamat ini?",
@@ -22,12 +24,15 @@ export const TEKS = {
     pilihTitik: "Pilih Titik di Peta",
     lokasiSaya: "Lokasi Saya saat ini",
     tambahBaru: "Tambah Alamat Baru",
-    judulTersimpan: (jumlah: number) => `Alamat Tersimpan Lainnya (${jumlah})`,
-    kosong: "Belum ada alamat tersimpan. Pilih titik di peta untuk menambahkan alamat pertamamu.",
+    judulTersimpan: (jumlah: number) =>
+      `Alamat Tersimpan Lainnya (${jumlah})`,
+    kosong:
+      "Belum ada alamat tersimpan. Pilih titik di peta untuk menambahkan alamat pertamamu.",
   },
 
   pinpoint: {
-    petunjuk: "Geser peta untuk menentukan titik pengantaran",
+    petunjuk:
+      "Geser peta untuk menentukan titik pengantaran",
     konfirmasi: "Konfirmasi Lokasi",
   },
 
@@ -37,18 +42,36 @@ export const TEKS = {
     pilihWilayah: "Pilih kecamatan & kelurahan",
     simpanSheet: "Simpan",
     simpan: "Simpan Alamat Pengantaran",
-    titikBelumDipilih: "Titik lokasi belum dipilih. Kembali dan pilih titik di peta.",
+    titikBelumDipilih:
+      "Titik lokasi belum dipilih. Kembali dan pilih titik di peta.",
+  },
+
+  notifikasi: {
+    judul: "Notifikasi",
+    terbaru: "Update Terbaru",
+    kosong: "Belum ada notifikasi di kategori ini.",
+    timbanganBersih: "Timbangan Bersih:",
+    voucherDiklaim: (kode: string) =>
+      `Kode voucher ${kode} siap dipakai saat checkout.`,
+    judulVoucher: "Voucher",
   },
 
   peringatan: {
     lokasiTidakDitemukan: {
       judul: "Lokasi tidak ditemukan",
-      pesan: "Coba kata kunci lain, atau pilih titik langsung di peta.",
+      pesan:
+        "Coba kata kunci lain, atau pilih titik langsung di peta.",
     },
+
     lokasiTidakTersedia: {
       judul: "Lokasi tidak tersedia",
-      pesan: "Izinkan akses lokasi di pengaturan HP, atau geser peta secara manual.",
+      pesan:
+        "Izinkan akses lokasi di pengaturan HP, atau geser peta secara manual.",
     },
-    gagalSimpan: { judul: "Gagal menyimpan", pesan: "Terjadi kesalahan, coba lagi." },
+
+    gagalSimpan: {
+      judul: "Gagal menyimpan",
+      pesan: "Terjadi kesalahan, coba lagi.",
+    },
   },
 } as const;

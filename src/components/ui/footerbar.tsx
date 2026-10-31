@@ -22,6 +22,6 @@ export default function FooterBar({ children, bordered = true, background = colo
 }
 
 const styles = StyleSheet.create({
-  bar: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: 10 },
+  bar: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: 10,marginBottom: 0 },
   bordered: { borderTopWidth: 1, borderTopColor: colors.border },
 });
