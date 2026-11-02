@@ -86,3 +86,10 @@ export function selisihHari(a: string, b: string): number {
   return Math.round((Date.parse(`${a}T00:00:00Z`) - Date.parse(`${b}T00:00:00Z`)) / 86400000);
 }
 
+// "2026-12-31" -> "31 Des 2026"
+export function formatTanggal(tanggal: string): string {
+  const [y, m, d] = tanggal.split("-").map(Number);
+  if (!y || !m || !d) return tanggal;
+  return `${d} ${BULAN[m - 1]} ${y}`;
+}
+

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 import { colors, spacing } from "@/theme";
 import { TEKS } from "@/data/teks";
 import { HARI_SIKLUS } from "@/data/poin";
@@ -12,6 +13,7 @@ import KartuPoin from "@/components/poin/kartupoin";
 import KlaimHarian from "@/components/poin/klaimharian";
 
 export default function PoinScreen() {
+  const router = useRouter();
   const { status, total, memuat, klaim } = usePoin();
   const sekarang = useSekarang();
   const [mengklaim, setMengklaim] = useState(false);
@@ -48,7 +50,7 @@ export default function PoinScreen() {
         <ScreenState loading />
       ) : (
         <ScrollView contentContainerStyle={styles.isi}>
-          <KartuPoin total={total} onPressTukar={segera} onPressRiwayat={segera} />
+          <KartuPoin total={total} onPressTukar={() => router.navigate("/voucher")} onPressRiwayat={segera} />
           <KlaimHarian ringkasan={ringkasan} mengklaim={mengklaim} onKlaim={onKlaim} />
         </ScrollView>
       )}

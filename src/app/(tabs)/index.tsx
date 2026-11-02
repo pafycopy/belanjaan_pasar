@@ -20,6 +20,11 @@ export default function Beranda() {
   const { terpilih, memuat } = useAlamat();
   const { total: totalPoin, memuat: memuatPoin } = usePoin();
 
+  // Menu "Voucher" membuka halaman Voucher
+  const menu = menuItems.map((item) =>
+    item.id === "voucher" ? { ...item, onPress: () => router.push("/voucher") } : item
+  );
+
   // Kartu poin di dompet: nilai asli + buka halaman Poin
   const dompet = walletItems.map((item) =>
     item.id === "poin"
@@ -61,7 +66,7 @@ export default function Beranda() {
         </View>
 
         <View style={styles.sheet}>
-          <MenuGrid items={menuItems} />
+          <MenuGrid items={menu} />
         </View>
 
         <View style={styles.padded}>

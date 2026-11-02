@@ -12,6 +12,8 @@ type PoinContextValue = {
   memuat: boolean;
   // null = klaim ditolak (sudah diklaim / di luar jam klaim). Melempar error kalau gagal menyimpan.
   klaim: () => Promise<HasilKlaim | null>;
+  // Mengurangi poin (mis. tukar voucher). false = poin tidak cukup. Melempar error kalau gagal menyimpan.
+  gunakan: (jumlah: number) => Promise<boolean>;
 };
 
 const PoinContext = createContext<PoinContextValue | null>(null);
@@ -46,8 +48,16 @@ export function PoinProvider({ children }: { children: ReactNode }) {
     return { poin: hasil.poin, hari: hasil.hari };
   };
 
+  const gunakan = async (jumlah: number) => {
+    if (jumlah <= 0 || status.total < jumlah) return false;
+    const baru: StatusPoin = { ...status, total: status.total - jumlah };
+    await repo.simpan(baru);
+    setStatus(baru);
+    return true;
+  };
+
   return (
-    <PoinContext.Provider value={{ status, total: status.total, memuat, klaim }}>
+    <PoinContext.Provider value={{ status, total: status.total, memuat, klaim, gunakan }}>
       {children}
     </PoinContext.Provider>
   );

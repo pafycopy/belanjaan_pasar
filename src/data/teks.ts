@@ -101,6 +101,68 @@ export const TEKS = {
     },
   },
 
+  voucher: {
+    judul: "Voucher",
+    member: (tingkat: string) => `MEMBER ${tingkat.toUpperCase()}`,
+    poinAnda: "Poin Anda",
+    satuan: "Pts",
+    ajakTukar: "Tukarkan poin belanja Anda.",
+    riwayatPoin: "Riwayat Poin",
+    klaimHarian: "Klaim Harian",
+    tab: { tukar: "Tukar Voucher", saya: "Voucher Saya" },
+    populer: "Paling Populer",
+    berlaku: (tanggal: string) => `Berlaku s/d ${tanggal}`,
+    biaya: (n: string) => `Biaya: ${n} Pts`,
+    tombolTukar: (n: string) => `Tukar ${n} Pts`,
+    kedaluwarsa: "Kedaluwarsa",
+    konfirmasi: {
+      judul: "Tukar voucher?",
+      pesan: (nama: string, biaya: string) => `${nama}\nPoinmu akan berkurang ${biaya} Pts.`,
+      batal: "Batal",
+      ya: "Tukar",
+    },
+    berhasil: {
+      judul: "Penukaran Berhasil",
+      pesan: (nama: string) => `${nama} sudah masuk ke Voucher Saya.`,
+      nanti: "Nanti",
+      lihat: "Lihat Voucher",
+    },
+    gagal: {
+      poinKurang: (kurang: string) => ({
+        judul: "Poin belum cukup",
+        pesan: `Kamu butuh ${kurang} Pts lagi. Kumpulkan lewat Klaim Harian.`,
+      }),
+      kedaluwarsa: { judul: "Voucher berakhir", pesan: "Voucher ini sudah tidak berlaku." },
+      umum: { judul: "Gagal menukar", pesan: "Terjadi kesalahan, coba lagi." },
+    },
+    milik: {
+      kosong: "Belum ada voucher. Tukarkan poinmu di tab Tukar Voucher.",
+      kosongFilter: "Tidak ada voucher di kategori ini.",
+      filter: { aktif: "Dapat Digunakan", terpakai: "Terpakai", kedaluwarsa: "Kedaluwarsa" },
+      pakai: "Pakai",
+      terpakai: "Terpakai",
+      berakhir: "Berakhir",
+      sudahDipakai: "Sudah dipakai",
+      berakhirPada: (tanggal: string) => `Berakhir ${tanggal}`,
+      caraPakai: {
+        judul: "Pakai voucher",
+        pesan: "Pilih voucher ini saat checkout untuk memakainya.",
+        tutup: "Tutup",
+        belanja: "Mulai Belanja",
+      },
+    },
+    syarat: {
+      judul: "Syarat & Ketentuan Penggunaan",
+      daftar: [
+        "Voucher hanya berlaku untuk pembelian lewat aplikasi.",
+        "Satu voucher untuk satu pesanan.",
+        "Voucher tidak dapat diuangkan atau dipindahtangankan.",
+        "Voucher yang sudah kedaluwarsa tidak dapat digunakan lagi.",
+        "Poin yang sudah ditukar tidak dapat dikembalikan.",
+      ],
+    },
+  },
+
   peringatan: {
     lokasiTidakDitemukan: {
       judul: "Lokasi tidak ditemukan",
