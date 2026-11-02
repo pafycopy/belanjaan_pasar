@@ -10,12 +10,26 @@ import WalletCard from "@/components/beranda/walletcard";
 import MenuGrid from "@/components/beranda/menugrid";
 import ProductCard from "@/components/product";
 import { useAlamat } from "@/context/alamat";
+import { usePoin } from "@/context/poin";
+import { formatRibuan } from "@/utils/angka";
 import { menuItems, promos, walletItems } from "@/data/beranda";
 import { TEKS } from "@/data/teks";
 
 export default function Beranda() {
   const router = useRouter();
   const { terpilih, memuat } = useAlamat();
+  const { total: totalPoin, memuat: memuatPoin } = usePoin();
+
+  // Kartu poin di dompet: nilai asli + buka halaman Poin
+  const dompet = walletItems.map((item) =>
+    item.id === "poin"
+      ? {
+          ...item,
+          value: memuatPoin ? "- Pts" : `${formatRibuan(totalPoin)} Pts`,
+          onPress: () => router.push("/poin"),
+        }
+      : item
+  );
 
   const alamatHeader = memuat
     ? TEKS.header.memuat
@@ -43,7 +57,7 @@ export default function Beranda() {
 
         <View style={[styles.padded, { marginTop: 12, gap: 12 }]}>
           <KiosStatusCard openAt="06:00" closeAt="10:00" />
-          <WalletCard items={walletItems} />
+          <WalletCard items={dompet} />
         </View>
 
         <View style={styles.sheet}>

@@ -66,3 +66,23 @@ export function formatWaktuNotifikasi(
         BULAN[w.getUTCMonth()]
       }, ${jam}`;
 }
+
+// ---- Penanda hari/jam WIB (dipakai klaim harian) ----
+
+// "YYYY-MM-DD" menurut WIB
+export function tanggalWIB(ms: number): string {
+  const d = new Date(ms + WIB_MS);
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+}
+
+// Menit sejak 00.00 WIB (0..1439)
+export function menitWIB(ms: number): number {
+  const d = new Date(ms + WIB_MS);
+  return d.getUTCHours() * 60 + d.getUTCMinutes();
+}
+
+// Jumlah hari kalender antara dua tanggal "YYYY-MM-DD" (a - b)
+export function selisihHari(a: string, b: string): number {
+  return Math.round((Date.parse(`${a}T00:00:00Z`) - Date.parse(`${b}T00:00:00Z`)) / 86400000);
+}
+

@@ -56,6 +56,51 @@ export const TEKS = {
     judulVoucher: "Voucher",
   },
 
+  poin: {
+    judul: "Poin",
+    totalLabel: "TOTAL POIN ANDA",
+    satuan: "Poin",
+    akunAktif: "Akun Aktif",
+    tukar: "Tukar Poin",
+    riwayat: "Riwayat Poin",
+    segera: { judul: "Segera hadir", pesan: "Fitur ini sedang disiapkan." },
+    klaim: {
+      judul: "Klaim Harian",
+      deskripsi: (mulai: string, selesai: string) =>
+        `Buka aplikasi tiap subuh (${mulai} - ${selesai} WIB) untuk kumpulkan bonus poin belanja`,
+      hari: (n: number) => `Hari ${n}`,
+      tambahPoin: (n: number) => `+${n} Poin`,
+      hariIni: "Hari Ini!",
+      superBonus: "Super Bonus",
+      voucher: "Voucher",
+      tombol: {
+        bisa: "Klaim Sekarang",
+        sudah: "Sudah Diklaim Hari Ini",
+        sebelum: (jam: string) => `Klaim Dibuka ${jam} WIB`,
+        terlewat: "Klaim Hari Ini Terlewat",
+      },
+      hitungMundur: {
+        sisa: "Sisa waktu klaim hari ini:",
+        dibuka: "Klaim dibuka dalam:",
+        berikutnya: "Klaim berikutnya dalam:",
+      },
+      berhasil: {
+        judul: "Klaim Berhasil",
+        pesan: (poin: number) => `+${poin} Poin sudah masuk ke akunmu.`,
+        siklusSelesai: "Siklus 7 hari selesai. Klaim berikutnya mulai lagi dari Hari 1.",
+      },
+      gagal: { judul: "Gagal klaim", pesan: "Terjadi kesalahan, coba lagi." },
+    },
+    statusHari: {
+      terklaim: "Terklaim",
+      siap: "Siap Klaim",
+      menunggu: "Menunggu Subuh",
+      terlewat: "Terlewat",
+      besok: "Besok Subuh",
+      terkunci: "Terkunci",
+    },
+  },
+
   peringatan: {
     lokasiTidakDitemukan: {
       judul: "Lokasi tidak ditemukan",

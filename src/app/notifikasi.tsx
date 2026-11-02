@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import { colors, spacing } from "@/theme";
 import { TEKS } from "@/data/teks";
 import { FILTER_NOTIFIKASI, FILTER_SEMUA, notifikasiContoh } from "@/data/notifikasi";
 import { Notifikasi } from "@/types/notifikasi";
 import ChipGroup from "@/components/ui/chipgroup";
+import HeaderHijau from "@/components/ui/headerhijau";
 import ScreenState from "@/components/ui/screenstate";
 import NotifikasiCard from "@/components/notifikasi/notifikasicard";
 
@@ -34,26 +34,7 @@ export default function NotifikasiScreen() {
 
   return (
     <View style={styles.screen}>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          title: TEKS.notifikasi.judul,
-          headerStyle: { backgroundColor: colors.primary },
-          headerTintColor: colors.white,
-          headerTitleAlign: "center",
-          headerTitleStyle: { fontSize: 14, fontWeight: "700" },
-          headerShadowVisible: false,
-          headerLeft: () => (
-            <Pressable onPress={() => router.back()} hitSlop={12}>
-              <Ionicons
-                name="chevron-back"
-                size={24}
-                color={colors.white}
-              />
-            </Pressable>
-          ),
-        }}
-      />
+      <HeaderHijau judul={TEKS.notifikasi.judul} />
 
       <View style={styles.filter}>
         <ChipGroup
