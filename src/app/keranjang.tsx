@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useMemo, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
@@ -9,12 +10,15 @@ import KapasitasBerat from "@/components/keranjang/kapasitasberat";
 import OpsiPengiriman from "@/components/keranjang/pengiriman";
 import AlamatPengantaran from "@/components/keranjang/alamatpengantaran";
 import RingkasanPembayaran from "@/components/keranjang/ringkasanpembayaran";
+import RekomendasiProduk from "@/components/keranjang/rekomendasiproduk";
 import { useKeranjang } from "@/context/keranjang";
 import { useAlamat } from "@/context/alamat";
 import { cariProduk } from "@/utils/produk";
+import { DAFTAR_PRODUK } from "@/data/produk";
 import { colors, spacing } from "@/theme";
 
 const KAPASITAS_KG = 50;
+const EMPTY_CART_IMAGE = require("../../assets/images/keranjang/empty-cart.svg");
 
 export default function Keranjang() {
   const router = useRouter();
@@ -52,7 +56,25 @@ export default function Keranjang() {
       <HeaderHijau judul="Keranjang" />
 
       {kosong ? (
-        <EmptyCart />
+        <ScrollView
+          style={styles.emptyScroll}
+          contentContainerStyle={styles.emptyContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.emptyHero}>
+            <Image
+              source={EMPTY_CART_IMAGE}
+              style={styles.emptyImage}
+              contentFit="contain"
+            />
+            <Text style={styles.emptyTitle}>Belum Ada Pesanan</Text>
+          </View>
+
+          <RekomendasiProduk
+            produk={DAFTAR_PRODUK}
+            onPress={(produk) => router.push(`/produk/${produk.id}`)}
+          />
+        </ScrollView>
       ) : (
         <>
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -107,20 +129,6 @@ export default function Keranjang() {
   );
 }
 
-function EmptyCart() {
-  return (
-    <View style={styles.empty}>
-      <View style={styles.illustration}>
-        <Ionicons name="cart-outline" size={78} color={colors.primary} />
-        <View style={styles.leafOne}><Ionicons name="leaf" size={28} color={colors.primary} /></View>
-        <View style={styles.leafTwo}><Ionicons name="leaf" size={22} color={colors.green} /></View>
-      </View>
-      <Text style={styles.emptyTitle}>Belum Ada Pesanan</Text>
-      <Text style={styles.emptyText}>Tambahkan produk segar dari pasar ke keranjangmu.</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.surface },
   content: { paddingBottom: spacing.lg },
@@ -133,10 +141,22 @@ const styles = StyleSheet.create({
   paymentText: { flex: 1 },
   paymentTitle: { fontSize: 11, fontWeight: "700", color: colors.text },
   paymentSubtitle: { fontSize: 9, color: colors.muted, marginTop: 2 },
-  empty: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 40, paddingBottom: 70 },
-  illustration: { width: 150, height: 125, alignItems: "center", justifyContent: "center", position: "relative", marginBottom: 12 },
-  leafOne: { position: "absolute", top: 10, right: 32, transform: [{ rotate: "-25deg" }] },
-  leafTwo: { position: "absolute", top: 36, left: 25, transform: [{ rotate: "35deg" }] },
-  emptyTitle: { fontSize: 13, fontWeight: "700", color: colors.text },
-  emptyText: { fontSize: 10, color: colors.muted, textAlign: "center", marginTop: 5, lineHeight: 15 },
+  emptyScroll: { flex: 1 },
+  emptyContent: { paddingBottom: spacing.xl },
+  emptyHero: {
+    minHeight: 220,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: spacing.md,
+  },
+  emptyImage: {
+    width: 145,
+    height: 145,
+  },
+  emptyTitle: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: colors.text,
+    marginTop: 2,
+  },
 });
