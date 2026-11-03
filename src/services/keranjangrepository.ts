@@ -8,7 +8,10 @@ import { gabungkanItem } from "@/utils/keranjang";
  */
 export interface KeranjangRepository {
   ambilSemua(): Promise<ItemKeranjang[]>;
-  tambah(input: ItemKeranjangInput): Promise<ItemKeranjang[]>; // mengembalikan isi keranjang terbaru
+  tambah(input: ItemKeranjangInput): Promise<ItemKeranjang[]>;
+  ubahJumlah(uid: string, jumlah: number): Promise<ItemKeranjang[]>;
+  hapus(uid: string): Promise<ItemKeranjang[]>;
+  kosongkan(): Promise<ItemKeranjang[]>;
 }
 
 const KUNCI = "belanjaan_pasar:keranjang:v1";
@@ -24,6 +27,11 @@ async function baca(): Promise<ItemKeranjang[]> {
   }
 }
 
+async function simpan(daftar: ItemKeranjang[]): Promise<ItemKeranjang[]> {
+  await AsyncStorage.setItem(KUNCI, JSON.stringify(daftar));
+  return daftar;
+}
+
 function buatUid(): string {
   return `krj-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -34,8 +42,21 @@ const keranjangLokal: KeranjangRepository = {
 
   async tambah(input) {
     const baru = gabungkanItem(await baca(), input, buatUid());
-    await AsyncStorage.setItem(KUNCI, JSON.stringify(baru));
-    return baru;
+    return simpan(baru);
+  },
+
+  async ubahJumlah(uid, jumlah) {
+    const daftar = await baca();
+    if (jumlah <= 0) return simpan(daftar.filter((i) => i.uid !== uid));
+    return simpan(daftar.map((i) => (i.uid === uid ? { ...i, jumlah } : i)));
+  },
+
+  async hapus(uid) {
+    return simpan((await baca()).filter((i) => i.uid !== uid));
+  },
+
+  async kosongkan() {
+    return simpan([]);
   },
 };
 
