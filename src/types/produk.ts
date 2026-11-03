@@ -1,4 +1,4 @@
-import { ImageSourcePropType } from "react-native";
+import { ImageSource } from "expo-image";
 import { IconName } from "@/types/ui";
 
 // Pilihan potongan gratis (khusus produk yang bisa dipotong, mis. ayam)
@@ -16,7 +16,7 @@ export type Produk = {
   harga: number;                  // Rupiah per satuan
   satuan?: string;                // ekor, kg, ikat, ...
   toko?: string;
-  gambar?: ImageSourcePropType;   // require(...) atau { uri: "https://..." }; kosong -> placeholder
+  gambar?: ImageSource | number;  // require(...) untuk .jpg/.png/.svg, atau { uri: "https://..." }; kosong -> placeholder
   ringkas?: string[];             // baris keterangan singkat di bawah nama
   deskripsi?: string;
   stok?: number;

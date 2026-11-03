@@ -3,9 +3,9 @@ import { OpsiPotongan, Produk } from "@/types/produk";
 
 /**
  * Katalog produk (data contoh). Nanti diganti data dari API.
- * Foto sementara: satu foto yang sama untuk semua produk.
+ * Gambar sementara: satu gambar yang sama untuk semua produk (.svg, .jpg, atau .png).
  */
-const FOTO_AYAM = require("../../assets/images/produk/ayam-broiler.jpg");
+const FOTO_AYAM = require("../../assets/images/produk/ayam.svg");
 
 // Tombol jumlah cepat bila produk tidak menentukan sendiri
 export const PILIHAN_JUMLAH_BAWAAN = [1, 5, 10];

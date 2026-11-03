@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderStrong,
     paddingTop: 10,
     paddingBottom: 18,
-    paddingHorizontal: 28,
+    paddingHorizontal: 12,
     marginBottom: spacing.md,
   },
   gambar: { aspectRatio: 1 },
