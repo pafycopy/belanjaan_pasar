@@ -55,7 +55,6 @@ export const OPSI_POTONGAN_AYAM: OpsiPotongan[] = [
   },
 ];
 
-// Tombol saran di "Catatan Khusus Pemotong": ketuk untuk menambahkan ke catatan
 export const SARAN_CATATAN = ["+ Tanpa kepala", "+ Ceker dibuang", "+ Potong kecil-kecil"];
 
 export const FIELD_JUMLAH_CUSTOM: DefinisiField = {
@@ -74,6 +73,7 @@ export const DAFTAR_PRODUK: Produk[] = [
     toko: "Pak Joko Daging",
     gambar: FOTO_AYAM,
     ringkas: ["Berat Hidup 1,0 - 1,1 Kg", "Berat Bersih 700 - 800 Gr"],
+    beratBersihGram: 750,
     deskripsi:
       "Ayam Broiler Ayam Bakar\n\nBerat Hidup 1,0 - 1,1 Kg\nBerat Bersih 700 - 800 Gr\n\nBukan ayam frozen/karkas. Dipotong dadakan sesuai syariat, tanpa bahan pengawet. Lengkap kepala, ceker, dan ati ampela.",
     stok: 48,
@@ -87,8 +87,8 @@ export const DAFTAR_PRODUK: Produk[] = [
     satuan: "ekor",
     toko: "Pak Joko Daging",
     gambar: FOTO_AYAM,
-    // contoh: berat dan stok perlu disesuaikan dengan data asli
     ringkas: ["Berat Hidup 1,4 - 1,5 Kg", "Berat Bersih 1,0 - 1,1 Kg"],
+    beratBersihGram: 1050,
     deskripsi:
       "Ayam Broiler Ukuran KFC\n\nBerat Hidup 1,4 - 1,5 Kg\nBerat Bersih 1,0 - 1,1 Kg\n\nBukan ayam frozen/karkas. Dipotong dadakan sesuai syariat, tanpa bahan pengawet. Pas untuk digoreng tepung ala fried chicken.",
     stok: 36,
@@ -102,8 +102,8 @@ export const DAFTAR_PRODUK: Produk[] = [
     satuan: "ekor",
     toko: "Pak Joko Daging",
     gambar: FOTO_AYAM,
-    // contoh: data karangan, sesuaikan dengan data asli
     ringkas: ["Berat Hidup 1,2 - 1,3 Kg", "Berat Bersih 850 - 950 Gr"],
+    beratBersihGram: 900,
     deskripsi:
       "Ayam Broiler Ukuran Potong 8\n\nBerat Hidup 1,2 - 1,3 Kg\nBerat Bersih 850 - 950 Gr\n\nAyam segar yang praktis untuk berbagai masakan harian keluarga.",
     stok: 40,
@@ -117,8 +117,8 @@ export const DAFTAR_PRODUK: Produk[] = [
     satuan: "ekor",
     toko: "Pak Joko Daging",
     gambar: FOTO_AYAM,
-    // contoh: data karangan, sesuaikan dengan data asli
     ringkas: ["Berat Hidup 1,8 - 2,0 Kg", "Berat Bersih 1,3 - 1,5 Kg"],
+    beratBersihGram: 1400,
     deskripsi:
       "Ayam Broiler Ukuran Jumbo\n\nBerat Hidup 1,8 - 2,0 Kg\nBerat Bersih 1,3 - 1,5 Kg\n\nUkuran besar, cocok untuk acara atau katering.",
     stok: 20,
