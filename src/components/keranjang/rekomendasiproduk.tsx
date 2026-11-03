@@ -52,18 +52,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 9,
+    fontSize: 12,
     fontWeight: "700",
     color: colors.text,
   },
   list: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.sm,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
     gap: spacing.sm,
   },
   card: {
-    width: 108,
+    width: 110,
     backgroundColor: colors.white,
     borderRadius: radius.md,
     borderWidth: 1,
@@ -78,16 +78,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   price: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "800",
     color: colors.dark,
     marginTop: 5,
   },
   name: {
-    fontSize: 8,
-    lineHeight: 12,
+    fontSize: 12,
+    lineHeight: 14,
     color: colors.text,
     marginTop: 4,
-    minHeight: 36,
+    minHeight: 42,
   },
 });

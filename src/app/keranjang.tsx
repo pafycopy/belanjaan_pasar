@@ -61,6 +61,8 @@ export default function Keranjang() {
           contentContainerStyle={styles.emptyContent}
           showsVerticalScrollIndicator={false}
         >
+
+          
           <View style={styles.emptyHero}>
             <Image
               source={EMPTY_CART_IMAGE}
@@ -144,7 +146,7 @@ const styles = StyleSheet.create({
   emptyScroll: { flex: 1 },
   emptyContent: { paddingBottom: spacing.xl },
   emptyHero: {
-    minHeight: 220,
+    minHeight: 400,
     alignItems: "center",
     justifyContent: "center",
     paddingTop: spacing.md,
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     height: 145,
   },
   emptyTitle: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: "700",
     color: colors.text,
     marginTop: 2,
