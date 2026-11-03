@@ -9,6 +9,8 @@ export const colors = {
   text: "#1f2937",
   muted: "#6b7280",
   border: "#e5e7eb",
+  borderStrong: "#d1d5db",
+  darker: "#0f3d17", // hijau paling tua (tombol di atas bar hijau)
 
   textSoft: "#4b5563",
   placeholder: "#9e9e9e",

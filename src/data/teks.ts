@@ -163,6 +163,41 @@ export const TEKS = {
     },
   },
 
+  produk: {
+    rekomendasi: "Rekomendasi Hari Ini",
+    tidakDitemukan: "Produk tidak ditemukan.",
+    varian: "Varian",
+    custom: "Custom",
+    stok: (jumlah: number, satuan: string) => `Stok: ${jumlah} ${satuan}`,
+    deskripsi: "Deskripsi",
+    lihatSelengkapnya: "Lihat Selengkapnya",
+    lihatSedikit: "Lihat Lebih Sedikit",
+    potongan: "Request Potongan Gratis",
+    catatan: {
+      judul: "Catatan Khusus Pemotong",
+      label: "Instruksi Khusus Dapur Anda",
+      placeholder:
+        "Contoh: Tolong potong kecil-kecil untuk kuah soto lamongan, ceker jangan dipotong kukunya terlalu pendek...",
+    },
+    subtotal: "Subtotal",
+    jumlahCustom: {
+      judul: "Jumlah Custom",
+      label: (satuan: string) => `Jumlah (${satuan})`,
+      terapkan: "Terapkan",
+      galat: (maks: number) => `Masukkan jumlah 1 sampai ${maks}`,
+    },
+    keranjang: {
+      berhasil: {
+        judul: "Masuk keranjang",
+        pesan: (nama: string, jumlah: number) => `${jumlah} x ${nama} ditambahkan ke keranjang.`,
+        lanjut: "Lanjut belanja",
+        lihat: "Lihat keranjang",
+      },
+      gagal: { judul: "Gagal menambahkan", pesan: "Terjadi kesalahan, coba lagi." },
+    },
+    bagikan: (nama: string, harga: string) => `${nama} - ${harga}`,
+  },
+
   peringatan: {
     lokasiTidakDitemukan: {
       judul: "Lokasi tidak ditemukan",

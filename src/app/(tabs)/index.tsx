@@ -1,6 +1,6 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { products } from "@/data/mock";
+import { DAFTAR_PRODUK } from "@/data/produk";
 import { colors } from "@/theme";
 import HeaderAddress from "@/components/beranda/headeraddress";
 import SearchBar from "@/components/beranda/searchbar";
@@ -8,9 +8,10 @@ import PromoCarousel from "@/components/beranda/promocarousel";
 import KiosStatusCard from "@/components/beranda/kiosstatuscard";
 import WalletCard from "@/components/beranda/walletcard";
 import MenuGrid from "@/components/beranda/menugrid";
-import ProductCard from "@/components/product";
+import KartuProduk from "@/components/produk/kartuproduk";
 import { useAlamat } from "@/context/alamat";
 import { usePoin } from "@/context/poin";
+import { useKeranjang } from "@/context/keranjang";
 import { formatRibuan } from "@/utils/angka";
 import { menuItems, promos, walletItems } from "@/data/beranda";
 import { TEKS } from "@/data/teks";
@@ -19,6 +20,7 @@ export default function Beranda() {
   const router = useRouter();
   const { terpilih, memuat } = useAlamat();
   const { total: totalPoin, memuat: memuatPoin } = usePoin();
+  const { jumlahBaris } = useKeranjang();
 
   // Menu "Voucher" membuka halaman Voucher
   const menu = menuItems.map((item) =>
@@ -46,7 +48,7 @@ export default function Beranda() {
     <View style={styles.screen}>
       <HeaderAddress
         address={alamatHeader}
-        cartCount={2}
+        cartCount={jumlahBaris}
         hasNotification
         onPressAddress={() => router.push("/alamat")}
         onPressCart={() => router.push("/keranjang")}
@@ -70,10 +72,14 @@ export default function Beranda() {
         </View>
 
         <View style={styles.padded}>
-          <Text style={styles.sectionTitle}>Rekomendasi Hari Ini</Text>
+          <Text style={styles.sectionTitle}>{TEKS.produk.rekomendasi}</Text>
           <View style={styles.grid}>
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {DAFTAR_PRODUK.map((p) => (
+              <KartuProduk
+                key={p.id}
+                produk={p}
+                onPress={() => router.push({ pathname: "/produk/[id]", params: { id: p.id } })}
+              />
             ))}
           </View>
         </View>

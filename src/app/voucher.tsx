@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Alert, FlatList, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
+import { useSekarang } from "@/hooks/usesekarang";
 import { colors, spacing } from "@/theme";
 import { TEKS } from "@/data/teks";
 import { KATALOG_VOUCHER, TINGKAT_MEMBER } from "@/data/voucher";
@@ -29,15 +30,16 @@ export default function VoucherScreen() {
   const [tab, setTab] = useState<IdTabVoucher>("tukar");
   const [filter, setFilter] = useState<StatusMilik>("aktif");
   const [menukarId, setMenukarId] = useState<string | null>(null);
+  // Waktu yang diperbarui berkala (bukan Date.now() saat render), agar status kedaluwarsa ikut berubah
+  const sekarang = useSekarang(30_000);
 
   // Voucher milik pengguna + statusnya (dapat digunakan / terpakai / kedaluwarsa)
   const itemMilik = useMemo<ItemMilik[]>(() => {
-    const sekarang = Date.now();
     return milik.flatMap((m) => {
       const voucher = KATALOG_VOUCHER.find((v) => v.id === m.voucherId);
       return voucher ? [{ milik: m, voucher, status: statusMilik(m, voucher, sekarang) }] : [];
     });
-  }, [milik]);
+  }, [milik, sekarang]);
 
   const jumlah = useMemo(() => {
     const hitung: Record<StatusMilik, number> = { aktif: 0, terpakai: 0, kedaluwarsa: 0 };
@@ -144,7 +146,7 @@ export default function VoucherScreen() {
             <KuponSaya
               voucher={item.voucher}
               milik={item.milik}
-              sekarang={Date.now()}
+              sekarang={sekarang}
               onPakai={pakai}
             />
           )}
