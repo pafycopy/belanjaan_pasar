@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { AlamatProvider } from "@/context/alamat";
+import { FavoritProvider } from "@/context/favorit";
 import { KeranjangProvider } from "@/context/keranjang";
 import { PoinProvider } from "@/context/poin";
 import { VoucherProvider } from "@/context/voucher";
@@ -10,7 +11,9 @@ export default function RootLayout() {
       <PoinProvider>
         <VoucherProvider>
           <KeranjangProvider>
-            <Stack screenOptions={{ headerShown: false }} />
+            <FavoritProvider>
+              <Stack screenOptions={{ headerShown: false }} />
+            </FavoritProvider>
           </KeranjangProvider>
         </VoucherProvider>
       </PoinProvider>
