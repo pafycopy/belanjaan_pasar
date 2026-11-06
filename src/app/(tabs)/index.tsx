@@ -1,42 +1,33 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { DAFTAR_PRODUK } from "@/data/produk";
-import { colors } from "@/theme";
+import { colors, spacing } from "@/theme";
 import HeaderAddress from "@/components/beranda/headeraddress";
 import SearchBar from "@/components/beranda/searchbar";
 import PromoCarousel from "@/components/beranda/promocarousel";
 import KiosStatusCard from "@/components/beranda/kiosstatuscard";
-import WalletCard from "@/components/beranda/walletcard";
 import MenuGrid from "@/components/beranda/menugrid";
 import KartuProduk from "@/components/produk/kartuproduk";
 import { useAlamat } from "@/context/alamat";
-import { usePoin } from "@/context/poin";
 import { useKeranjang } from "@/context/keranjang";
-import { formatRibuan } from "@/utils/angka";
-import { menuItems, promos, walletItems } from "@/data/beranda";
+import { menuItems, promos } from "@/data/beranda";
 import { TEKS } from "@/data/teks";
 
 export default function Beranda() {
   const router = useRouter();
   const { terpilih, memuat } = useAlamat();
-  const { total: totalPoin, memuat: memuatPoin } = usePoin();
   const { jumlahBaris } = useKeranjang();
 
-  // Menu "Voucher" membuka halaman Voucher
-  const menu = menuItems.map((item) =>
-    item.id === "voucher" ? { ...item, onPress: () => router.push("/voucher") } : item
-  );
+  const menu = menuItems.map((item) => {
+    const tujuan: Record<string, () => void> = {
+      poin: () => router.push("/poin"),
+      favorit: () => router.push("/favorit"),
+      voucher: () => router.push("/voucher"),
+      riwayat: () => router.push("/pesanan"),
+    };
 
-  // Kartu poin di dompet: nilai asli + buka halaman Poin
-  const dompet = walletItems.map((item) =>
-    item.id === "poin"
-      ? {
-          ...item,
-          value: memuatPoin ? "- Pts" : `${formatRibuan(totalPoin)} Pts`,
-          onPress: () => router.push("/poin"),
-        }
-      : item
-  );
+    return { ...item, onPress: tujuan[item.id] };
+  });
 
   const alamatHeader = memuat
     ? TEKS.header.memuat
@@ -55,30 +46,40 @@ export default function Beranda() {
         onPressNotification={() => router.push("/notifikasi")}
       />
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
-        <View style={styles.padded}>
-          <SearchBar placeholder="Cari ayam, bebek, ati ampela..." style={{ marginTop: 12 }} />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.searchWrap}>
+          <SearchBar placeholder="Cari ayam, bebek, ati ampela..." />
         </View>
 
-        <PromoCarousel promos={promos} style={{ marginTop: 12 }} cardHeight={170} />
+        <PromoCarousel promos={promos} style={styles.promo} cardHeight={170} />
 
-        <View style={[styles.padded, { marginTop: 12, gap: 12 }]}>
+        <View style={styles.kiosWrap}>
           <KiosStatusCard openAt="06:00" closeAt="10:00" />
-          <WalletCard items={dompet} />
         </View>
 
-        <View style={styles.sheet}>
+        <View style={styles.shortcutPanel}>
           <MenuGrid items={menu} />
         </View>
 
-        <View style={styles.padded}>
-          <Text style={styles.sectionTitle}>{TEKS.produk.rekomendasi}</Text>
-          <View style={styles.grid}>
-            {DAFTAR_PRODUK.map((p) => (
+        <View style={styles.recommendationSection}>
+          <View style={styles.sectionHeading}>
+            <Text style={styles.sectionTitle}>{TEKS.produk.rekomendasi}</Text>
+          </View>
+
+          <View style={styles.productGrid}>
+            {DAFTAR_PRODUK.map((produk) => (
               <KartuProduk
-                key={p.id}
-                produk={p}
-                onPress={() => router.push({ pathname: "/produk/[id]", params: { id: p.id } })}
+                key={produk.id}
+                produk={produk}
+                onPress={() =>
+                  router.push({
+                    pathname: "/produk/[id]",
+                    params: { id: produk.id },
+                  })
+                }
               />
             ))}
           </View>
@@ -89,25 +90,62 @@ export default function Beranda() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.surface },
-  padded: { paddingHorizontal: 16 },
-  sheet: {
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  searchWrap: {
+    paddingHorizontal: 14,
+    paddingTop: 10,
+  },
+  promo: {
+    marginTop: 10,
+  },
+  kiosWrap: {
+    paddingHorizontal: 8,
+    marginTop: 10,
+  },
+  shortcutPanel: {
     backgroundColor: colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    marginTop: 16,
-    padding: 16,
+    marginHorizontal: 6,
+    marginTop: 6,
+    paddingHorizontal: 10,
+    paddingTop: 16,
+    paddingBottom: 12,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 14,
+    borderBottomRightRadius: 14,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  recommendationSection: {
+    marginTop: 8,
+    backgroundColor: colors.white,
+  },
+  sectionHeading: {
+    backgroundColor: "#e8e9eb",
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "700",
     color: colors.text,
-    marginTop: 16,
-    marginBottom: 12,
   },
-  grid: {
+  productGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
 });
