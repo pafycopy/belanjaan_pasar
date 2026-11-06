@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import GambarProduk from "@/components/produk/gambarproduk";
 import { colors, radius, spacing } from "@/theme";
 import { Produk } from "@/types/produk";
@@ -16,11 +16,7 @@ export default function RekomendasiProduk({ produk, onPress }: Props) {
         <Text style={styles.title}>Pilihan Belanjaan Pasar saat ini</Text>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.list}
-      >
+      <View style={styles.list}>
         {produk.map((item) => (
           <Pressable
             key={item.id}
@@ -34,7 +30,7 @@ export default function RekomendasiProduk({ produk, onPress }: Props) {
             </Text>
           </Pressable>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -57,13 +53,16 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   list: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     paddingHorizontal: spacing.sm,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-    gap: spacing.sm,
+    columnGap: spacing.sm,
+    rowGap: spacing.sm,
   },
   card: {
-    width: 110,
+    width: "31.5%",
     backgroundColor: colors.white,
     borderRadius: radius.md,
     borderWidth: 1,
