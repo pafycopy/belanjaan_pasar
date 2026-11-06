@@ -1,5 +1,4 @@
 import { Promo } from "@/components/beranda/promocarousel";
-import { WalletItem } from "@/components/beranda/walletcard";
 import { MenuItem } from "@/components/beranda/menugrid";
 
 // Data Beranda dipisah dari tampilan. Nanti tinggal diganti dengan data dari API.
@@ -32,15 +31,30 @@ export const promos: Promo[] = [
   },
 ];
 
-export const walletItems: WalletItem[] = [
-  { id: "saldo", label: "Saldo Anda", value: "Rp 150.000", icon: "wallet" },
-  { id: "poin", label: "Poin Saya", value: "2.450 Pts", icon: "star" },
-  { id: "transfer", label: "Transfer", value: "Kirim Saldo", icon: "swap-horizontal" },
-];
-
 export const menuItems: MenuItem[] = [
-  { id: "belanja", label: "Ngebelanjain", icon: "bicycle" },
-  { id: "toko", label: "Toko Populer", icon: "storefront" },
-  { id: "voucher", label: "Voucher", icon: "ticket" },
-  { id: "riwayat", label: "Riwayat Transaksi", icon: "receipt" },
+  {
+    id: "poin",
+    label: "Poin Saya",
+    icon: "star",
+    iconBackground: "#ef7d00",
+    onPress: undefined,
+  },
+  {
+    id: "favorit",
+    label: "Favorit",
+    icon: "heart",
+    iconBackground: "#176b38",
+  },
+  {
+    id: "voucher",
+    label: "Voucher",
+    icon: "ticket",
+    iconBackground: "#176b38",
+  },
+  {
+    id: "riwayat",
+    label: "Riwayat Transaksi",
+    icon: "receipt",
+    iconBackground: "#176b38",
+  },
 ];
