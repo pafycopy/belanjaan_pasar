@@ -11,27 +11,20 @@ type Props = {
   onToggleFavorit: () => void;
 };
 
-// Nama + tombol favorit, keterangan + stok, dan harga
 export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) {
   return (
     <View style={styles.wrap}>
       <View style={styles.baris}>
         <Text style={styles.nama}>{produk.nama}</Text>
-        <Pressable onPress={onToggleFavorit} hitSlop={10}>
-          <Ionicons
-            name={favorit ? "heart" : "heart-outline"}
-            size={26}
-            color={colors.danger}
-          />
+        <Pressable onPress={onToggleFavorit} hitSlop={10} accessibilityRole="button" accessibilityLabel={favorit ? "Hapus dari favorit" : "Tambah ke favorit"}>
+          <Ionicons name={favorit ? "heart" : "heart-outline"} size={26} color={colors.danger} />
         </Pressable>
       </View>
 
       <View style={styles.baris}>
         <View style={styles.ringkas}>
           {produk.ringkas?.map((teks) => (
-            <Text key={teks} style={styles.ringkasText}>
-              {teks}
-            </Text>
+            <Text key={teks} style={styles.ringkasText}>{teks}</Text>
           ))}
         </View>
         {produk.stok != null ? (
@@ -41,7 +34,6 @@ export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) 
           </View>
         ) : null}
       </View>
-
       <Text style={styles.harga}>{formatHarga(produk.harga)}</Text>
     </View>
   );
