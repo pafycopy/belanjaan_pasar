@@ -5,6 +5,7 @@ import { colors, radius, spacing } from "@/theme";
 import { TEKS } from "@/data/teks";
 import { PILIHAN_JUMLAH_BAWAAN, SARAN_CATATAN } from "@/data/produk";
 import { useKeranjang } from "@/context/keranjang";
+import { useFavorit } from "@/context/favorit";
 import { Produk } from "@/types/produk";
 import { cariProduk, hitungSubtotal } from "@/utils/produk";
 import HeaderHijau from "@/components/ui/headerhijau";
@@ -37,6 +38,7 @@ export default function DetailProduk() {
 function IsiDetail({ produk }: { produk: Produk }) {
   const router = useRouter();
   const { tambah } = useKeranjang();
+  const { isFavorit, toggle } = useFavorit();
 
   const satuan = produk.satuan ?? "pcs";
   const maks = produk.stok ?? 99;
@@ -45,7 +47,6 @@ function IsiDetail({ produk }: { produk: Produk }) {
   const [jumlah, setJumlah] = useState(1);
   const [potonganId, setPotonganId] = useState<string | undefined>(produk.potonganBawaan);
   const [catatan, setCatatan] = useState("");
-  const [favorit, setFavorit] = useState(false); // sementara hanya di layar ini (fitur Favorit belum ada)
   const [sheetCustom, setSheetCustom] = useState(false);
   const [menambah, setMenambah] = useState(false);
 
@@ -75,9 +76,11 @@ function IsiDetail({ produk }: { produk: Produk }) {
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={styles.isi} keyboardShouldPersistTaps="handled">
         <GambarProduk gambar={produk.gambar} style={styles.foto} />
-
-        <InfoProduk produk={produk} favorit={favorit} onToggleFavorit={() => setFavorit((v) => !v)} />
-
+        <InfoProduk
+          produk={produk}
+          favorit={isFavorit(produk.id)}
+          onToggleFavorit={() => void toggle(produk.id)}
+        />
         <PilihJumlah
           satuan={satuan}
           pilihan={produk.pilihanJumlah ?? PILIHAN_JUMLAH_BAWAAN}
@@ -86,28 +89,17 @@ function IsiDetail({ produk }: { produk: Produk }) {
           onUbah={setJumlah}
           onCustom={() => setSheetCustom(true)}
         />
-
         {produk.deskripsi ? <DeskripsiProduk teks={produk.deskripsi} /> : null}
-
         {bisaDipotong ? (
           <>
-            <OpsiPotonganProduk
-              opsi={produk.opsiPotongan ?? []}
-              dipilihId={potonganId}
-              onPilih={setPotonganId}
-            />
+            <OpsiPotonganProduk opsi={produk.opsiPotongan ?? []} dipilihId={potonganId} onPilih={setPotonganId} />
             <CatatanPemotong value={catatan} onChangeText={setCatatan} saran={SARAN_CATATAN} />
           </>
         ) : null}
       </ScrollView>
 
       <FooterBar bordered={false} background={colors.surface}>
-        <BarKeranjang
-          subtotal={hitungSubtotal(produk.harga, jumlah)}
-          jumlah={jumlah}
-          loading={menambah}
-          onTambah={tambahKeKeranjang}
-        />
+        <BarKeranjang subtotal={hitungSubtotal(produk.harga, jumlah)} jumlah={jumlah} loading={menambah} onTambah={tambahKeKeranjang} />
       </FooterBar>
 
       {sheetCustom ? (
@@ -115,10 +107,7 @@ function IsiDetail({ produk }: { produk: Produk }) {
           awal={jumlah}
           maks={maks}
           satuan={satuan}
-          onTerapkan={(n) => {
-            setJumlah(n);
-            setSheetCustom(false);
-          }}
+          onTerapkan={(n) => { setJumlah(n); setSheetCustom(false); }}
           onTutup={() => setSheetCustom(false)}
         />
       ) : null}
