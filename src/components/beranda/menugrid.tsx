@@ -9,6 +9,7 @@ export type MenuItem = {
   id: string;
   label: string;
   icon: IconName;
+  iconBackground?: string;
   onPress?: () => void;
 };
 
@@ -22,8 +23,8 @@ export default function MenuGrid({ items, style }: Props) {
     <View style={[styles.row, style]}>
       {items.map((item) => (
         <Pressable key={item.id} onPress={item.onPress} style={styles.item}>
-          <View style={styles.iconBox}>
-            <Ionicons name={item.icon} size={28} color="#fff" />
+          <View style={[styles.iconBox, { backgroundColor: item.iconBackground ?? colors.dark }]}>
+            <Ionicons name={item.icon} size={21} color="#fff" />
           </View>
           <Text style={styles.label} numberOfLines={2}>
             {item.label}
@@ -35,15 +36,21 @@ export default function MenuGrid({ items, style }: Props) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: "row" },
-  item: { flex: 1, alignItems: "center", gap: 6, paddingHorizontal: 2 },
+  row: { flexDirection: "row", alignItems: "flex-start" },
+  item: { flex: 1, alignItems: "center", gap: 7, paddingHorizontal: 3 },
   iconBox: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    backgroundColor: colors.dark,
+    width: 36,
+    height: 36,
+    borderRadius: 9,
     alignItems: "center",
     justifyContent: "center",
   },
-  label: { fontSize: 11, fontWeight: "600", textAlign: "center", color: colors.text },
+  label: {
+    fontSize: 9,
+    lineHeight: 12,
+    fontWeight: "600",
+    textAlign: "center",
+    color: colors.text,
+    minHeight: 24,
+  },
 });
