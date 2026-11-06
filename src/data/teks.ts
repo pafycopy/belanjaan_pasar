@@ -213,6 +213,8 @@ export const TEKS = {
     jumlah: (jumlah: number) => `${jumlah} Item Favorit`,
     cari: "Cari produk favorit Anda",
     lihatDetail: "Lihat Detail",
+    penandaFavorit: "Produk tersimpan di favorit",
+    hapusAksesibilitas: "Hapus produk dari favorit",
     kosong: {
       judul: "Belum Ada Produk Favorit",
       pesan: "Tekan ikon hati pada produk untuk menyimpannya di sini.",
