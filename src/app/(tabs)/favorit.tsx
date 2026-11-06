@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import HeaderHijau from "@/components/ui/headerhijau";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SearchField from "@/components/ui/searchfield";
 import ChipGroup, { ChipItem } from "@/components/ui/chipgroup";
 import PromoCarousel from "@/components/beranda/promocarousel";
@@ -24,6 +24,7 @@ const FILTER: readonly ChipItem[] = [
 
 export default function FavoritScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { ids, jumlah, memuat, hapus } = useFavorit();
   const [cari, setCari] = useState("");
   const [filter, setFilter] = useState("semua");
@@ -58,15 +59,16 @@ export default function FavoritScreen() {
 
   return (
     <View style={styles.screen}>
-      <HeaderHijau
-        judul="Favorit"
-        kanan={
-          <Pressable onPress={() => router.push("/notifikasi")} hitSlop={10}>
-            <Ionicons name="notifications-outline" size={23} color={colors.white} />
-            <View style={styles.badge}><Text style={styles.badgeText}>2</Text></View>
-          </Pressable>
-        }
-      />
+      <View style={[styles.header, { paddingTop: insets.top + 5 }]}>
+        <Pressable onPress={() => router.back()} hitSlop={10} style={styles.back}>
+          <Ionicons name="chevron-back" size={22} color={colors.white} />
+        </Pressable>
+        <Text style={styles.headerTitle}>Favorit</Text>
+        <Pressable onPress={() => router.push("/notifikasi")} hitSlop={10} style={styles.notification}>
+          <Ionicons name="notifications-outline" size={23} color={colors.white} />
+          <View style={styles.badge}><Text style={styles.badgeText}>2</Text></View>
+        </Pressable>
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <PromoCarousel promos={promos} cardHeight={132} style={styles.promo} />
@@ -137,6 +139,18 @@ export default function FavoritScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#e8e9eb" },
+  header: {
+    backgroundColor: colors.primary,
+    minHeight: 42,
+    paddingHorizontal: 14,
+    paddingBottom: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  back: { width: 32, alignItems: "flex-start" },
+  headerTitle: { color: colors.white, fontSize: 14, fontWeight: "700" },
+  notification: { width: 32, alignItems: "flex-end" },
   content: { paddingBottom: spacing.xl },
   promo: { marginTop: 8 },
   titleBar: {
@@ -157,12 +171,8 @@ const styles = StyleSheet.create({
   filters: { marginTop: 4 },
   list: { paddingHorizontal: 10, paddingTop: 8 },
   empty: {
-    marginHorizontal: 14,
-    marginTop: 18,
-    padding: 24,
-    backgroundColor: colors.white,
-    borderRadius: radius.lg,
-    alignItems: "center",
+    marginHorizontal: 14, marginTop: 18, padding: 24,
+    backgroundColor: colors.white, borderRadius: radius.lg, alignItems: "center",
   },
   emptyTitle: { color: colors.text, fontSize: 14, fontWeight: "700", marginTop: 10 },
   emptyText: { color: colors.muted, fontSize: 12, textAlign: "center", lineHeight: 18, marginTop: 6 },
