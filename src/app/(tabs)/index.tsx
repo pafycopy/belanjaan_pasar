@@ -1,7 +1,7 @@
 import { ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { DAFTAR_PRODUK } from "@/data/produk";
-import { colors, spacing } from "@/theme";
+import { colors } from "@/theme";
 import HeaderAddress from "@/components/beranda/headeraddress";
 import SearchBar from "@/components/beranda/searchbar";
 import PromoCarousel from "@/components/beranda/promocarousel";
