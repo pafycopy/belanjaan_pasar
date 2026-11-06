@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import GambarProduk from "@/components/produk/gambarproduk";
 import Button from "@/components/ui/button";
 import { colors, radius, spacing } from "@/theme";
+import { TEKS } from "@/data/teks";
 import { Produk } from "@/types/produk";
 import { formatHarga } from "@/utils/produk";
 
@@ -25,7 +26,7 @@ export default function KartuFavorit({ produk, onDetail, onHapus }: Props) {
         </View>
         <Text style={styles.price}>{formatHarga(produk.harga)}</Text>
       </View>
-      <Button label="Lihat Detail" size="sm" onPress={onDetail} style={styles.button} />
+      <Button label={TEKS.favorit.lihatDetail} size="sm" onPress={onDetail} style={styles.button} />
     </View>
   );
 }

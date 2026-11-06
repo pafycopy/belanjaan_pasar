@@ -6,11 +6,12 @@ import HeaderAddress from "@/components/beranda/headeraddress";
 import SearchBar from "@/components/beranda/searchbar";
 import PromoCarousel from "@/components/beranda/promocarousel";
 import KiosStatusCard from "@/components/beranda/kiosstatuscard";
-import MenuGrid from "@/components/beranda/menugrid";
+import MenuGrid, { MenuItem } from "@/components/beranda/menugrid";
 import KartuProduk from "@/components/produk/kartuproduk";
 import { useAlamat } from "@/context/alamat";
 import { useKeranjang } from "@/context/keranjang";
-import { menuItems, promos } from "@/data/beranda";
+import { JAM_KIOS, menuItems, promos } from "@/data/beranda";
+import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import { TEKS } from "@/data/teks";
 
 export default function Beranda() {
@@ -18,16 +19,10 @@ export default function Beranda() {
   const { terpilih, memuat } = useAlamat();
   const { jumlahBaris } = useKeranjang();
 
-  const menu = menuItems.map((item) => {
-    const tujuan: Record<string, () => void> = {
-      poin: () => router.push("/poin"),
-      favorit: () => router.push("/favorit"),
-      voucher: () => router.push("/voucher"),
-      riwayat: () => router.push("/pesanan"),
-    };
-
-    return { ...item, onPress: tujuan[item.id] };
-  });
+  const menu: MenuItem[] = menuItems.map(({ href, ...item }) => ({
+    ...item,
+    onPress: () => router.push(href),
+  }));
 
   const alamatHeader = memuat
     ? TEKS.header.memuat
@@ -40,7 +35,7 @@ export default function Beranda() {
       <HeaderAddress
         address={alamatHeader}
         cartCount={jumlahBaris}
-        hasNotification
+        hasNotification={JUMLAH_NOTIFIKASI_BARU > 0}
         onPressAddress={() => router.push("/alamat")}
         onPressCart={() => router.push("/keranjang")}
         onPressNotification={() => router.push("/notifikasi")}
@@ -51,13 +46,13 @@ export default function Beranda() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.searchWrap}>
-          <SearchBar placeholder="Cari ayam, bebek, ati ampela..." />
+          <SearchBar placeholder={TEKS.beranda.cari} />
         </View>
 
         <PromoCarousel promos={promos} style={styles.promo} cardHeight={170} />
 
         <View style={styles.kiosWrap}>
-          <KiosStatusCard openAt="06:00" closeAt="10:00" />
+          <KiosStatusCard openAt={JAM_KIOS.buka} closeAt={JAM_KIOS.tutup} />
         </View>
 
         <View style={styles.shortcutPanel}>
@@ -92,7 +87,7 @@ export default function Beranda() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#e8e9eb",
+    backgroundColor: colors.canvas,
   },
   scrollContent: {
     paddingBottom: 20,
@@ -128,10 +123,10 @@ const styles = StyleSheet.create({
   recommendationSection: {
     marginHorizontal: 4,
     marginTop: 0,
-    backgroundColor: "#e8e9eb",
+    backgroundColor: colors.canvas,
   },
   sectionHeading: {
-    backgroundColor: "#e8e9eb",
+    backgroundColor: colors.canvas,
     paddingHorizontal: 14,
     paddingVertical: 11,
     borderBottomWidth: 1,

@@ -3,7 +3,7 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } f
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { colors, radius, spacing } from "@/theme";
 import { TEKS } from "@/data/teks";
-import { PILIHAN_JUMLAH_BAWAAN, SARAN_CATATAN } from "@/data/produk";
+import { PILIHAN_JUMLAH_BAWAAN, SARAN_CATATAN, SATUAN_BAWAAN } from "@/data/produk";
 import { useKeranjang } from "@/context/keranjang";
 import { useFavorit } from "@/context/favorit";
 import { Produk } from "@/types/produk";
@@ -40,7 +40,7 @@ function IsiDetail({ produk }: { produk: Produk }) {
   const { tambah } = useKeranjang();
   const { isFavorit, toggle } = useFavorit();
 
-  const satuan = produk.satuan ?? "pcs";
+  const satuan = produk.satuan ?? SATUAN_BAWAAN;
   const maks = produk.stok ?? 99;
   const bisaDipotong = !!produk.opsiPotongan?.length;
 

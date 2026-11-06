@@ -1,4 +1,5 @@
 import { ItemKeranjang, ItemKeranjangInput } from "@/types/keranjang";
+import { Produk } from "@/types/produk";
 
 // Dua item dianggap sama bila produk, potongan, dan catatannya sama
 export function kunciItem(i: ItemKeranjangInput): string {
@@ -17,4 +18,27 @@ export function gabungkanItem(
   return daftar.map((i) =>
     i.uid === ada.uid ? { ...i, jumlah: i.jumlah + input.jumlah, hargaSatuan: input.hargaSatuan } : i
   );
+}
+
+export type BarisKeranjang = { item: ItemKeranjang; produk: Produk };
+
+// Pasangkan item keranjang dengan data produknya (item yang produknya sudah tidak ada dilewati)
+export function barisDenganProduk(
+  daftar: readonly ItemKeranjang[],
+  cari: (produkId: string) => Produk | undefined
+): BarisKeranjang[] {
+  return daftar.flatMap((item) => {
+    const produk = cari(item.produkId);
+    return produk ? [{ item, produk }] : [];
+  });
+}
+
+export function hitungBeratGram(baris: readonly BarisKeranjang[]): number {
+  return baris.reduce((total, { item, produk }) => total + (produk.beratBersihGram ?? 0) * item.jumlah, 0);
+}
+
+// 1.0 -> "1", 12.5 -> "12.5"
+export function formatKg(kg: number): string {
+  const teks = kg.toFixed(1);
+  return teks.endsWith(".0") ? teks.slice(0, -2) : teks;
 }

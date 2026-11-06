@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import GambarProduk from "@/components/produk/gambarproduk";
+import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { Produk } from "@/types/produk";
 import { formatHarga } from "@/utils/produk";
@@ -13,7 +14,7 @@ export default function RekomendasiProduk({ produk, onPress }: Props) {
   return (
     <View style={styles.wrapper}>
       <View style={styles.header}>
-        <Text style={styles.title}>Pilihan Belanjaan Pasar saat ini</Text>
+        <Text style={styles.title}>{TEKS.keranjang.kosong.rekomendasi}</Text>
       </View>
 
       <View style={styles.list}>

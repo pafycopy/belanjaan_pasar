@@ -5,6 +5,9 @@ import { OpsiPotongan, Produk } from "@/types/produk";
  * Katalog produk (data contoh). Nanti diganti data dari API.
  * Gambar sementara: satu gambar yang sama untuk semua produk (.svg, .jpg, atau .png).
  */
+// Satuan bila produk tidak menentukan sendiri
+export const SATUAN_BAWAAN = "pcs";
+
 const FOTO_AYAM = require("../../assets/images/produk/ayam.svg");
 
 // Tombol jumlah cepat bila produk tidak menentukan sendiri
@@ -67,6 +70,7 @@ export const FIELD_JUMLAH_CUSTOM: DefinisiField = {
 export const DAFTAR_PRODUK: Produk[] = [
   {
     id: "ayam-bakar",
+    tag: ["ayam-bebek"],
     nama: "Ayam Broiler Ukuran Ayam Bakar",
     harga: 39000,
     satuan: "ekor",
@@ -82,6 +86,7 @@ export const DAFTAR_PRODUK: Produk[] = [
   },
   {
     id: "ayam-kfc",
+    tag: ["ayam-bebek"],
     nama: "Ayam Broiler Ukuran KFC",
     harga: 51000,
     satuan: "ekor",
@@ -97,6 +102,7 @@ export const DAFTAR_PRODUK: Produk[] = [
   },
   {
     id: "ayam-potong-8",
+    tag: ["ayam-bebek", "partingan"],
     nama: "Ayam Broiler Ukuran Potong 8",
     harga: 45000,
     satuan: "ekor",
@@ -112,6 +118,7 @@ export const DAFTAR_PRODUK: Produk[] = [
   },
   {
     id: "ayam-jumbo",
+    tag: ["ayam-bebek"],
     nama: "Ayam Broiler Ukuran Jumbo",
     harga: 62000,
     satuan: "ekor",

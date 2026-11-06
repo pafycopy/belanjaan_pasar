@@ -1,4 +1,5 @@
 export const TEKS = {
+  ya: "Ya",
   hapus: "Hapus",
   batal: "Batal",
   gunakan: "Gunakan",
@@ -160,6 +161,76 @@ export const TEKS = {
         "Voucher yang sudah kedaluwarsa tidak dapat digunakan lagi.",
         "Poin yang sudah ditukar tidak dapat dikembalikan.",
       ],
+    },
+  },
+
+  beranda: {
+    cari: "Cari ayam, bebek, ati ampela...",
+  },
+
+  keranjang: {
+    judul: "Keranjang",
+    pesananSaya: "Pesanan Saya",
+    jumlahProduk: (jumlah: number) => `${jumlah} Produk`,
+    produkSegar: "Produk segar",
+    kosong: {
+      judul: "Belum Ada Pesanan",
+      rekomendasi: "Pilihan Belanjaan Pasar saat ini",
+    },
+    kapasitas: {
+      judul: "Kapasitas Berat Bersih",
+      tersedia: "\u2713 kapasitas tersedia",
+      terpakai: (berat: string) => `${berat} kg`,
+      maks: (kapasitas: number) => `/ ${kapasitas} kg`,
+      sisa: (sisa: string) => `Sisa ${sisa} kg`,
+    },
+    pengiriman: "Opsi Pengiriman",
+    alamat: {
+      judul: "Alamat Pengantaran",
+      ubah: "Ubah Alamat",
+      kosongJudul: "Belum ada alamat",
+      kosongPesan: "Pilih atau tambah alamat pengantaran",
+    },
+    pembayaran: {
+      judul: "Pilih Pembayaran",
+      keterangan: "Metode pembayaran dipilih saat checkout",
+    },
+    ringkasan: { total: "Total Akhir", bayar: "Bayar" },
+    alamatBelumDipilih: {
+      judul: "Alamat belum dipilih",
+      pesan: "Pilih alamat pengantaran terlebih dahulu.",
+      pilih: "Pilih Alamat",
+    },
+    pembayaranBelumAda: {
+      judul: "Pembayaran",
+      pesan: "Halaman pembayaran akan dihubungkan pada tahap berikutnya.",
+    },
+  },
+
+  favorit: {
+    judul: "Favorit",
+    daftarJudul: "Produk Favorit Saya",
+    jumlah: (jumlah: number) => `${jumlah} Item Favorit`,
+    cari: "Cari produk favorit Anda",
+    lihatDetail: "Lihat Detail",
+    kosong: {
+      judul: "Belum Ada Produk Favorit",
+      pesan: "Tekan ikon hati pada produk untuk menyimpannya di sini.",
+      mulai: "Mulai Belanja",
+    },
+    tidakCocok: {
+      judul: "Produk Tidak Ditemukan",
+      pesan: "Coba ubah kata pencarian atau kategori pilihan Anda.",
+    },
+    gagalHapus: {
+      judul: "Gagal menghapus",
+      pesan: "Produk belum berhasil dihapus dari favorit. Coba lagi.",
+    },
+    dialogHapus: {
+      judul: "Hapus produk ini?",
+      pesan: (nama?: string) =>
+        `${nama ?? "Produk yang dipilih"} akan dihapus dari daftar produk favorit Anda. Apakah Anda yakin ingin melanjutkan?`,
+      konfirmasi: "Hapus Produk",
     },
   },
 

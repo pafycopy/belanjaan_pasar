@@ -1,6 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import GambarProduk from "@/components/produk/gambarproduk";
+import { SATUAN_BAWAAN } from "@/data/produk";
+import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { ItemKeranjang } from "@/types/keranjang";
 import { Produk } from "@/types/produk";
@@ -29,11 +31,11 @@ export default function ItemKeranjangCard({ item, produk, onKurang, onTambah, on
           </Pressable>
         </View>
 
-        <Text style={styles.potongan}>{potongan ? potongan.judul : "Produk segar"}</Text>
+        <Text style={styles.potongan}>{potongan ? potongan.judul : TEKS.keranjang.produkSegar}</Text>
         <Text style={styles.harga}>{formatHarga(item.hargaSatuan)}</Text>
 
         <View style={styles.footer}>
-          <Text style={styles.satuan}>{produk.satuan ?? "pcs"}</Text>
+          <Text style={styles.satuan}>{produk.satuan ?? SATUAN_BAWAAN}</Text>
           <View style={styles.stepper}>
             <Pressable style={styles.stepButton} onPress={onKurang} hitSlop={4}>
               <Ionicons name="remove" size={15} color={colors.dark} />

@@ -35,6 +35,11 @@ export const colors = {
   lockedCircle: "#e4e7f7",
   infoSoft: "#e0f2fe",
   info: "#0369a1",
+  canvas: "#e8e9eb",                 // latar halaman tab (Beranda, Favorit)
+  glass: "rgba(255,255,255,0.22)",   // kapsul transparan di atas latar hijau
+  shortcutOrange: "#ef7d00",         // ikon menu pintasan: Poin
+  shortcutGreen: "#176b38",          // ikon menu pintasan lain
+  tabInactive: "#888",
   overlay: "rgba(0,0,0,0.4)",
   shadow: "#000",
 };

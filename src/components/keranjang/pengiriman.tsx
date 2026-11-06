@@ -1,22 +1,30 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, radius, spacing } from "@/theme";
+import { colors, radius } from "@/theme";
+import { IdPengiriman, OPSI_PENGIRIMAN } from "@/data/keranjang";
+import { TEKS } from "@/data/teks";
 
-type Props = { antar: boolean; onChange: (antar: boolean) => void };
+type Props = { dipilih: IdPengiriman; onChange: (id: IdPengiriman) => void };
 
-export default function OpsiPengiriman({ antar, onChange }: Props) {
+// Pilihan pengiriman (antar / ambil); isinya dari OPSI_PENGIRIMAN
+export default function OpsiPengiriman({ dipilih, onChange }: Props) {
   return (
     <View>
-      <Text style={styles.title}>Opsi Pengiriman</Text>
+      <Text style={styles.title}>{TEKS.keranjang.pengiriman}</Text>
       <View style={styles.group}>
-        <Pressable style={[styles.option, antar && styles.active]} onPress={() => onChange(true)}>
-          <Ionicons name="bicycle" size={14} color={antar ? colors.white : colors.text} />
-          <Text style={[styles.text, antar && styles.activeText]}>Antar ke Rumah</Text>
-        </Pressable>
-        <Pressable style={[styles.option, !antar && styles.active]} onPress={() => onChange(false)}>
-          <Ionicons name="storefront-outline" size={14} color={!antar ? colors.white : colors.text} />
-          <Text style={[styles.text, !antar && styles.activeText]}>Ambil di Toko</Text>
-        </Pressable>
+        {OPSI_PENGIRIMAN.map((opsi) => {
+          const aktif = opsi.id === dipilih;
+          return (
+            <Pressable
+              key={opsi.id}
+              style={[styles.option, aktif && styles.active]}
+              onPress={() => onChange(opsi.id)}
+            >
+              <Ionicons name={opsi.icon} size={14} color={aktif ? colors.white : colors.text} />
+              <Text style={[styles.text, aktif && styles.activeText]}>{opsi.label}</Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );

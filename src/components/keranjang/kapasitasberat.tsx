@@ -1,9 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import { colors, radius, spacing } from "@/theme";
+import { KAPASITAS_KERANJANG_KG } from "@/data/keranjang";
+import { TEKS } from "@/data/teks";
+import { formatKg } from "@/utils/keranjang";
 
 type Props = { beratGram: number; kapasitasKg?: number };
 
-export default function KapasitasBerat({ beratGram, kapasitasKg = 50 }: Props) {
+export default function KapasitasBerat({ beratGram, kapasitasKg = KAPASITAS_KERANJANG_KG }: Props) {
+  const T = TEKS.keranjang.kapasitas;
   const beratKg = beratGram / 1000;
   const persen = Math.min(beratKg / kapasitasKg, 1);
   const sisaKg = Math.max(kapasitasKg - beratKg, 0);
@@ -11,15 +15,17 @@ export default function KapasitasBerat({ beratGram, kapasitasKg = 50 }: Props) {
   return (
     <View style={styles.wrap}>
       <View style={styles.header}>
-        <Text style={styles.label}>Kapasitas Berat Bersih</Text>
-        <Text style={styles.nilai}>{beratKg.toFixed(1).replace(".0", "")} kg <Text style={styles.maks}>/ {kapasitasKg} kg</Text></Text>
+        <Text style={styles.label}>{T.judul}</Text>
+        <Text style={styles.nilai}>
+          {T.terpakai(formatKg(beratKg))} <Text style={styles.maks}>{T.maks(kapasitasKg)}</Text>
+        </Text>
       </View>
       <View style={styles.track}>
         <View style={[styles.progress, { width: `${persen * 100}%` }]} />
       </View>
       <View style={styles.footer}>
-        <Text style={styles.tersedia}>✓ kapasitas tersedia</Text>
-        <Text style={styles.sisa}>Sisa {sisaKg % 1 === 0 ? sisaKg : sisaKg.toFixed(1)} kg</Text>
+        <Text style={styles.tersedia}>{T.tersedia}</Text>
+        <Text style={styles.sisa}>{T.sisa(formatKg(sisaKg))}</Text>
       </View>
     </View>
   );

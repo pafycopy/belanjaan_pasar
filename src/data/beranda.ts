@@ -1,7 +1,12 @@
+import { Href } from "expo-router";
 import { Promo } from "@/components/beranda/promocarousel";
 import { MenuItem } from "@/components/beranda/menugrid";
+import { colors } from "@/theme";
 
 // Data Beranda dipisah dari tampilan. Nanti tinggal diganti dengan data dari API.
+
+// Jam buka kios (format "HH:mm", zona WIB)
+export const JAM_KIOS = { buka: "06:00", tutup: "10:00" } as const;
 
 export const promos: Promo[] = [
   {
@@ -31,30 +36,12 @@ export const promos: Promo[] = [
   },
 ];
 
-export const menuItems: MenuItem[] = [
-  {
-    id: "poin",
-    label: "Poin Saya",
-    icon: "star",
-    iconBackground: "#ef7d00",
-    onPress: undefined,
-  },
-  {
-    id: "favorit",
-    label: "Favorit",
-    icon: "heart",
-    iconBackground: "#176b38",
-  },
-  {
-    id: "voucher",
-    label: "Voucher",
-    icon: "ticket",
-    iconBackground: "#176b38",
-  },
-  {
-    id: "riwayat",
-    label: "Riwayat Transaksi",
-    icon: "receipt",
-    iconBackground: "#176b38",
-  },
+// Menu pintasan: tujuan (href) ikut di data, jadi Beranda cukup memetakan tanpa daftar if/map terpisah
+export type MenuPintasan = Omit<MenuItem, "onPress"> & { href: Href };
+
+export const menuItems: MenuPintasan[] = [
+  { id: "poin", label: "Poin Saya", icon: "star", iconBackground: colors.shortcutOrange, href: "/poin" },
+  { id: "favorit", label: "Favorit", icon: "heart", iconBackground: colors.shortcutGreen, href: "/favorit" },
+  { id: "voucher", label: "Voucher", icon: "ticket", iconBackground: colors.shortcutGreen, href: "/voucher" },
+  { id: "riwayat", label: "Riwayat Transaksi", icon: "receipt", iconBackground: colors.shortcutGreen, href: "/pesanan" },
 ];

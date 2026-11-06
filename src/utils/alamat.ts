@@ -73,3 +73,8 @@ export function ringkasanWilayah(rt: string, rw: string, kodePos: string): strin
 export function labelDenganKota(dasar: string, kota: string): string {
   return kota ? `${dasar} (${kota})` : dasar;
 }
+
+// "Jl. Musyawarah No. 44, Kembangan, Meruya, Jakarta Barat"
+export function formatAlamatLengkap(a: Pick<Alamat, "jalan" | "wilayah" | "kota">): string {
+  return [a.jalan, a.wilayah, a.kota].filter(Boolean).join(", ");
+}

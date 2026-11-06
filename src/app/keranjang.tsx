@@ -13,47 +13,41 @@ import RingkasanPembayaran from "@/components/keranjang/ringkasanpembayaran";
 import RekomendasiProduk from "@/components/keranjang/rekomendasiproduk";
 import { useKeranjang } from "@/context/keranjang";
 import { useAlamat } from "@/context/alamat";
-import { cariProduk } from "@/utils/produk";
 import { DAFTAR_PRODUK } from "@/data/produk";
+import { IdPengiriman, KAPASITAS_KERANJANG_KG, PENGIRIMAN_BAWAAN } from "@/data/keranjang";
+import { TEKS } from "@/data/teks";
+import { barisDenganProduk, hitungBeratGram } from "@/utils/keranjang";
+import { cariProduk } from "@/utils/produk";
 import { colors, spacing } from "@/theme";
 
-const KAPASITAS_KG = 50;
-const EMPTY_CART_IMAGE = require("../../assets/images/keranjang/empty-cart.svg");
+const T = TEKS.keranjang;
+const GAMBAR_KOSONG = require("../../assets/images/keranjang/empty-cart.svg");
 
 export default function Keranjang() {
   const router = useRouter();
   const { item, subtotal, memuat, ubahJumlah, hapus } = useKeranjang();
   const { terpilih } = useAlamat();
-  const [antar, setAntar] = useState(true);
+  const [pengiriman, setPengiriman] = useState<IdPengiriman>(PENGIRIMAN_BAWAAN);
+  const antar = pengiriman === "antar";
 
-  const data = useMemo(
-    () => item
-      .map((i) => ({ item: i, produk: cariProduk(i.produkId) }))
-      .filter((x): x is { item: typeof item[number]; produk: NonNullable<ReturnType<typeof cariProduk>> } => !!x.produk),
-    [item]
-  );
-
-  const beratGram = data.reduce(
-    (total, { item: i, produk }) => total + (produk.beratBersihGram ?? 0) * i.jumlah,
-    0
-  );
-
-  const kosong = !memuat && data.length === 0;
+  const baris = useMemo(() => barisDenganProduk(item, cariProduk), [item]);
+  const beratGram = hitungBeratGram(baris);
+  const kosong = !memuat && baris.length === 0;
 
   const bayar = () => {
     if (antar && !terpilih) {
-      Alert.alert("Alamat belum dipilih", "Pilih alamat pengantaran terlebih dahulu.", [
-        { text: "Pilih Alamat", onPress: () => router.push("/alamat") },
-        { text: "Batal", style: "cancel" },
+      Alert.alert(T.alamatBelumDipilih.judul, T.alamatBelumDipilih.pesan, [
+        { text: T.alamatBelumDipilih.pilih, onPress: () => router.push("/alamat") },
+        { text: TEKS.batal, style: "cancel" },
       ]);
       return;
     }
-    Alert.alert("Pembayaran", "Halaman pembayaran akan dihubungkan pada tahap berikutnya.");
+    Alert.alert(T.pembayaranBelumAda.judul, T.pembayaranBelumAda.pesan);
   };
 
   return (
     <View style={styles.screen}>
-      <HeaderHijau judul="Keranjang" />
+      <HeaderHijau judul={T.judul} />
 
       {kosong ? (
         <ScrollView
@@ -61,35 +55,29 @@ export default function Keranjang() {
           contentContainerStyle={styles.emptyContent}
           showsVerticalScrollIndicator={false}
         >
-
-          
           <View style={styles.emptyHero}>
-            <Image
-              source={EMPTY_CART_IMAGE}
-              style={styles.emptyImage}
-              contentFit="contain"
-            />
-            <Text style={styles.emptyTitle}>Belum Ada Pesanan</Text>
+            <Image source={GAMBAR_KOSONG} style={styles.emptyImage} contentFit="contain" />
+            <Text style={styles.emptyTitle}>{T.kosong.judul}</Text>
           </View>
 
           <RekomendasiProduk
             produk={DAFTAR_PRODUK}
-            onPress={(produk) => router.push(`/produk/${produk.id}`)}
+            onPress={(produk) => router.push({ pathname: "/produk/[id]", params: { id: produk.id } })}
           />
         </ScrollView>
       ) : (
         <>
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-            <KapasitasBerat beratGram={beratGram} kapasitasKg={KAPASITAS_KG} />
+            <KapasitasBerat beratGram={beratGram} kapasitasKg={KAPASITAS_KERANJANG_KG} />
 
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Pesanan Saya</Text>
-                <Text style={styles.count}>{item.length} Produk</Text>
+                <Text style={styles.sectionTitle}>{T.pesananSaya}</Text>
+                <Text style={styles.count}>{T.jumlahProduk(item.length)}</Text>
               </View>
 
               <View style={styles.list}>
-                {data.map(({ item: i, produk }) => (
+                {baris.map(({ item: i, produk }) => (
                   <ItemKeranjangCard
                     key={i.uid}
                     item={i}
@@ -103,7 +91,7 @@ export default function Keranjang() {
             </View>
 
             <View style={styles.section}>
-              <OpsiPengiriman antar={antar} onChange={setAntar} />
+              <OpsiPengiriman dipilih={pengiriman} onChange={setPengiriman} />
             </View>
 
             {antar ? (
@@ -115,8 +103,8 @@ export default function Keranjang() {
             <View style={styles.paymentHint}>
               <Ionicons name="card-outline" size={15} color={colors.primary} />
               <View style={styles.paymentText}>
-                <Text style={styles.paymentTitle}>Pilih Pembayaran</Text>
-                <Text style={styles.paymentSubtitle}>Metode pembayaran dipilih saat checkout</Text>
+                <Text style={styles.paymentTitle}>{T.pembayaran.judul}</Text>
+                <Text style={styles.paymentSubtitle}>{T.pembayaran.keterangan}</Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={colors.muted} />
             </View>
@@ -145,20 +133,7 @@ const styles = StyleSheet.create({
   paymentSubtitle: { fontSize: 9, color: colors.muted, marginTop: 2 },
   emptyScroll: { flex: 1 },
   emptyContent: { paddingBottom: spacing.xl },
-  emptyHero: {
-    minHeight: 400,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: spacing.md,
-  },
-  emptyImage: {
-    width: 145,
-    height: 145,
-  },
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.text,
-    marginTop: 2,
-  },
+  emptyHero: { minHeight: 400, alignItems: "center", justifyContent: "center", paddingTop: spacing.md },
+  emptyImage: { width: 145, height: 145 },
+  emptyTitle: { fontSize: 16, fontWeight: "700", color: colors.text, marginTop: 2 },
 });

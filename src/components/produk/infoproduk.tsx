@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing } from "@/theme";
+import { SATUAN_BAWAAN } from "@/data/produk";
 import { TEKS } from "@/data/teks";
 import { Produk } from "@/types/produk";
 import { formatHarga } from "@/utils/produk";
@@ -30,7 +31,7 @@ export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) 
         {produk.stok != null ? (
           <View style={styles.stok}>
             <Ionicons name="cart" size={18} color={colors.green} />
-            <Text style={styles.stokText}>{TEKS.produk.stok(produk.stok, produk.satuan ?? "pcs")}</Text>
+            <Text style={styles.stokText}>{TEKS.produk.stok(produk.stok, produk.satuan ?? SATUAN_BAWAAN)}</Text>
           </View>
         ) : null}
       </View>

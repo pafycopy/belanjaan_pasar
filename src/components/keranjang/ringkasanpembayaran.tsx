@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { formatHarga } from "@/utils/produk";
 
@@ -8,11 +9,11 @@ export default function RingkasanPembayaran({ total, onBayar, disabled }: Props)
   return (
     <View style={styles.wrap}>
       <View>
-        <Text style={styles.label}>Total Akhir</Text>
+        <Text style={styles.label}>{TEKS.keranjang.ringkasan.total}</Text>
         <Text style={styles.total}>{formatHarga(total)}</Text>
       </View>
       <Pressable style={[styles.button, disabled && styles.disabled]} onPress={onBayar} disabled={disabled}>
-        <Text style={styles.buttonText}>Bayar</Text>
+        <Text style={styles.buttonText}>{TEKS.keranjang.ringkasan.bayar}</Text>
       </Pressable>
     </View>
   );

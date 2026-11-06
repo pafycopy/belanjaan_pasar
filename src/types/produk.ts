@@ -20,6 +20,7 @@ export type Produk = {
   ringkas?: string[];             // baris keterangan singkat di bawah nama
   deskripsi?: string;
   stok?: number;
+  tag?: string[];                 // penanda untuk filter, mis. "promo", "ayam-bebek", "partingan"
   beratBersihGram?: number;       // estimasi berat bersih per satuan, untuk kapasitas keranjang
   pilihanJumlah?: number[];       // tombol jumlah cepat (selain "Custom")
   opsiPotongan?: OpsiPotongan[];  // bila ada: tampilkan "Request Potongan" dan "Catatan Pemotong"

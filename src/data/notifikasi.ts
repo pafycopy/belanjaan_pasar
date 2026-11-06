@@ -102,3 +102,7 @@ export const notifikasiContoh: Notifikasi[] = [
     isi: "Transaksi tagihan #SM-04028 lunas. Pesanan Anda segera kami proses.",
   },
 ];
+
+// TODO: ganti dengan hitungan notifikasi belum dibaca dari backend / status baca.
+// Satu sumber untuk badge di Beranda dan di header tab.
+export const JUMLAH_NOTIFIKASI_BARU = 2;
