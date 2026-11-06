@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
-    fontSize: 9,
+    fontSize: 10,
     lineHeight: 12,
     fontWeight: "600",
     textAlign: "center",

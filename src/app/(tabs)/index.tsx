@@ -110,9 +110,9 @@ const styles = StyleSheet.create({
   },
   shortcutPanel: {
     backgroundColor: colors.white,
-    marginHorizontal: 24,
-    marginTop: 6,
-    paddingHorizontal: 10,
+    marginHorizontal: 0,
+    marginTop: 8,
+    paddingHorizontal: 16,
     paddingTop: 26,
     paddingBottom: 14,
     borderTopLeftRadius: 24,
@@ -121,9 +121,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    shadowColor: colors.dark,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
   },
   recommendationSection: {
-    marginHorizontal: 24,
+    marginHorizontal: 4,
     marginTop: 0,
     backgroundColor: "#e8e9eb",
   },
@@ -135,7 +138,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "700",
     color: colors.text,
   },
@@ -144,6 +147,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     paddingHorizontal: 8,
-    paddingTop: 10,
+    paddingTop: 2,
   },
 });
