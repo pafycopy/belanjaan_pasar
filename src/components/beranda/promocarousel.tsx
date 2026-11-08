@@ -13,6 +13,7 @@ import {
   NativeScrollEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { alpha, colors, fontSize, radius, spacing } from "@/theme";
 
 export type Promo = {
   id: string;
@@ -28,7 +29,7 @@ type Props = {
   promos: Promo[];
   onPressPromo?: (promo: Promo) => void;
   autoPlay?: boolean;                // bergeser otomatis (bawaan: aktif)
-  cardHeight?: number;                // ← baru: tinggi semua kartu
+  cardHeight?: number;               // tinggi semua kartu
   interval?: number;                 // jeda antar geseran, milidetik
   style?: StyleProp<ViewStyle>;      // gaya pembungkus
   cardStyle?: StyleProp<ViewStyle>;  // gaya tiap kartu
@@ -39,7 +40,7 @@ export default function PromoCarousel({
   onPressPromo,
   autoPlay = true,
   interval = 4000,
-  cardHeight = 170, 
+  cardHeight = 170,
   style,
   cardStyle,
 }: Props) {
@@ -82,7 +83,7 @@ export default function PromoCarousel({
           onScrollEndDrag={() => (touching.current = false)}
           onMomentumScrollEnd={onScrollEnd}
           renderItem={({ item }) => (
-            <View style={{ width, paddingHorizontal: 16 }}>
+            <View style={{ width, paddingHorizontal: spacing.lg }}>
               <Pressable
                 onPress={() => onPressPromo?.(item)}
                 style={[styles.card, { height: cardHeight }, cardStyle]}
@@ -101,12 +102,12 @@ export default function PromoCarousel({
                 <View style={styles.content}>
                   <View style={styles.topRow}>
                     <View style={styles.tag}>
-                      <Ionicons name="flash" size={12} color="#fff" />
+                      <Ionicons name="flash" size={12} color={colors.white} />
                       <Text style={styles.tagText}>{item.tag}</Text>
                     </View>
                     {item.until ? (
                       <View style={styles.timer}>
-                        <Ionicons name="alarm-outline" size={13} color="#fff" />
+                        <Ionicons name="alarm-outline" size={13} color={colors.white} />
                         <Text style={styles.timerText}>{item.until}</Text>
                       </View>
                     ) : null}
@@ -140,14 +141,14 @@ export default function PromoCarousel({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#1b5e20",
-    borderRadius: 14,
+    backgroundColor: colors.dark,
+    borderRadius: radius.card,
     padding: 14,
     paddingBottom: 30, // ruang untuk titik penanda di dalam kartu
     overflow: "hidden",
   },
-  overlay: { backgroundColor: "rgba(0,0,0,0.45)" },
-  content: { gap: 8 },
+  overlay: { backgroundColor: alpha.black45 },
+  content: { gap: spacing.sm },
   topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -157,25 +158,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "#9c5a12",
-    borderRadius: 999,
+    backgroundColor: colors.promoTag,
+    borderRadius: radius.pill,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  tagText: { color: "#fff", fontSize: 10, fontWeight: "700" },
+  tagText: { color: colors.white, fontSize: fontSize.xxs, fontWeight: "700" },
   timer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    borderRadius: 999,
+    backgroundColor: alpha.black30,
+    borderRadius: radius.pill,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  timerText: { color: "#fff", fontSize: 10, fontWeight: "600" },
-  title: { color: "#fff", fontSize: 22, fontWeight: "800" },
-  subtitle: { fontSize: 14, fontWeight: "600", color: "#ffe0b2" },
-  description: { color: "#e8f5e9", fontSize: 12, lineHeight: 17 },
+  timerText: { color: colors.white, fontSize: fontSize.xxs, fontWeight: "600" },
+  title: { color: colors.white, fontSize: fontSize.display, fontWeight: "800" },
+  subtitle: { fontSize: fontSize.lg, fontWeight: "600", color: colors.promoSubtitle },
+  description: { color: colors.primarySoft, fontSize: fontSize.sm, lineHeight: 17 },
   dots: {
     position: "absolute",
     bottom: 10,
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "rgba(255,255,255,0.45)",
+    backgroundColor: alpha.white45,
   },
-  dotActive: { width: 16, backgroundColor: "#fff" },
+  dotActive: { width: 16, backgroundColor: colors.white },
 });

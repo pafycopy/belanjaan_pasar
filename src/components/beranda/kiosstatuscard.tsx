@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, StyleProp, ViewStyle } from "react-native";
-import { colors } from "@/theme";
+import { colors, fontSize, radius, spacing } from "@/theme";
 
 type Props = {
   openAt?: string;   // format "06:00"
@@ -9,8 +9,8 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-const OPEN_COLOR = colors.dark;   // hijau saat buka
-const CLOSED_COLOR = "#e53935";   // merah saat tutup
+const OPEN_COLOR = colors.dark;      // hijau saat buka
+const CLOSED_COLOR = colors.danger;  // merah saat tutup
 
 const toMinutes = (t: string) => {
   const [h, m] = t.split(":").map(Number);
@@ -89,36 +89,36 @@ export default function KiosStatusCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 14,
+    borderRadius: radius.card,
     padding: 14,
-    gap: 12,
+    gap: spacing.md,
   },
   topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  title: { flex: 1, marginRight: 8, color: "#fff", fontSize: 13, fontWeight: "600" },
+  title: { flex: 1, marginRight: spacing.sm, color: colors.white, fontSize: fontSize.md, fontWeight: "600" },
   clock: {
-    backgroundColor: "#fff",
-    borderRadius: 999,
+    backgroundColor: colors.white,
+    borderRadius: radius.pill,
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
-  clockText: { color: colors.dark, fontSize: 10, fontWeight: "700" },
+  clockText: { color: colors.dark, fontSize: fontSize.xxs, fontWeight: "700" },
   box: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
+    backgroundColor: colors.white,
+    borderRadius: radius.md,
     minHeight: 60,
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
     alignItems: "center",
     justifyContent: "center",
   },
-  openText: { color: "#1f2937", fontSize: 16, fontWeight: "800" },
-  caption: { color: "#1f2937", fontSize: 10, fontWeight: "600", letterSpacing: 0.5 },
+  openText: { color: colors.text, fontSize: fontSize.xl, fontWeight: "800" },
+  caption: { color: colors.text, fontSize: fontSize.xxs, fontWeight: "600", letterSpacing: 0.5 },
   countdown: {
-    color: "#111827",
-    fontSize: 22,
+    color: colors.textStrong,
+    fontSize: fontSize.display,
     fontWeight: "800",
     letterSpacing: 1,
     marginTop: 2,

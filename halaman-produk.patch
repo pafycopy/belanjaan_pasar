@@ -1,0 +1,584 @@
+diff --git a/src/app/(tabs)/favorit.tsx b/src/app/(tabs)/favorit.tsx
+index a332963..83edcfc 100644
+--- a/src/app/(tabs)/favorit.tsx
++++ b/src/app/(tabs)/favorit.tsx
+@@ -49,9 +49,9 @@ export default function FavoritScreen() {
+     <View style={styles.screen}>
+       <HeaderTab
+         judul={T.judul}
+-        jumlahNotifikasi={JUMLAH_NOTIFIKASI_BARU}
++        jumlahBadge={JUMLAH_NOTIFIKASI_BARU}
+         onKembali={() => router.back()}
+-        onNotifikasi={() => router.push("/notifikasi")}
++        onKanan={() => router.push("/notifikasi")}
+       />
+ 
+       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+diff --git a/src/app/(tabs)/produk.tsx b/src/app/(tabs)/produk.tsx
+index e69de29..e3f05bf 100644
+--- a/src/app/(tabs)/produk.tsx
++++ b/src/app/(tabs)/produk.tsx
+@@ -0,0 +1,125 @@
++import { useMemo, useState } from "react";
++import { FlatList, ScrollView, StyleSheet, View } from "react-native";
++import { useRouter } from "expo-router";
++import HeaderTab from "@/components/ui/headertab";
++import SearchField from "@/components/ui/searchfield";
++import JudulSeksi from "@/components/ui/judulseksi";
++import Pill from "@/components/ui/pill";
++import ChipGroup from "@/components/ui/chipgroup";
++import ScreenState from "@/components/ui/screenstate";
++import PromoCarousel from "@/components/beranda/promocarousel";
++import KartuProduk from "@/components/produk/kartuproduk";
++import KartuProdukRingkas from "@/components/produk/kartuprodukringkas";
++import { useFavorit } from "@/context/favorit";
++import { useKeranjang } from "@/context/keranjang";
++import { JAM_KIOS, promos } from "@/data/beranda";
++import { DAFTAR_PRODUK, KATEGORI_PRODUK, KATEGORI_PRODUK_SEMUA } from "@/data/produk";
++import { TEKS } from "@/data/teks";
++import { useTambahCepat } from "@/hooks/usetambahcepat";
++import { produkDariIds } from "@/utils/favorit";
++import { saringProduk } from "@/utils/produk";
++import { colors, spacing } from "@/theme";
++
++const T = TEKS.katalog;
++
++export default function ProdukScreen() {
++  const router = useRouter();
++  const { jumlahBaris } = useKeranjang();
++  const { ids } = useFavorit();
++  const tambahCepat = useTambahCepat();
++
++  const [cari, setCari] = useState("");
++  const [kategori, setKategori] = useState(KATEGORI_PRODUK_SEMUA);
++
++  const favorit = useMemo(() => produkDariIds(ids, DAFTAR_PRODUK), [ids]);
++  const daftar = useMemo(() => saringProduk(DAFTAR_PRODUK, cari, kategori), [cari, kategori]);
++
++  const keDetail = (id: string) => router.push({ pathname: "/produk/[id]", params: { id } });
++
++  return (
++    <View style={styles.screen}>
++      <HeaderTab
++        judul={T.judul}
++        ikonKanan="cart-outline"
++        jumlahBadge={jumlahBaris}
++        labelKanan={T.keranjangAksesibilitas}
++        onKembali={() => router.back()}
++        onKanan={() => router.push("/keranjang")}
++      />
++
++      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
++        <View style={styles.searchWrap}>
++          <SearchField
++            value={cari}
++            onChangeText={setCari}
++            onSubmit={() => undefined}
++            placeholder={T.cari}
++            icon="search-outline"
++          />
++        </View>
++
++        {/* Hanya tampil bila sudah ada produk favorit */}
++        {favorit.length > 0 ? (
++          <View style={styles.seksi}>
++            <JudulSeksi
++              judul={T.favoritJudul}
++              aksi={{ label: T.lihatSemua, onPress: () => router.navigate("/favorit") }}
++            />
++            <FlatList
++              horizontal
++              data={favorit}
++              keyExtractor={(p) => p.id}
++              showsHorizontalScrollIndicator={false}
++              contentContainerStyle={styles.favoritList}
++              renderItem={({ item }) => (
++                <KartuProdukRingkas
++                  produk={item}
++                  onPress={() => keDetail(item.id)}
++                  onTambah={() => void tambahCepat(item)}
++                />
++              )}
++            />
++          </View>
++        ) : null}
++
++        <View style={styles.seksi}>
++          <JudulSeksi
++            judul={T.promoJudul}
++            kanan={<Pill icon="alarm-outline" label={T.promoSampai(JAM_KIOS.tutup)} />}
++          />
++          <PromoCarousel promos={promos} cardHeight={170} />
++        </View>
++
++        <View style={styles.filters}>
++          <ChipGroup items={KATEGORI_PRODUK} selectedId={kategori} onSelect={setKategori} scroll />
++        </View>
++
++        {daftar.length > 0 ? (
++          <View style={styles.grid}>
++            {daftar.map((produk) => (
++              <KartuProduk key={produk.id} produk={produk} onPress={() => keDetail(produk.id)} />
++            ))}
++          </View>
++        ) : (
++          <ScreenState message={T.kosong} />
++        )}
++      </ScrollView>
++    </View>
++  );
++}
++
++const styles = StyleSheet.create({
++  screen: { flex: 1, backgroundColor: colors.canvas },
++  content: { paddingBottom: spacing.xl },
++  searchWrap: { paddingHorizontal: 14, paddingTop: spacing.md },
++  seksi: { marginTop: spacing.lg },
++  favoritList: { paddingHorizontal: 14, gap: 10 },
++  filters: { marginTop: spacing.lg },
++  grid: {
++    flexDirection: "row",
++    flexWrap: "wrap",
++    justifyContent: "space-between",
++    paddingHorizontal: 12,
++    paddingTop: spacing.md,
++  },
++});
+diff --git a/src/components/produk/kartuprodukringkas.tsx b/src/components/produk/kartuprodukringkas.tsx
+new file mode 100644
+index 0000000..8eee307
+--- /dev/null
++++ b/src/components/produk/kartuprodukringkas.tsx
+@@ -0,0 +1,69 @@
++import { Pressable, StyleSheet, Text, View } from "react-native";
++import { Ionicons } from "@expo/vector-icons";
++import GambarProduk from "@/components/produk/gambarproduk";
++import { TEKS } from "@/data/teks";
++import { colors, radius, spacing } from "@/theme";
++import { Produk } from "@/types/produk";
++import { formatHarga } from "@/utils/produk";
++
++type Props = {
++  produk: Produk;
++  onPress: () => void;   // buka detail produk
++  onTambah: () => void;  // tombol "+": tambah ke keranjang
++};
++
++// Kartu produk ringkas untuk daftar yang digeser ke samping (mis. "Produk Favorit Anda")
++export default function KartuProdukRingkas({ produk, onPress, onTambah }: Props) {
++  return (
++    <Pressable style={styles.kartu} onPress={onPress}>
++      <GambarProduk gambar={produk.gambar} style={styles.gambar} fit="contain" />
++
++      <Text style={styles.nama} numberOfLines={2}>
++        {produk.nama}
++      </Text>
++      <Text style={styles.deskripsi} numberOfLines={1}>
++        {produk.ringkas?.[0] ?? ""}
++      </Text>
++
++      <View style={styles.garis} />
++
++      <View style={styles.bawah}>
++        <Text style={styles.harga}>{formatHarga(produk.harga)}</Text>
++        <Pressable
++          onPress={onTambah}
++          hitSlop={8}
++          style={styles.tambah}
++          accessibilityRole="button"
++          accessibilityLabel={TEKS.katalog.tambahAksesibilitas(produk.nama)}
++        >
++          <Ionicons name="add" size={20} color={colors.white} />
++        </Pressable>
++      </View>
++    </Pressable>
++  );
++}
++
++const styles = StyleSheet.create({
++  kartu: {
++    width: 190,
++    backgroundColor: colors.white,
++    borderRadius: radius.lg,
++    borderWidth: 1,
++    borderColor: colors.border,
++    padding: spacing.md,
++  },
++  gambar: { aspectRatio: 1.2, borderRadius: radius.sm },
++  nama: { fontSize: 13, fontWeight: "700", color: colors.text, lineHeight: 18, marginTop: spacing.sm, minHeight: 36 },
++  deskripsi: { fontSize: 11, color: colors.muted, marginTop: 2, minHeight: 16 },
++  garis: { height: 1, backgroundColor: colors.border, marginTop: spacing.sm },
++  bawah: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.sm },
++  harga: { fontSize: 16, fontWeight: "800", color: colors.dark },
++  tambah: {
++    width: 34,
++    height: 34,
++    borderRadius: radius.md,
++    backgroundColor: colors.dark,
++    alignItems: "center",
++    justifyContent: "center",
++  },
++});
+diff --git a/src/components/ui/headertab.tsx b/src/components/ui/headertab.tsx
+index 42684e0..9dda229 100644
+--- a/src/components/ui/headertab.tsx
++++ b/src/components/ui/headertab.tsx
+@@ -2,17 +2,27 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
+ import { Ionicons } from "@expo/vector-icons";
+ import { useSafeAreaInsets } from "react-native-safe-area-context";
+ import { colors, spacing } from "@/theme";
++import { IconName } from "@/types/ui";
+ 
+ type Props = {
+   judul: string;
+-  jumlahNotifikasi?: number; // badge merah di ikon lonceng; 0 / kosong = tanpa badge
++  ikonKanan?: IconName;     // bawaan: lonceng; halaman Produk memakai keranjang
++  jumlahBadge?: number;     // badge merah di ikon kanan; 0 / kosong = tanpa badge
++  labelKanan?: string;      // label aksesibilitas tombol kanan
+   onKembali: () => void;
+-  onNotifikasi: () => void;
++  onKanan: () => void;
+ };
+ 
+-// Header hijau untuk layar tab: tombol kembali, judul di tengah, lonceng notifikasi di kanan
++// Header hijau untuk layar tab: tombol kembali, judul di tengah, satu ikon aksi di kanan (lonceng / keranjang)
+ // (layar tab tidak memakai header bawaan navigasi, jadi dibuat sebagai komponen biasa)
+-export default function HeaderTab({ judul, jumlahNotifikasi = 0, onKembali, onNotifikasi }: Props) {
++export default function HeaderTab({
++  judul,
++  ikonKanan = "notifications-outline",
++  jumlahBadge = 0,
++  labelKanan,
++  onKembali,
++  onKanan,
++}: Props) {
+   const insets = useSafeAreaInsets();
+ 
+   return (
+@@ -23,11 +33,17 @@ export default function HeaderTab({ judul, jumlahNotifikasi = 0, onKembali, onNo
+ 
+       <Text style={styles.judul}>{judul}</Text>
+ 
+-      <Pressable onPress={onNotifikasi} hitSlop={10} style={styles.kanan}>
+-        <Ionicons name="notifications-outline" size={23} color={colors.white} />
+-        {jumlahNotifikasi > 0 ? (
++      <Pressable
++        onPress={onKanan}
++        hitSlop={10}
++        style={styles.kanan}
++        accessibilityRole="button"
++        accessibilityLabel={labelKanan}
++      >
++        <Ionicons name={ikonKanan} size={23} color={colors.white} />
++        {jumlahBadge > 0 ? (
+           <View style={styles.badge}>
+-            <Text style={styles.badgeText}>{jumlahNotifikasi > 9 ? "9+" : jumlahNotifikasi}</Text>
++            <Text style={styles.badgeText}>{jumlahBadge > 9 ? "9+" : jumlahBadge}</Text>
+           </View>
+         ) : null}
+       </Pressable>
+diff --git a/src/components/ui/judulseksi.tsx b/src/components/ui/judulseksi.tsx
+new file mode 100644
+index 0000000..93f5bde
+--- /dev/null
++++ b/src/components/ui/judulseksi.tsx
+@@ -0,0 +1,44 @@
++import { ReactNode } from "react";
++import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
++import { Ionicons } from "@expo/vector-icons";
++import { colors, spacing } from "@/theme";
++
++type Aksi = { label: string; onPress: () => void };
++
++type Props = {
++  judul: string;
++  aksi?: Aksi;          // tautan di kanan, mis. "Lihat Semua >"
++  kanan?: ReactNode;    // atau elemen bebas di kanan, mis. kapsul waktu
++  style?: StyleProp<ViewStyle>;
++};
++
++// Judul seksi: teks tebal di kiri, tautan atau elemen kecil di kanan
++export default function JudulSeksi({ judul, aksi, kanan, style }: Props) {
++  return (
++    <View style={[styles.row, style]}>
++      <Text style={styles.judul}>{judul}</Text>
++
++      {aksi ? (
++        <Pressable onPress={aksi.onPress} hitSlop={8} style={styles.aksi} accessibilityRole="button">
++          <Text style={styles.aksiText}>{aksi.label}</Text>
++          <Ionicons name="chevron-forward" size={14} color={colors.dark} />
++        </Pressable>
++      ) : null}
++
++      {kanan}
++    </View>
++  );
++}
++
++const styles = StyleSheet.create({
++  row: {
++    flexDirection: "row",
++    alignItems: "center",
++    justifyContent: "space-between",
++    paddingHorizontal: 14,
++    marginBottom: spacing.sm,
++  },
++  judul: { fontSize: 17, fontWeight: "700", color: colors.text },
++  aksi: { flexDirection: "row", alignItems: "center", gap: 2 },
++  aksiText: { fontSize: 12, fontWeight: "700", color: colors.dark },
++});
+diff --git a/src/components/ui/pill.tsx b/src/components/ui/pill.tsx
+new file mode 100644
+index 0000000..5312166
+--- /dev/null
++++ b/src/components/ui/pill.tsx
+@@ -0,0 +1,34 @@
++import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
++import { Ionicons } from "@expo/vector-icons";
++import { colors, radius } from "@/theme";
++import { IconName } from "@/types/ui";
++
++type Props = {
++  label: string;
++  icon?: IconName;
++  bg?: string;
++  fg?: string;
++  style?: StyleProp<ViewStyle>;
++};
++
++// Kapsul kecil berisi ikon + teks (mis. "s/d 10.00 WIB")
++export default function Pill({ label, icon, bg = colors.peachSoft, fg = colors.brown, style }: Props) {
++  return (
++    <View style={[styles.pill, { backgroundColor: bg }, style]}>
++      {icon ? <Ionicons name={icon} size={12} color={fg} /> : null}
++      <Text style={[styles.text, { color: fg }]}>{label}</Text>
++    </View>
++  );
++}
++
++const styles = StyleSheet.create({
++  pill: {
++    flexDirection: "row",
++    alignItems: "center",
++    gap: 4,
++    paddingHorizontal: 10,
++    paddingVertical: 4,
++    borderRadius: radius.xl,
++  },
++  text: { fontSize: 11, fontWeight: "600" },
++});
+diff --git a/src/data/produk.ts b/src/data/produk.ts
+index 3d9acf6..0876e48 100644
+--- a/src/data/produk.ts
++++ b/src/data/produk.ts
+@@ -1,3 +1,4 @@
++import { ChipItem } from "@/components/ui/chipgroup";
+ import { DefinisiField } from "@/data/formalamat";
+ import { OpsiPotongan, Produk } from "@/types/produk";
+ 
+@@ -67,6 +68,21 @@ export const FIELD_JUMLAH_CUSTOM: DefinisiField = {
+   maxLength: 3,
+ };
+ 
++export const KATEGORI_PRODUK_SEMUA = "semua";
++
++// Chip kategori di halaman Produk. `id` selain "semua" dicocokkan dengan Produk.tag
++export const KATEGORI_PRODUK: readonly ChipItem[] = [
++  { id: KATEGORI_PRODUK_SEMUA, label: "Semua" },
++  { id: "ayam-bebek", label: "Ayam & Bebek Potong" },
++  { id: "daging-tanpa-tulang", label: "Daging Tanpa Tulang" },
++  { id: "sembako", label: "Sembako" },
++  { id: "daging-sapi", label: "Daging Sapi Segar" },
++  { id: "bumbu", label: "Bumbu" },
++  { id: "sayuran", label: "Sayuran Segar" },
++  { id: "telur", label: "Telur Segar" },
++  { id: "ikan", label: "Ikan Segar" },
++];
++
+ export const DAFTAR_PRODUK: Produk[] = [
+   {
+     id: "ayam-bakar",
+@@ -132,4 +148,96 @@ export const DAFTAR_PRODUK: Produk[] = [
+     opsiPotongan: OPSI_POTONGAN_AYAM,
+     potonganBawaan: "potong-12",
+   },
++  // ---- Data contoh untuk kategori lain (hapus / ganti saat data dari API siap) ----
++  {
++    id: "fillet-dada",
++    tag: ["daging-tanpa-tulang"],
++    nama: "Fillet Dada Ayam Tanpa Tulang",
++    harga: 58000,
++    satuan: "kg",
++    toko: "Pak Joko Daging",
++    gambar: FOTO_AYAM,
++    ringkas: ["Tanpa tulang dan kulit", "Dipotong dadakan"],
++    beratBersihGram: 1000,
++    deskripsi: "Fillet dada ayam segar tanpa tulang dan kulit, praktis untuk berbagai olahan.",
++    stok: 25,
++  },
++  {
++    id: "beras-premium",
++    tag: ["sembako"],
++    nama: "Beras Premium 5 Kg",
++    harga: 72000,
++    satuan: "karung",
++    toko: "Toko Sembako Jaya",
++    gambar: FOTO_AYAM,
++    ringkas: ["Pulen dan wangi", "Kemasan 5 Kg"],
++    beratBersihGram: 5000,
++    deskripsi: "Beras premium pulen dan wangi, kemasan 5 Kg.",
++    stok: 30,
++  },
++  {
++    id: "daging-sapi-has",
++    tag: ["daging-sapi"],
++    nama: "Daging Sapi Has Dalam",
++    harga: 135000,
++    satuan: "kg",
++    toko: "Pak Joko Daging",
++    gambar: FOTO_AYAM,
++    ringkas: ["Segar, tanpa lemak berlebih"],
++    beratBersihGram: 1000,
++    deskripsi: "Daging sapi has dalam segar, empuk untuk steak dan tumisan.",
++    stok: 15,
++  },
++  {
++    id: "bawang-merah",
++    tag: ["bumbu"],
++    nama: "Bawang Merah Segar",
++    harga: 38000,
++    satuan: "kg",
++    toko: "Bumbu Bu Rina",
++    gambar: FOTO_AYAM,
++    ringkas: ["Pilihan, ukuran sedang"],
++    beratBersihGram: 1000,
++    deskripsi: "Bawang merah segar pilihan ukuran sedang.",
++    stok: 40,
++  },
++  {
++    id: "bayam-segar",
++    tag: ["sayuran"],
++    nama: "Bayam Segar",
++    harga: 5000,
++    satuan: "ikat",
++    toko: "Bu Siti Sayur",
++    gambar: FOTO_AYAM,
++    ringkas: ["Dipetik pagi hari"],
++    beratBersihGram: 250,
++    deskripsi: "Bayam hijau segar, dipetik pagi hari.",
++    stok: 60,
++  },
++  {
++    id: "telur-ayam",
++    tag: ["telur"],
++    nama: "Telur Ayam Negeri",
++    harga: 29000,
++    satuan: "kg",
++    toko: "Toko Sembako Jaya",
++    gambar: FOTO_AYAM,
++    ringkas: ["Segar, kulit bersih"],
++    beratBersihGram: 1000,
++    deskripsi: "Telur ayam negeri segar dengan kulit bersih.",
++    stok: 50,
++  },
++  {
++    id: "ikan-lele",
++    tag: ["ikan"],
++    nama: "Ikan Lele Segar",
++    harga: 28000,
++    satuan: "kg",
++    toko: "Ikan Segar Mulya",
++    gambar: FOTO_AYAM,
++    ringkas: ["Hidup, dibersihkan sesuai permintaan"],
++    beratBersihGram: 1000,
++    deskripsi: "Ikan lele segar, bisa dibersihkan sesuai permintaan.",
++    stok: 35,
++  },
+ ];
+diff --git a/src/data/teks.ts b/src/data/teks.ts
+index 47c155b..f3fb0ea 100644
+--- a/src/data/teks.ts
++++ b/src/data/teks.ts
+@@ -168,6 +168,18 @@ export const TEKS = {
+     cari: "Cari ayam, bebek, ati ampela...",
+   },
+ 
++  katalog: {
++    judul: "Produk",
++    cari: "Cari ayam, bebek, ati ampela...",
++    favoritJudul: "Produk Favorit Anda",
++    lihatSemua: "Lihat Semua",
++    promoJudul: "Promo Hari Ini",
++    promoSampai: (jam: string) => `s/d ${jam.replace(":", ".")} WIB`,
++    kosong: "Produk tidak ditemukan. Coba ubah kata pencarian atau kategori.",
++    keranjangAksesibilitas: "Buka keranjang",
++    tambahAksesibilitas: (nama: string) => `Tambah ${nama} ke keranjang`,
++  },
++
+   keranjang: {
+     judul: "Keranjang",
+     pesananSaya: "Pesanan Saya",
+diff --git a/src/hooks/usetambahcepat.ts b/src/hooks/usetambahcepat.ts
+new file mode 100644
+index 0000000..19cd692
+--- /dev/null
++++ b/src/hooks/usetambahcepat.ts
+@@ -0,0 +1,34 @@
++import { Alert } from "react-native";
++import { useRouter } from "expo-router";
++import { useKeranjang } from "@/context/keranjang";
++import { TEKS } from "@/data/teks";
++import { Produk } from "@/types/produk";
++
++const T = TEKS.produk.keranjang;
++
++/**
++ * Tambah 1 produk ke keranjang langsung dari daftar (tanpa membuka detail).
++ * Produk yang bisa dipotong memakai potongan bawaannya.
++ */
++export function useTambahCepat() {
++  const router = useRouter();
++  const { tambah } = useKeranjang();
++
++  return async (produk: Produk) => {
++    const bisaDipotong = !!produk.opsiPotongan?.length;
++    try {
++      await tambah({
++        produkId: produk.id,
++        jumlah: 1,
++        hargaSatuan: produk.harga,
++        potonganId: bisaDipotong ? produk.potonganBawaan : undefined,
++      });
++      Alert.alert(T.berhasil.judul, T.berhasil.pesan(produk.nama, 1), [
++        { text: T.berhasil.lanjut, style: "cancel" },
++        { text: T.berhasil.lihat, onPress: () => router.push("/keranjang") },
++      ]);
++    } catch {
++      Alert.alert(T.gagal.judul, T.gagal.pesan);
++    }
++  };
++}
+diff --git a/src/utils/produk.ts b/src/utils/produk.ts
+index d79da46..951b8ea 100644
+--- a/src/utils/produk.ts
++++ b/src/utils/produk.ts
+@@ -1,4 +1,4 @@
+-import { DAFTAR_PRODUK } from "@/data/produk";
++import { DAFTAR_PRODUK, KATEGORI_PRODUK_SEMUA } from "@/data/produk";
+ import { Produk } from "@/types/produk";
+ import { formatRibuan } from "@/utils/angka";
+ 
+@@ -19,3 +19,13 @@ export function hitungSubtotal(harga: number, jumlah: number): number {
+ export function kapital(teks: string): string {
+   return teks.charAt(0).toUpperCase() + teks.slice(1);
+ }
++
++// Saring berdasarkan kata pencarian (nama) dan kategori (Produk.tag)
++export function saringProduk(produk: readonly Produk[], cari: string, kategoriId: string): Produk[] {
++  const kata = cari.trim().toLowerCase();
++  return produk.filter(
++    (p) =>
++      p.nama.toLowerCase().includes(kata) &&
++      (kategoriId === KATEGORI_PRODUK_SEMUA || (p.tag ?? []).includes(kategoriId))
++  );
++}
