@@ -1,4 +1,4 @@
-import { DAFTAR_PRODUK } from "@/data/produk";
+import { DAFTAR_PRODUK, KATEGORI_PRODUK_SEMUA } from "@/data/produk";
 import { Produk } from "@/types/produk";
 import { formatRibuan } from "@/utils/angka";
 
@@ -18,4 +18,14 @@ export function hitungSubtotal(harga: number, jumlah: number): number {
 // "ekor" -> "Ekor"
 export function kapital(teks: string): string {
   return teks.charAt(0).toUpperCase() + teks.slice(1);
+}
+
+// Saring berdasarkan kata pencarian (nama) dan kategori (Produk.tag)
+export function saringProduk(produk: readonly Produk[], cari: string, kategoriId: string): Produk[] {
+  const kata = cari.trim().toLowerCase();
+  return produk.filter(
+    (p) =>
+      p.nama.toLowerCase().includes(kata) &&
+      (kategoriId === KATEGORI_PRODUK_SEMUA || (p.tag ?? []).includes(kategoriId))
+  );
 }

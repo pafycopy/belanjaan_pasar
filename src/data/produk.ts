@@ -1,3 +1,4 @@
+import { ChipItem } from "@/components/ui/chipgroup";
 import { DefinisiField } from "@/data/formalamat";
 import { OpsiPotongan, Produk } from "@/types/produk";
 
@@ -67,6 +68,21 @@ export const FIELD_JUMLAH_CUSTOM: DefinisiField = {
   maxLength: 3,
 };
 
+export const KATEGORI_PRODUK_SEMUA = "semua";
+
+// Chip kategori di halaman Produk. `id` selain "semua" dicocokkan dengan Produk.tag
+export const KATEGORI_PRODUK: readonly ChipItem[] = [
+  { id: KATEGORI_PRODUK_SEMUA, label: "Semua" },
+  { id: "ayam-bebek", label: "Ayam & Bebek Potong" },
+  { id: "daging-tanpa-tulang", label: "Daging Tanpa Tulang" },
+  { id: "sembako", label: "Sembako" },
+  { id: "daging-sapi", label: "Daging Sapi Segar" },
+  { id: "bumbu", label: "Bumbu" },
+  { id: "sayuran", label: "Sayuran Segar" },
+  { id: "telur", label: "Telur Segar" },
+  { id: "ikan", label: "Ikan Segar" },
+];
+
 export const DAFTAR_PRODUK: Produk[] = [
   {
     id: "ayam-bakar",
@@ -131,5 +147,97 @@ export const DAFTAR_PRODUK: Produk[] = [
     stok: 20,
     opsiPotongan: OPSI_POTONGAN_AYAM,
     potonganBawaan: "potong-12",
+  },
+  // ---- Data contoh untuk kategori lain (hapus / ganti saat data dari API siap) ----
+  {
+    id: "fillet-dada",
+    tag: ["daging-tanpa-tulang"],
+    nama: "Fillet Dada Ayam Tanpa Tulang",
+    harga: 58000,
+    satuan: "kg",
+    toko: "Pak Joko Daging",
+    gambar: FOTO_AYAM,
+    ringkas: ["Tanpa tulang dan kulit", "Dipotong dadakan"],
+    beratBersihGram: 1000,
+    deskripsi: "Fillet dada ayam segar tanpa tulang dan kulit, praktis untuk berbagai olahan.",
+    stok: 25,
+  },
+  {
+    id: "beras-premium",
+    tag: ["sembako"],
+    nama: "Beras Premium 5 Kg",
+    harga: 72000,
+    satuan: "karung",
+    toko: "Toko Sembako Jaya",
+    gambar: FOTO_AYAM,
+    ringkas: ["Pulen dan wangi", "Kemasan 5 Kg"],
+    beratBersihGram: 5000,
+    deskripsi: "Beras premium pulen dan wangi, kemasan 5 Kg.",
+    stok: 30,
+  },
+  {
+    id: "daging-sapi-has",
+    tag: ["daging-sapi"],
+    nama: "Daging Sapi Has Dalam",
+    harga: 135000,
+    satuan: "kg",
+    toko: "Pak Joko Daging",
+    gambar: FOTO_AYAM,
+    ringkas: ["Segar, tanpa lemak berlebih"],
+    beratBersihGram: 1000,
+    deskripsi: "Daging sapi has dalam segar, empuk untuk steak dan tumisan.",
+    stok: 15,
+  },
+  {
+    id: "bawang-merah",
+    tag: ["bumbu"],
+    nama: "Bawang Merah Segar",
+    harga: 38000,
+    satuan: "kg",
+    toko: "Bumbu Bu Rina",
+    gambar: FOTO_AYAM,
+    ringkas: ["Pilihan, ukuran sedang"],
+    beratBersihGram: 1000,
+    deskripsi: "Bawang merah segar pilihan ukuran sedang.",
+    stok: 40,
+  },
+  {
+    id: "bayam-segar",
+    tag: ["sayuran"],
+    nama: "Bayam Segar",
+    harga: 5000,
+    satuan: "ikat",
+    toko: "Bu Siti Sayur",
+    gambar: FOTO_AYAM,
+    ringkas: ["Dipetik pagi hari"],
+    beratBersihGram: 250,
+    deskripsi: "Bayam hijau segar, dipetik pagi hari.",
+    stok: 60,
+  },
+  {
+    id: "telur-ayam",
+    tag: ["telur"],
+    nama: "Telur Ayam Negeri",
+    harga: 29000,
+    satuan: "kg",
+    toko: "Toko Sembako Jaya",
+    gambar: FOTO_AYAM,
+    ringkas: ["Segar, kulit bersih"],
+    beratBersihGram: 1000,
+    deskripsi: "Telur ayam negeri segar dengan kulit bersih.",
+    stok: 50,
+  },
+  {
+    id: "ikan-lele",
+    tag: ["ikan"],
+    nama: "Ikan Lele Segar",
+    harga: 28000,
+    satuan: "kg",
+    toko: "Ikan Segar Mulya",
+    gambar: FOTO_AYAM,
+    ringkas: ["Hidup, dibersihkan sesuai permintaan"],
+    beratBersihGram: 1000,
+    deskripsi: "Ikan lele segar, bisa dibersihkan sesuai permintaan.",
+    stok: 35,
   },
 ];

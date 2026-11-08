@@ -168,6 +168,18 @@ export const TEKS = {
     cari: "Cari ayam, bebek, ati ampela...",
   },
 
+  katalog: {
+    judul: "Produk",
+    cari: "Cari ayam, bebek, ati ampela...",
+    favoritJudul: "Produk Favorit Anda",
+    lihatSemua: "Lihat Semua",
+    promoJudul: "Promo Hari Ini",
+    promoSampai: (jam: string) => `s/d ${jam.replace(":", ".")} WIB`,
+    kosong: "Produk tidak ditemukan. Coba ubah kata pencarian atau kategori.",
+    keranjangAksesibilitas: "Buka keranjang",
+    tambahAksesibilitas: (nama: string) => `Tambah ${nama} ke keranjang`,
+  },
+
   keranjang: {
     judul: "Keranjang",
     pesananSaya: "Pesanan Saya",

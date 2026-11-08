@@ -2,17 +2,27 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, spacing } from "@/theme";
+import { IconName } from "@/types/ui";
 
 type Props = {
   judul: string;
-  jumlahNotifikasi?: number; // badge merah di ikon lonceng; 0 / kosong = tanpa badge
+  ikonKanan?: IconName;     // bawaan: lonceng; halaman Produk memakai keranjang
+  jumlahBadge?: number;     // badge merah di ikon kanan; 0 / kosong = tanpa badge
+  labelKanan?: string;      // label aksesibilitas tombol kanan
   onKembali: () => void;
-  onNotifikasi: () => void;
+  onKanan: () => void;
 };
 
-// Header hijau untuk layar tab: tombol kembali, judul di tengah, lonceng notifikasi di kanan
+// Header hijau untuk layar tab: tombol kembali, judul di tengah, satu ikon aksi di kanan (lonceng / keranjang)
 // (layar tab tidak memakai header bawaan navigasi, jadi dibuat sebagai komponen biasa)
-export default function HeaderTab({ judul, jumlahNotifikasi = 0, onKembali, onNotifikasi }: Props) {
+export default function HeaderTab({
+  judul,
+  ikonKanan = "notifications-outline",
+  jumlahBadge = 0,
+  labelKanan,
+  onKembali,
+  onKanan,
+}: Props) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -23,11 +33,17 @@ export default function HeaderTab({ judul, jumlahNotifikasi = 0, onKembali, onNo
 
       <Text style={styles.judul}>{judul}</Text>
 
-      <Pressable onPress={onNotifikasi} hitSlop={10} style={styles.kanan}>
-        <Ionicons name="notifications-outline" size={23} color={colors.white} />
-        {jumlahNotifikasi > 0 ? (
+      <Pressable
+        onPress={onKanan}
+        hitSlop={10}
+        style={styles.kanan}
+        accessibilityRole="button"
+        accessibilityLabel={labelKanan}
+      >
+        <Ionicons name={ikonKanan} size={23} color={colors.white} />
+        {jumlahBadge > 0 ? (
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>{jumlahNotifikasi > 9 ? "9+" : jumlahNotifikasi}</Text>
+            <Text style={styles.badgeText}>{jumlahBadge > 9 ? "9+" : jumlahBadge}</Text>
           </View>
         ) : null}
       </Pressable>

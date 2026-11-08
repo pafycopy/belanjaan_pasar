@@ -49,9 +49,9 @@ export default function FavoritScreen() {
     <View style={styles.screen}>
       <HeaderTab
         judul={T.judul}
-        jumlahNotifikasi={JUMLAH_NOTIFIKASI_BARU}
+        jumlahBadge={JUMLAH_NOTIFIKASI_BARU}
         onKembali={() => router.back()}
-        onNotifikasi={() => router.push("/notifikasi")}
+        onKanan={() => router.push("/notifikasi")}
       />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
