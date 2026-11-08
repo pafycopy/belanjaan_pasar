@@ -26,6 +26,9 @@ import {
 import { TEKS } from "@/data/teks";
 import { barisDenganProduk, cariTarifOngkir, hitungBeratGram, hitungTagihan } from "@/utils/keranjang";
 import { cariProduk, formatHarga } from "@/utils/produk";
+import { formatAlamatLengkap } from "@/utils/alamat";
+import { buatTagihanTransfer } from "@/utils/pembayaran";
+import { pembayaranRepository } from "@/services/pembayaranrepository";
 import { colors, spacing } from "@/theme";
 
 const T = TEKS.keranjang;
@@ -38,6 +41,7 @@ export default function Keranjang() {
   const [pengiriman, setPengiriman] = useState<IdPengiriman>(PENGIRIMAN_BAWAAN);
   const [metode, setMetode] = useState<IdMetode>(METODE_BAWAAN);
   const [terscroll, setTerscroll] = useState(false);
+  const [membuatTagihan, setMembuatTagihan] = useState(false);
   const antar = pengiriman === "antar";
 
   const baris = useMemo(() => barisDenganProduk(item, cariProduk), [item]);
@@ -48,7 +52,8 @@ export default function Keranjang() {
   const tarif = antar ? cariTarifOngkir(terpilih?.jarakKm) : null;
   const tagihan = hitungTagihan(subtotal, tarif);
 
-  const bayar = () => {
+  const bayar = async () => {
+    if (membuatTagihan) return;
     if (antar && !terpilih) {
       Alert.alert(T.alamatBelumDipilih.judul, T.alamatBelumDipilih.pesan, [
         { text: T.alamatBelumDipilih.pilih, onPress: () => router.push("/alamat") },
@@ -56,8 +61,32 @@ export default function Keranjang() {
       ]);
       return;
     }
-    const namaMetode = METODE_PEMBAYARAN.find((m) => m.id === metode)?.nama ?? "";
-    Alert.alert(T.pembayaranBelumAda.judul, T.pembayaranBelumAda.pesan(namaMetode, formatHarga(tagihan.total)));
+
+    // Sementara hanya transfer BCA (manual) yang punya halaman petunjuk. QRIS dan COD menyusul.
+    if (metode !== "bca") {
+      const namaMetode = METODE_PEMBAYARAN.find((m) => m.id === metode)?.nama ?? "";
+      Alert.alert(T.pembayaranBelumAda.judul, T.pembayaranBelumAda.pesan(namaMetode, formatHarga(tagihan.total)));
+      return;
+    }
+
+    setMembuatTagihan(true);
+    try {
+      await pembayaranRepository.simpan(
+        buatTagihanTransfer({
+          baris,
+          tagihan,
+          tarif,
+          pengiriman,
+          metode,
+          alamat: terpilih ? formatAlamatLengkap(terpilih) : undefined,
+        })
+      );
+      router.push("/pembayaran");
+    } catch {
+      Alert.alert(TEKS.pembayaran.gagalBuat.judul, TEKS.pembayaran.gagalBuat.pesan);
+    } finally {
+      setMembuatTagihan(false);
+    }
   };
 
   return (
@@ -141,7 +170,7 @@ export default function Keranjang() {
           </ScrollView>
 
           <FooterBar bordered={false} background={colors.barBg}>
-            <RingkasanPembayaran total={tagihan.total} onBayar={bayar} />
+            <RingkasanPembayaran total={tagihan.total} onBayar={() => void bayar()} disabled={membuatTagihan} />
           </FooterBar>
         </>
       )}

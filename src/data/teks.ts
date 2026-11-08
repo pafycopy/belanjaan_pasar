@@ -227,6 +227,53 @@ export const TEKS = {
     },
   },
 
+  pembayaran: {
+    judul: "Petunjuk Pembayaran",
+    batas: {
+      label: "Batas waktu bayar",
+      menunggu: (bank: string) => `Menunggu Transfer ${bank}`,
+      sisa: "Sisa Waktu",
+      habis: "Waktu pembayaran habis",
+      habisPesan: "Pesanan ini belum dibayar. Kembali ke keranjang untuk membuat tagihan baru.",
+    },
+    rekening: {
+      judul: (bank: string) => `${bank} Rekening`,
+      nomor: "Nomor rekening",
+      namaAkun: "Nama akun / pedagang",
+      total: "Total nominal transfer",
+      salin: "Salin",
+      salinJumlah: "Salin Jumlah",
+      tersalin: "Tersalin",
+      penting: (total: string) =>
+        `**Penting:** Pastikan mentransfer tepat **${total}**. Selisih nominal dapat memperlambat proses penjadwalan pemotongan.`,
+    },
+    ringkasan: {
+      judul: "Ringkasan Pesanan",
+      invoice: (no: string) => `Invoice: #${no}`,
+      jumlah: (jumlah: number, harga: string) => `${jumlah} x ${harga}`,
+      ongkir: "Ongkos Kurir",
+      antar: (jendela: string) => `Pengantaran (${jendela})`,
+      ambil: "Ambil di Toko",
+      ambilPesan: "Ambil pesanan langsung di kios setelah pembayaran terverifikasi.",
+    },
+    petunjuk: { judul: "Petunjuk Pembayaran" },
+    sudahTransfer: "Saya Sudah Transfer",
+    kembaliKeranjang: "Kembali ke Keranjang",
+    konfirmasi: {
+      judul: "Sudah transfer?",
+      pesan: (total: string) =>
+        `Pastikan Anda sudah mentransfer tepat ${total}. Pesanan diproses setelah transfer kami cek.`,
+      ya: "Ya, sudah transfer",
+    },
+    terima: {
+      judul: "Terima kasih",
+      pesan: "Transfer Anda akan kami cek. Pesanan mulai diproses setelah pembayaran terverifikasi.",
+      tutup: "Ke Beranda",
+    },
+    tidakDitemukan: "Tagihan tidak ditemukan. Buat pesanan dari keranjang.",
+    gagalBuat: { judul: "Gagal membuat tagihan", pesan: "Terjadi kesalahan, coba lagi." },
+  },
+
   favorit: {
     judul: "Favorit",
     daftarJudul: "Produk Favorit Saya",
