@@ -63,10 +63,14 @@ export function padRtRw(v: string): string {
 }
 
 // "RT 04 / RW 02 (Kode Pos 11640)"
+// "RT 04 / RW 02" (kosong bila keduanya kosong)
+export function formatRtRw(rt?: string, rw?: string): string {
+  return rt || rw ? `RT ${rt || "-"} / RW ${rw || "-"}` : "";
+}
+
 export function ringkasanWilayah(rt: string, rw: string, kodePos: string): string {
-  const rtRw = rt || rw ? `RT ${rt || "-"} / RW ${rw || "-"}` : "";
   const kp = kodePos ? `(Kode Pos ${kodePos})` : "";
-  return [rtRw, kp].filter(Boolean).join(" ");
+  return [formatRtRw(rt, rw), kp].filter(Boolean).join(" ");
 }
 
 // "Kecamatan & Kelurahan (Jakarta Barat)"
@@ -74,7 +78,22 @@ export function labelDenganKota(dasar: string, kota: string): string {
   return kota ? `${dasar} (${kota})` : dasar;
 }
 
-// "Jl. Musyawarah No. 44, Kembangan, Meruya, Jakarta Barat"
-export function formatAlamatLengkap(a: Pick<Alamat, "jalan" | "wilayah" | "kota">): string {
-  return [a.jalan, a.wilayah, a.kota].filter(Boolean).join(", ");
+// "Jl. Melati No. 14, RT 04 / RW 02, Kramat Jati, Jakarta Timur"
+export function formatAlamatLengkap(
+  a: Pick<Alamat, "jalan" | "wilayah" | "kota" | "rt" | "rw">
+): string {
+  return [a.jalan, formatRtRw(a.rt, a.rw), a.wilayah, a.kota].filter(Boolean).join(", ");
+}
+
+// Judul kartu alamat: "Alamat Rumah" + penanda alamat utama. Label buatan sendiri dipakai apa adanya.
+export function judulAlamat(a: Pick<Alamat, "kategori">): { judul: string; utama: boolean } {
+  const kategori = cariKategori(a.kategori);
+  return { judul: `Alamat ${kategori?.sebutan ?? a.kategori}`, utama: kategori?.utama === true };
+}
+
+// "081298765432" -> "0812-9876-XXXX" (4 digit terakhir disamarkan)
+export function samarkanNoHp(noHp: string): string {
+  const digit = noHp.replace(/\D/g, "");
+  if (digit.length < 9) return digit;
+  return `${digit.slice(0, 4)}-${digit.slice(4, 8)}-${"X".repeat(Math.max(digit.length - 8, 3))}`;
 }

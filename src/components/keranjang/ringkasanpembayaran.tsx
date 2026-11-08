@@ -1,10 +1,12 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import Button from "@/components/ui/button";
+import { colors } from "@/theme";
 import { TEKS } from "@/data/teks";
-import { colors, radius, spacing } from "@/theme";
 import { formatHarga } from "@/utils/produk";
 
 type Props = { total: number; onBayar: () => void; disabled?: boolean };
 
+// Isi bar bawah: total akhir di kiri, tombol Bayar di kanan (latar bar disediakan FooterBar)
 export default function RingkasanPembayaran({ total, onBayar, disabled }: Props) {
   return (
     <View style={styles.wrap}>
@@ -12,18 +14,20 @@ export default function RingkasanPembayaran({ total, onBayar, disabled }: Props)
         <Text style={styles.label}>{TEKS.keranjang.ringkasan.total}</Text>
         <Text style={styles.total}>{formatHarga(total)}</Text>
       </View>
-      <Pressable style={[styles.button, disabled && styles.disabled]} onPress={onBayar} disabled={disabled}>
-        <Text style={styles.buttonText}>{TEKS.keranjang.ringkasan.bayar}</Text>
-      </Pressable>
+      <Button
+        label={TEKS.keranjang.ringkasan.bayar}
+        size="md"
+        onPress={onBayar}
+        disabled={disabled}
+        style={styles.tombol}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: colors.white, borderTopWidth: 1, borderTopColor: colors.border, paddingHorizontal: spacing.lg, paddingTop: spacing.md },
-  label: { fontSize: 9, color: colors.muted },
-  total: { fontSize: 14, fontWeight: "800", color: colors.primary, marginTop: 1 },
-  button: { minWidth: 78, height: 36, paddingHorizontal: spacing.lg, borderRadius: radius.md, backgroundColor: colors.primary, alignItems: "center", justifyContent: "center" },
-  disabled: { opacity: 0.45 },
-  buttonText: { color: colors.white, fontSize: 11, fontWeight: "700" },
+  wrap: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  label: { fontSize: 11, color: colors.muted },
+  total: { fontSize: 18, fontWeight: "800", color: colors.dark, marginTop: 2 },
+  tombol: { minWidth: 110 },
 });

@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import GambarProduk from "@/components/produk/gambarproduk";
-import { SATUAN_BAWAAN } from "@/data/produk";
 import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { ItemKeranjang } from "@/types/keranjang";
@@ -24,25 +23,28 @@ export default function ItemKeranjangCard({ item, produk, onKurang, onTambah, on
       <GambarProduk gambar={produk.gambar} style={styles.gambar} fit="contain" />
 
       <View style={styles.info}>
-        <View style={styles.namaRow}>
-          <Text style={styles.nama} numberOfLines={2}>{produk.nama}</Text>
-          <Pressable onPress={onHapus} hitSlop={8}>
-            <Ionicons name="close" size={18} color={colors.muted} />
-          </Pressable>
+        <View>
+          <View style={styles.namaRow}>
+            <Text style={styles.nama} numberOfLines={2}>
+              {produk.nama}
+            </Text>
+            <Pressable onPress={onHapus} hitSlop={8}>
+              <Ionicons name="close" size={20} color={colors.textSoft} />
+            </Pressable>
+          </View>
+          <Text style={styles.potongan}>{potongan ? potongan.judul : TEKS.keranjang.produkSegar}</Text>
         </View>
 
-        <Text style={styles.potongan}>{potongan ? potongan.judul : TEKS.keranjang.produkSegar}</Text>
-        <Text style={styles.harga}>{formatHarga(item.hargaSatuan)}</Text>
+        <View style={styles.bawah}>
+          <Text style={styles.harga}>{formatHarga(item.hargaSatuan)}</Text>
 
-        <View style={styles.footer}>
-          <Text style={styles.satuan}>{produk.satuan ?? SATUAN_BAWAAN}</Text>
           <View style={styles.stepper}>
             <Pressable style={styles.stepButton} onPress={onKurang} hitSlop={4}>
-              <Ionicons name="remove" size={15} color={colors.dark} />
+              <Ionicons name="remove" size={16} color={colors.textSoft} />
             </Pressable>
             <Text style={styles.jumlah}>{item.jumlah}</Text>
             <Pressable style={styles.stepButton} onPress={onTambah} hitSlop={4}>
-              <Ionicons name="add" size={15} color={colors.dark} />
+              <Ionicons name="add" size={16} color={colors.textSoft} />
             </Pressable>
           </View>
         </View>
@@ -56,26 +58,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: colors.white,
     borderRadius: radius.lg,
-    padding: spacing.sm,
-    minHeight: 92,
-    borderWidth: 1,
-    borderColor: colors.border,
+    padding: spacing.md,
   },
-  gambar: { width: 72, height: 72, borderRadius: radius.md },
-  info: { flex: 1, marginLeft: spacing.sm },
-  namaRow: { flexDirection: "row", alignItems: "flex-start", gap: 4 },
-  nama: { flex: 1, fontSize: 12, lineHeight: 16, fontWeight: "600", color: colors.text },
-  potongan: { fontSize: 10, color: colors.muted, marginTop: 2 },
-  harga: { fontSize: 13, fontWeight: "700", color: colors.primary, marginTop: 3 },
-  footer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 4 },
-  satuan: { fontSize: 10, color: colors.muted },
+  gambar: { width: 72, height: 72, borderRadius: radius.sm, backgroundColor: colors.white },
+  info: { flex: 1, marginLeft: spacing.md, justifyContent: "space-between", gap: spacing.sm },
+  namaRow: { flexDirection: "row", alignItems: "flex-start", gap: spacing.xs },
+  nama: { flex: 1, fontSize: 13, lineHeight: 18, fontWeight: "500", color: colors.text },
+  potongan: { fontSize: 12, color: colors.dark, marginTop: 2 },
+  bawah: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  harga: { fontSize: 16, fontWeight: "700", color: colors.dark },
   stepper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.accentSoft,
-    borderRadius: radius.sm,
-    minHeight: 28,
+    backgroundColor: colors.accentSoftStrong,
+    borderRadius: radius.md,
+    minHeight: 30,
   },
-  stepButton: { width: 28, height: 28, alignItems: "center", justifyContent: "center" },
-  jumlah: { minWidth: 22, textAlign: "center", fontSize: 11, fontWeight: "600", color: colors.text },
+  stepButton: { width: 30, height: 30, alignItems: "center", justifyContent: "center" },
+  jumlah: { minWidth: 22, textAlign: "center", fontSize: 13, fontWeight: "500", color: colors.text },
 });

@@ -1,4 +1,5 @@
 import { ItemKeranjang, ItemKeranjangInput } from "@/types/keranjang";
+import { TARIF_ONGKIR, TarifOngkir } from "@/data/keranjang";
 import { Produk } from "@/types/produk";
 
 // Dua item dianggap sama bila produk, potongan, dan catatannya sama
@@ -41,4 +42,18 @@ export function hitungBeratGram(baris: readonly BarisKeranjang[]): number {
 export function formatKg(kg: number): string {
   const teks = kg.toFixed(1);
   return teks.endsWith(".0") ? teks.slice(0, -2) : teks;
+}
+
+// Tarif ongkir menurut jarak. Jarak belum diketahui / melebihi semua tingkatan -> tingkatan terakhir.
+export function cariTarifOngkir(jarakKm?: number): TarifOngkir {
+  const tarif = jarakKm === undefined ? undefined : TARIF_ONGKIR.find((t) => jarakKm <= t.sampaiKm);
+  return tarif ?? TARIF_ONGKIR[TARIF_ONGKIR.length - 1];
+}
+
+export type Tagihan = { subtotal: number; ongkir: number; total: number };
+
+// ongkir = null untuk "Ambil di Toko" (tanpa ongkir)
+export function hitungTagihan(subtotal: number, ongkir: TarifOngkir | null): Tagihan {
+  const biayaOngkir = ongkir?.tarif ?? 0;
+  return { subtotal, ongkir: biayaOngkir, total: subtotal + biayaOngkir };
 }

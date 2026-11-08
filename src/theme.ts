@@ -35,6 +35,8 @@ export const colors = {
   lockedCircle: "#e4e7f7",
   infoSoft: "#e0f2fe",
   info: "#0369a1",
+  barBg: "#f9f8fe",                  // latar bar bawah (total + tombol)
+  brandBca: "#0060af",               // teks logo BCA (sementara, sebelum file logo dipasang)
   canvas: "#e8e9eb",                 // latar halaman tab (Beranda, Favorit)
   glass: "rgba(255,255,255,0.22)",   // kapsul transparan di atas latar hijau
   shortcutOrange: "#ef7d00",         // ikon menu pintasan: Poin

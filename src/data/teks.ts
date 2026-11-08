@@ -179,7 +179,8 @@ export const TEKS = {
     },
     kapasitas: {
       judul: "Kapasitas Berat Bersih",
-      tersedia: "\u2713 kapasitas tersedia",
+      tersedia: "kapasitas tersedia",
+      penuh: "kapasitas penuh",
       terpakai: (berat: string) => `${berat} kg`,
       maks: (kapasitas: number) => `/ ${kapasitas} kg`,
       sisa: (sisa: string) => `Sisa ${sisa} kg`,
@@ -188,12 +189,18 @@ export const TEKS = {
     alamat: {
       judul: "Alamat Pengantaran",
       ubah: "Ubah Alamat",
+      judulKartu: (sebutan: string) => `Alamat ${sebutan}`,
+      utama: "Utama",
+      patokan: (teks: string) => `Patokan: ${teks}`,
       kosongJudul: "Belum ada alamat",
       kosongPesan: "Pilih atau tambah alamat pengantaran",
     },
-    pembayaran: {
-      judul: "Pilih Pembayaran",
-      keterangan: "Metode pembayaran dipilih saat checkout",
+    pembayaran: { judul: "Pilih Pembayaran" },
+    rincian: {
+      judul: "Ringkasan Pembayaran",
+      pesanan: "Total Pesanan",
+      ongkir: (label: string) => `Ongkir Kurir (${label})`,
+      total: "Total Tagihan",
     },
     ringkasan: { total: "Total Akhir", bayar: "Bayar" },
     alamatBelumDipilih: {
@@ -203,7 +210,8 @@ export const TEKS = {
     },
     pembayaranBelumAda: {
       judul: "Pembayaran",
-      pesan: "Halaman pembayaran akan dihubungkan pada tahap berikutnya.",
+      pesan: (metode: string, total: string) =>
+        `${metode} - ${total}. Halaman pembayaran akan dihubungkan pada tahap berikutnya.`,
     },
   },
 
