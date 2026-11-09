@@ -23,4 +23,5 @@ export type TagihanTransfer = {
   ongkir: number | null;  // null = ambil di toko
   labelOngkir?: string;   // mis. "Radius 1\u20133 km"
   total: number;
+  dibayarPada?: number;   // ms, terisi saat pelanggan menyatakan sudah transfer
 };

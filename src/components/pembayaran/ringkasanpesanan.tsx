@@ -11,7 +11,7 @@ type Props = { tagihan: TagihanTransfer };
 
 const T = TEKS.pembayaran.ringkasan;
 
-function BarisProduk({ baris }: { baris: BarisTagihan }) {
+export function BarisProduk({ baris }: { baris: BarisTagihan }) {
   const produk = cariProduk(baris.produkId);
   return (
     <View style={styles.baris}>

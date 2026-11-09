@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import * as Clipboard from "expo-clipboard";
+import LogoBank from "@/components/pembayaran/logobank";
 import TeksTebal from "@/components/ui/tekstebal";
 import { TEKS } from "@/data/teks";
+import { useSalin } from "@/hooks/usesalin";
 import { colors, radius, spacing } from "@/theme";
 import { formatRibuan } from "@/utils/angka";
 import { formatHarga } from "@/utils/produk";
@@ -18,7 +18,6 @@ type Props = {
 };
 
 const T = TEKS.pembayaran.rekening;
-const WAKTU_TERSALIN_MS = 2000;
 
 type TombolProps = { label: string; sudah: boolean; gelap?: boolean; onPress: () => void };
 
@@ -40,34 +39,13 @@ function TombolSalin({ label, sudah, gelap, onPress }: TombolProps) {
 
 // Kartu rekening tujuan: nomor rekening, nama akun, dan nominal transfer, masing-masing bisa disalin
 export default function RekeningTransfer({ bank, nomor, namaAkun, total }: Props) {
-  const [tersalin, setTersalin] = useState<Kunci | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, []);
-
-  const salin = async (kunci: Kunci, nilai: string) => {
-    try {
-      await Clipboard.setStringAsync(nilai);
-    } catch {
-      return; // gagal menyalin: jangan tampilkan "Tersalin"
-    }
-    setTersalin(kunci);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setTersalin(null), WAKTU_TERSALIN_MS);
-  };
-
+  const { tersalin, salin } = useSalin<Kunci>();
   const totalTeks = formatHarga(total);
 
   return (
     <View style={styles.kartu}>
       <View style={styles.judulBaris}>
-        <View style={styles.logo}>
-          <Text style={styles.logoTeks}>{bank}</Text>
-        </View>
+        <LogoBank bank={bank} />
         <Text style={styles.judul}>{T.judul(bank)}</Text>
       </View>
 
@@ -121,14 +99,6 @@ export default function RekeningTransfer({ bank, nomor, namaAkun, total }: Props
 const styles = StyleSheet.create({
   kartu: { backgroundColor: colors.white, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md },
   judulBaris: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
-  logo: {
-    borderWidth: 1.5,
-    borderColor: colors.brandBca,
-    borderRadius: radius.sm,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-  },
-  logoTeks: { fontSize: 13, fontWeight: "900", fontStyle: "italic", color: colors.brandBca },
   judul: { fontSize: 14, fontWeight: "700", color: colors.text, textTransform: "uppercase" },
   kotak: { backgroundColor: colors.accentSoft, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.lg },
   baris: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },

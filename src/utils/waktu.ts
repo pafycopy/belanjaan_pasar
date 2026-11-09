@@ -93,3 +93,11 @@ export function formatTanggal(tanggal: string): string {
   return `${d} ${BULAN[m - 1]} ${y}`;
 }
 
+
+/** Waktu lengkap dalam WIB (tidak bergantung zona waktu HP): "18 Okt 2024, 20:45:12 WIB" */
+export function formatWaktuLengkapWib(ms: number): string {
+  const d = new Date(ms + WIB_MS);
+  const tanggal = `${d.getUTCDate()} ${BULAN[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  const jam = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+  return `${tanggal}, ${jam} WIB`;
+}

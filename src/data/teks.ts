@@ -261,17 +261,34 @@ export const TEKS = {
     kembaliKeranjang: "Kembali ke Keranjang",
     konfirmasi: {
       judul: "Sudah transfer?",
-      pesan: (total: string) =>
-        `Pastikan Anda sudah mentransfer tepat ${total}. Pesanan diproses setelah transfer kami cek.`,
+      pesan: (total: string) => `Pastikan Anda sudah mentransfer tepat ${total}.`,
       ya: "Ya, sudah transfer",
-    },
-    terima: {
-      judul: "Terima kasih",
-      pesan: "Transfer Anda akan kami cek. Pesanan mulai diproses setelah pembayaran terverifikasi.",
-      tutup: "Ke Beranda",
     },
     tidakDitemukan: "Tagihan tidak ditemukan. Buat pesanan dari keranjang.",
     gagalBuat: { judul: "Gagal membuat tagihan", pesan: "Terjadi kesalahan, coba lagi." },
+  },
+
+  berhasil: {
+    judul: "Pembayaran Berhasil!",
+    pesan: (bank: string) => `Terima kasih! Pesanan Anda telah terverifikasi ${bank}.`,
+    danaMasuk: "Total Dana Masuk",
+    lunas: "LUNAS",
+    jadwal: {
+      judul: "Jadwal Pesanan",
+      pesanan: (urutan: number, jam: string) => `Pesanan ${urutan} (${jam})`,
+      kustomisasi: "Kustomisasi potongan terpilih:",
+      targetTiba: "Target Tiba:",
+      targetSiap: "Target Siap:",
+      ambilDi: (kios: string) => `Ambil pesanan langsung di ${kios}.`,
+    },
+    ringkasan: {
+      judul: "Ringkasan Pesanan",
+      item: (n: number) => `${n} Item`,
+    },
+    bukti: "Simpan Bukti Pembayaran (E-Receipt)",
+    lihatPesanan: "Lihat Pesanan",
+    keBeranda: "Ke Beranda",
+    tidakDitemukan: "Data pembayaran tidak ditemukan.",
   },
 
   favorit: {

@@ -68,17 +68,16 @@ function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
   const habis = sisa === 0;
   const totalTeks = formatHarga(tagihan.total);
 
-  // Sementara belum ada verifikasi otomatis: pelanggan menyatakan sudah transfer,
-  // keranjang dikosongkan, dan pesanan nanti dicek manual oleh kios.
+  // Sementara belum ada verifikasi otomatis: pelanggan menyatakan sudah transfer, tagihan dicatat
+  // sebagai lunas, keranjang dikosongkan, lalu tampil layar "Pembayaran Berhasil".
   const selesai = async () => {
     if (menyelesaikan) return;
     setMenyelesaikan(true);
     try {
+      await pembayaranRepository.simpanLunas({ ...tagihan, dibayarPada: Date.now() });
       await kosongkan();
       await pembayaranRepository.hapus();
-      Alert.alert(T.terima.judul, T.terima.pesan, [
-        { text: T.terima.tutup, onPress: () => router.dismissTo("/") },
-      ]);
+      router.replace("/pembayaran-berhasil");
     } catch {
       setMenyelesaikan(false);
       Alert.alert(TEKS.peringatan.gagalSimpan.judul, TEKS.peringatan.gagalSimpan.pesan);

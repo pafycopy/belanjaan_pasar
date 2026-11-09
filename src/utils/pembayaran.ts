@@ -2,6 +2,8 @@ import { TarifOngkir, IdPengiriman, IdMetode } from "@/data/keranjang";
 import { BATAS_BAYAR_MENIT } from "@/data/pembayaran";
 import { BarisTagihan, TagihanTransfer } from "@/types/pembayaran";
 import { BarisKeranjang, Tagihan } from "@/utils/keranjang";
+import { formatHarga } from "@/utils/produk";
+import { formatWaktuLengkapWib } from "@/utils/waktu";
 
 // "SM-" + 5 digit. Sementara dibuat di HP; nanti nomor invoice dari server.
 export function buatInvoice(sekarang: number = Date.now()): string {
@@ -64,4 +66,31 @@ export function pecahTebal(teks: string): PotonganTeks[] {
     .split("**")
     .map((bagian, i) => ({ teks: bagian, tebal: i % 2 === 1 }))
     .filter((p) => p.teks.length > 0);
+}
+
+// Pilihan potongan yang dipakai di pesanan, tanpa duplikat ("Potong 4" muncul sekali)
+export function potonganUnik(baris: readonly BarisTagihan[]): string[] {
+  return [...new Set(baris.map((b) => b.potongan).filter((p): p is string => !!p))];
+}
+
+type Rekening = { bank: string; nomor: string; namaAkun: string };
+
+// Bukti pembayaran berbentuk teks, dibagikan lewat menu Bagikan bawaan HP
+export function buatTeksBukti(t: TagihanTransfer, rek: Rekening): string {
+  const baris = t.baris.map((b) => {
+    const nama = b.potongan ? `${b.nama} (${b.potongan})` : b.nama;
+    return `- ${nama}: ${b.jumlah} x ${formatHarga(b.hargaSatuan)} = ${formatHarga(b.hargaSatuan * b.jumlah)}`;
+  });
+  return [
+    "BUKTI PEMBAYARAN - Belanjaan Pasar",
+    `Invoice: #${t.invoice}`,
+    `Waktu: ${formatWaktuLengkapWib(t.dibayarPada ?? t.dibuatPada)}`,
+    `Transfer ke: ${rek.bank} ${rek.nomor} (${rek.namaAkun})`,
+    "",
+    "Pesanan:",
+    ...baris,
+    ...(t.ongkir !== null ? [`- Ongkos kurir${t.labelOngkir ? ` (${t.labelOngkir})` : ""}: ${formatHarga(t.ongkir)}`] : []),
+    "",
+    `Total: ${formatHarga(t.total)}`,
+  ].join("\n");
 }
