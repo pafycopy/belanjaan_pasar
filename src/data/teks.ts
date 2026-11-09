@@ -356,6 +356,22 @@ export const TEKS = {
     },
   },
 
+  akun: {
+    editProfil: "Edit Profil",
+    terverifikasi: "Terverifikasi",
+    poin: "Poin Surya",
+    poinNilai: (n: string) => `${n} Pts`,
+    voucher: "Voucher",
+    voucherNilai: (n: number) => `${n} Kupon`,
+    versi: (v: string) => `v${v}`,
+    keluar: "Keluar dari Akun",
+    ubahFoto: "Ubah foto profil",
+    segera: {
+      judul: "Segera hadir",
+      pesan: (menu: string) => `${menu} belum tersedia.`,
+    },
+  },
+
   favorit: {
     judul: "Favorit",
     daftarJudul: "Produk Favorit Saya",

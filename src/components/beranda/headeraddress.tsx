@@ -10,6 +10,7 @@ type Props = {
   onPressAddress?: () => void;
   onPressCart?: () => void;
   onPressNotification?: () => void;
+  showActions?: boolean; // false = sembunyikan ikon keranjang & notifikasi (mis. di tab Akun)
   style?: StyleProp<ViewStyle>;
 };
 
@@ -20,6 +21,7 @@ export default function HeaderAddress({
   onPressAddress,
   onPressCart,
   onPressNotification,
+  showActions = true,
   style,
 }: Props) {
   const insets = useSafeAreaInsets();
@@ -38,6 +40,7 @@ export default function HeaderAddress({
       </Pressable>
 
       {/* Kanan: keranjang dan notifikasi */}
+      {showActions ? (
       <View style={styles.right}>
         <Pressable onPress={onPressCart} hitSlop={8}>
           <Ionicons name="cart-outline" size={26} color={colors.white} />
@@ -53,6 +56,7 @@ export default function HeaderAddress({
           {hasNotification ? <View style={styles.dot} /> : null}
         </Pressable>
       </View>
+      ) : null}
     </View>
   );
 }
