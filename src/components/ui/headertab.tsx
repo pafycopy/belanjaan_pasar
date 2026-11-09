@@ -9,8 +9,8 @@ type Props = {
   ikonKanan?: IconName;     // bawaan: lonceng; halaman Produk memakai keranjang
   jumlahBadge?: number;     // badge merah di ikon kanan; 0 / kosong = tanpa badge
   labelKanan?: string;      // label aksesibilitas tombol kanan
-  onKembali: () => void;
-  onKanan: () => void;
+  onKembali?: () => void;   // kosong = tanpa tombol kembali
+  onKanan?: () => void;     // kosong = tanpa ikon aksi di kanan
 };
 
 // Header hijau untuk layar tab: tombol kembali, judul di tengah, satu ikon aksi di kanan (lonceng / keranjang)
@@ -27,26 +27,34 @@ export default function HeaderTab({
 
   return (
     <View style={[styles.header, { paddingTop: insets.top + 5 }]}>
-      <Pressable onPress={onKembali} hitSlop={10} style={styles.kiri}>
-        <Ionicons name="chevron-back" size={22} color={colors.white} />
-      </Pressable>
+      {onKembali ? (
+        <Pressable onPress={onKembali} hitSlop={10} style={styles.kiri}>
+          <Ionicons name="chevron-back" size={22} color={colors.white} />
+        </Pressable>
+      ) : (
+        <View style={styles.kiri} />
+      )}
 
       <Text style={styles.judul}>{judul}</Text>
 
-      <Pressable
-        onPress={onKanan}
-        hitSlop={10}
-        style={styles.kanan}
-        accessibilityRole="button"
-        accessibilityLabel={labelKanan}
-      >
-        <Ionicons name={ikonKanan} size={23} color={colors.white} />
-        {jumlahBadge > 0 ? (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{jumlahBadge > 9 ? "9+" : jumlahBadge}</Text>
-          </View>
-        ) : null}
-      </Pressable>
+      {onKanan ? (
+        <Pressable
+          onPress={onKanan}
+          hitSlop={10}
+          style={styles.kanan}
+          accessibilityRole="button"
+          accessibilityLabel={labelKanan}
+        >
+          <Ionicons name={ikonKanan} size={23} color={colors.white} />
+          {jumlahBadge > 0 ? (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{jumlahBadge > 9 ? "9+" : jumlahBadge}</Text>
+            </View>
+          ) : null}
+        </Pressable>
+      ) : (
+        <View style={styles.kanan} />
+      )}
     </View>
   );
 }

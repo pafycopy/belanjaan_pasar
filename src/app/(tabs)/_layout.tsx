@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "@/theme";
 
 export default function TabsLayout() {
@@ -31,14 +31,16 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="favorit"
+        name="ngebelanjain"
         options={{
-          title: "Favorit",
+          title: "Ngebelanjain",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart-outline" size={size} color={color as string} />
+            <MaterialCommunityIcons name="moped" size={size} color={color as string} />
           ),
         }}
       />
+      {/* Favorit dibuka dari menu di Beranda, jadi tidak muncul di bar bawah */}
+      <Tabs.Screen name="favorit" options={{ href: null }} />
       <Tabs.Screen
         name="pesanan"
         options={{

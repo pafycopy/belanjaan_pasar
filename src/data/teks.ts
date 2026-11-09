@@ -372,6 +372,15 @@ export const TEKS = {
     },
   },
 
+  ngebelanjain: {
+    judul: "Ngebelanjain",
+    pesananSaya: "Pesanan Saya",
+    kosongJudul: "Belum ada pesanan Ngebelanjain.",
+    kosongPesan: "Yuk, titip kebutuhan belanja pasar dan biar kami yang belanjain!",
+    mulai: "Mulai Ngebelanjain",
+    segera: { judul: "Segera hadir", pesan: "Layanan Ngebelanjain belum tersedia." },
+  },
+
   favorit: {
     judul: "Favorit",
     daftarJudul: "Produk Favorit Saya",
