@@ -10,6 +10,7 @@ import RekeningTransfer from "@/components/pembayaran/rekeningtransfer";
 import RingkasanPesanan from "@/components/pembayaran/ringkasanpesanan";
 import PetunjukPembayaran from "@/components/pembayaran/petunjukpembayaran";
 import { useKeranjang } from "@/context/keranjang";
+import { usePesanan } from "@/context/pesanan";
 import { PETUNJUK_BCA, REKENING_BCA } from "@/data/pembayaran";
 import { TEKS } from "@/data/teks";
 import { useSekarang } from "@/hooks/usesekarang";
@@ -17,6 +18,7 @@ import { pembayaranRepository } from "@/services/pembayaranrepository";
 import { colors, spacing } from "@/theme";
 import { TagihanTransfer } from "@/types/pembayaran";
 import { sisaDetik } from "@/utils/pembayaran";
+import { buatPesanan } from "@/utils/pesanan";
 import { formatHarga } from "@/utils/produk";
 
 const T = TEKS.pembayaran;
@@ -61,6 +63,7 @@ export default function Pembayaran() {
 function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
   const router = useRouter();
   const { kosongkan } = useKeranjang();
+  const { tambah: tambahPesanan } = usePesanan();
   const sekarang = useSekarang();
   const [menyelesaikan, setMenyelesaikan] = useState(false);
 
@@ -74,7 +77,9 @@ function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
     if (menyelesaikan) return;
     setMenyelesaikan(true);
     try {
-      await pembayaranRepository.simpanLunas({ ...tagihan, dibayarPada: Date.now() });
+      const lunas: TagihanTransfer = { ...tagihan, dibayarPada: Date.now() };
+      await pembayaranRepository.simpanLunas(lunas);
+      await tambahPesanan(buatPesanan(lunas)); // muncul di tab Pesanan > Disiapkan
       await kosongkan();
       await pembayaranRepository.hapus();
       router.replace("/pembayaran-berhasil");

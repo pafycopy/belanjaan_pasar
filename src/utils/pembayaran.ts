@@ -29,6 +29,8 @@ export function buatTagihanTransfer(b: BahanTagihan): TagihanTransfer {
     jumlah: item.jumlah,
     hargaSatuan: item.hargaSatuan,
     potongan: produk.opsiPotongan?.find((o) => o.id === item.potonganId)?.judul,
+    potonganId: item.potonganId,
+    catatan: item.catatan,
   }));
 
   return {

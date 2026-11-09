@@ -7,7 +7,9 @@ import { colors, radius, spacing } from "@/theme";
 import { BarisTagihan, TagihanTransfer } from "@/types/pembayaran";
 import { cariProduk, formatHarga } from "@/utils/produk";
 
-type Props = { tagihan: TagihanTransfer };
+type Props = {
+  tagihan: Pick<TagihanTransfer, "invoice" | "baris" | "ongkir" | "labelOngkir" | "pengiriman" | "alamat">;
+};
 
 const T = TEKS.pembayaran.ringkasan;
 

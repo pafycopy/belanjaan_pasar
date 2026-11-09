@@ -101,3 +101,43 @@ export function formatWaktuLengkapWib(ms: number): string {
   const jam = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
   return `${tanggal}, ${jam} WIB`;
 }
+
+const HARI_MS = 24 * 3600 * 1000;
+
+/** Jam WIB: "04.30" */
+export function formatJamWib(ms: number): string {
+  const d = new Date(ms + WIB_MS);
+  return `${pad(d.getUTCHours())}.${pad(d.getUTCMinutes())}`;
+}
+
+/** "18 Okt, 06.15 WIB" */
+export function formatTanggalJamWib(ms: number): string {
+  const d = new Date(ms + WIB_MS);
+  return `${d.getUTCDate()} ${BULAN[d.getUTCMonth()]}, ${formatJamWib(ms)} WIB`;
+}
+
+/** "Hari ini" | "Besok" | "18 Okt" (menurut tanggal WIB, dibanding `sekarang`) */
+export function labelHariWib(ms: number, sekarang: number = Date.now()): string {
+  const selisih = Math.floor((ms + WIB_MS) / HARI_MS) - Math.floor((sekarang + WIB_MS) / HARI_MS);
+  if (selisih === 0) return "Hari ini";
+  if (selisih === 1) return "Besok";
+  const d = new Date(ms + WIB_MS);
+  return `${d.getUTCDate()} ${BULAN[d.getUTCMonth()]}`;
+}
+
+/** Saat berikutnya (setelah `ms`) yang jatuh pada jam:menit WIB tertentu */
+export function berikutnyaJamWib(ms: number, jam: number, menit: number): number {
+  const w = ms + WIB_MS;
+  let t = Math.floor(w / HARI_MS) * HARI_MS + (jam * 60 + menit) * 60_000;
+  if (t <= w) t += HARI_MS;
+  return t - WIB_MS;
+}
+
+/** Pagi / Siang / Sore / Malam (WIB) */
+export function bagianHariWib(ms: number): "Pagi" | "Siang" | "Sore" | "Malam" {
+  const jam = new Date(ms + WIB_MS).getUTCHours();
+  if (jam < 11) return "Pagi";
+  if (jam < 15) return "Siang";
+  if (jam < 18) return "Sore";
+  return "Malam";
+}

@@ -7,6 +7,8 @@ export type BarisTagihan = {
   jumlah: number;
   hargaSatuan: number;
   potongan?: string; // judul pilihan potongan, mis. "Potong 4"
+  potonganId?: string;
+  catatan?: string;
 };
 
 // Tagihan transfer manual yang sedang menunggu dibayar.

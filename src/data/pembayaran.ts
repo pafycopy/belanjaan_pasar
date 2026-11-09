@@ -20,7 +20,11 @@ export const JENDELA_ANTAR = "05.30 - 07.00 WIB";
 // Contoh data kios & jadwal pemotongan untuk layar "Pembayaran Berhasil".
 // Sementara tetap; nanti dari server per pesanan.
 export const KIOS_PEMOTONGAN = { nama: "Kios Potong H. Syamsuddin", blok: "Blok B5" } as const;
-export const JADWAL_PEMOTONGAN = { urutan: 1, jam: "04.30 - 05.00 WIB" } as const;
+export const JADWAL_PEMOTONGAN = {
+  urutan: 1,
+  jam: "04.30 - 05.00 WIB",
+  mulai: { jam: 4, menit: 30 }, // dipakai menghitung "Besok 04.30" di daftar pesanan
+} as const;
 
 export type DataPetunjuk = {
   nomor: string;     // nomor rekening tujuan
