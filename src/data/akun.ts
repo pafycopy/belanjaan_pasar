@@ -1,12 +1,5 @@
 import { IconName } from "@/types/ui";
 
-// Data profil contoh (sementara, belum ada login). Nanti dari akun pengguna di server.
-export const PROFIL_CONTOH = {
-  nama: "Asep Gracier",
-  telepon: "+62 812-8921-3400",
-  terverifikasi: true,
-} as const;
-
 export type MenuAkun = {
   id: string;
   label: string;
