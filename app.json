@@ -39,6 +39,13 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Izinkan Belanjaan Pasar mengakses foto untuk digunakan sebagai foto profil.",
+          "microphonePermission": false
+        }
       ]
     ],
     "experiments": {
