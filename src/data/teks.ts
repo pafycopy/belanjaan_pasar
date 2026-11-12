@@ -392,6 +392,7 @@ export const TEKS = {
       },
       berhasil: { judul: "Profil Diperbarui", pesan: "Perubahan profil berhasil disimpan." },
       gagal: { judul: "Gagal Menyimpan", pesan: "Profil belum berhasil disimpan. Silakan coba lagi." },
+      gagalFoto: { judul: "Foto Gagal Dipilih", pesan: "Foto tidak dapat disimpan. Silakan pilih gambar lain." },
     },
     segera: {
       judul: "Segera hadir",
