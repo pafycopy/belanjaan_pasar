@@ -39,9 +39,39 @@ export const promos: Promo[] = [
 // Menu pintasan: tujuan (href) ikut di data, jadi Beranda cukup memetakan tanpa daftar if/map terpisah
 export type MenuPintasan = Omit<MenuItem, "onPress"> & { href: Href };
 
+
 export const menuItems: MenuPintasan[] = [
-  { id: "poin", label: "Poin Saya", icon: "star", iconBackground: colors.shortcutOrange, href: "/poin" },
-  { id: "favorit", label: "Favorit", icon: "heart", iconBackground: colors.shortcutGreen, href: "/favorit" },
-  { id: "voucher", label: "Voucher", icon: "ticket", iconBackground: colors.shortcutGreen, href: "/voucher" },
-  { id: "riwayat", label: "Riwayat Transaksi", icon: "receipt", iconBackground: colors.shortcutGreen, href: "/pesanan" },
+  {
+    id: "poin",
+    label: "Poin Saya",
+    icon: "star",
+    iconImage: require("../../assets/icon/poin-saya.svg"),
+    iconBackground: colors.shortcutOrange,
+    href: "/poin",
+  },
+  {
+    id: "favorit",
+    label: "Favorit",
+    icon: "heart",
+    iconImage: require("../../assets/icon/favorit.svg"),
+    iconBackground: colors.shortcutGreen,
+    href: "/favorit",
+  },
+  {
+    id: "voucher",
+    label: "Voucher",
+    icon: "ticket",
+    iconImage: require("../../assets/icon/voucher.svg"),
+    iconBackground: colors.shortcutGreen,
+    href: "/voucher",
+  },
+  {
+    id: "riwayat",
+    label: "Riwayat Transaksi",
+    icon: "receipt",
+    iconImage: require("../../assets/icon/riwayat-transaksi.svg"),
+    iconBackground: colors.shortcutGreen,
+    href: "/pesanan",
+  },
 ];
+
