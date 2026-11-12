@@ -38,8 +38,8 @@ export default function AkunScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.profil}>
           <KartuProfil
-            nama={profilMemuat ? "Memuat profil..." : profil.nama}
-            telepon={profil.telepon}
+            nama={profilMemuat ? "Memuat profil..." : profil.nama || T.profilKosong}
+            telepon={profil.telepon || T.teleponKosong}
             fotoUri={profil.fotoUri}
             terverifikasi={profil.terverifikasi}
             poin={T.poinNilai(formatRibuan(totalPoin))}
