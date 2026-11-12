@@ -8,7 +8,8 @@ import { BarisMenu, GrupMenu } from "@/components/akun/barismenu";
 import { useAlamat } from "@/context/alamat";
 import { usePoin } from "@/context/poin";
 import { useVoucher } from "@/context/voucher";
-import { GRUP_MENU_AKUN, MenuAkun, PROFIL_CONTOH } from "@/data/akun";
+import { useProfil } from "@/context/profil";
+import { GRUP_MENU_AKUN, MenuAkun } from "@/data/akun";
 import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { hitungVoucherAktif } from "@/utils/akun";
@@ -21,6 +22,7 @@ export default function AkunScreen() {
   const { terpilih, memuat } = useAlamat();
   const { total: totalPoin } = usePoin();
   const { milik } = useVoucher();
+  const { profil, memuat: profilMemuat } = useProfil();
 
   const alamatHeader = memuat ? TEKS.header.memuat : terpilih ? terpilih.jalan : TEKS.header.kosong;
   const versi = Constants.expoConfig?.version ?? "-";
@@ -36,13 +38,14 @@ export default function AkunScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.profil}>
           <KartuProfil
-            nama={PROFIL_CONTOH.nama}
-            telepon={PROFIL_CONTOH.telepon}
-            terverifikasi={PROFIL_CONTOH.terverifikasi}
+            nama={profilMemuat ? "Memuat profil..." : profil.nama || T.profilKosong}
+            telepon={profil.telepon || T.teleponKosong}
+            fotoUri={profil.fotoUri}
+            terverifikasi={profil.terverifikasi}
             poin={T.poinNilai(formatRibuan(totalPoin))}
             voucher={T.voucherNilai(hitungVoucherAktif(milik))}
-            onEdit={() => segera(T.editProfil)}
-            onFoto={() => segera(T.ubahFoto)}
+            onEdit={() => router.push("/edit-profil")}
+            onFoto={() => router.push("/edit-profil")}
             onPoin={() => router.push("/poin")}
             onVoucher={() => router.push("/voucher")}
           />
