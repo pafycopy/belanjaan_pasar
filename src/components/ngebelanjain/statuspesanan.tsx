@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TabNgebelanjain } from "@/data/ngebelanjain";
 import { StatusNgebelanjain } from "@/types/ngebelanjain";
 import { colors, spacing } from "@/theme";
+import { Image } from "expo-image";
 
 type Props = {
   items: readonly TabNgebelanjain[];
@@ -24,7 +25,19 @@ export default function TabStatusNgebelanjain({ items, selectedId, onSelect }: P
             accessibilityRole="tab"
             accessibilityState={{ selected: aktif }}
           >
-            <Ionicons name={it.ikon} size={26} color={aktif ? colors.dark : colors.textStrong} />
+            {it.ikonGambar ? (
+            <Image
+              source={it.ikonGambar}
+              style={styles.ikonGambar}
+              contentFit="contain"
+            />
+          ) : (
+            <Ionicons
+              name={it.ikon}
+              size={26}
+              color={aktif ? colors.dark : colors.textStrong}
+            />
+          )}
             <Text style={[styles.label, aktif && styles.labelAktif]} numberOfLines={2}>
               {it.label}
             </Text>
@@ -37,6 +50,10 @@ export default function TabStatusNgebelanjain({ items, selectedId, onSelect }: P
 
 const styles = StyleSheet.create({
   baris: { flexDirection: "row", alignItems: "stretch" },
+  ikonGambar: {
+  width: 26,
+  height: 26,
+  },
   item: {
     flex: 1,
     alignItems: "center",

@@ -2,11 +2,21 @@ import { ImageSource } from "expo-image";
 import { MetodeNgebelanjain, StatusNgebelanjain } from "@/types/ngebelanjain";
 import { IconName } from "@/types/ui";
 
-export type TabNgebelanjain = { id: StatusNgebelanjain; label: string; ikon: IconName };
+export type TabNgebelanjain = {
+  id: StatusNgebelanjain;
+  label: string;
+  ikon: IconName;
+  ikonGambar?: ImageSource | number;
+};
 
 // Tahapan pesanan Ngebelanjain (titip belanja pasar), urut dari awal sampai akhir
 export const TAB_NGEBELANJAIN: readonly TabNgebelanjain[] = [
-  { id: "diproses", label: "Sedang\nDiproses", ikon: "sync-circle-outline" },
+  {
+    id: "diproses",
+    label: "Sedang\nDiproses",
+    ikon: "sync-circle-outline",
+    ikonGambar: require("../../assets/icon/sedang-proses.svg"),
+  },
   { id: "dibelanjain", label: "Sedang\nDibelanjain", ikon: "cart" },
   { id: "pembayaran", label: "Pembayaran\nTersedia", ikon: "card" },
   { id: "dibayar", label: "Sudah\nDibayar", ikon: "checkbox-outline" },
@@ -30,8 +40,9 @@ export const NOMOR_WA_NGEBELANJAIN = "";
 //   export const GAMBAR_QRIS = require("../../assets/images/qris.png");
 export const GAMBAR_QRIS: ImageSource | number | undefined = undefined;
 
-// Ilustrasi layar kosong. Kosong = tampil gambar sementara dari ikon.
-export const ILUSTRASI_NGEBELANJAIN_KOSONG: ImageSource | number | undefined = undefined;
+// Ilustrasi untuk kondisi kosong pada menu Ngebelanjain.
+export const ILUSTRASI_NGEBELANJAIN_KOSONG: ImageSource | number =
+  require("../../assets/images/ngeblanjain-empty.svg");
 
 // Data contoh untuk simulasi tugas admin di mode pengembangan (nanti diisi admin lewat server)
 export const ESTIMASI_SELESAI_CONTOH = "06.15 WIB";
