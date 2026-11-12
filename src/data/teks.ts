@@ -366,6 +366,8 @@ export const TEKS = {
     versi: (v: string) => `v${v}`,
     keluar: "Keluar dari Akun",
     ubahFoto: "Ubah foto profil",
+    profilKosong: "Lengkapi profil Anda",
+    teleponKosong: "Tambahkan nomor telepon",
     edit: {
       judul: "Edit Profil",
       foto: "Foto Profil",
