@@ -1,9 +1,9 @@
 import { Profil } from "@/types/profil";
 
-// Nilai awal untuk akun demo sebelum profil pertama kali disimpan pengguna.
+// Profil kosong digunakan sampai pengguna mengisi informasi miliknya sendiri.
 export const PROFIL_AWAL: Profil = {
-  nama: "Asep Gracier",
-  telepon: "+62 812-8921-3400",
+  nama: "",
+  telepon: "",
   fotoUri: null,
-  terverifikasi: true,
+  terverifikasi: false,
 };
