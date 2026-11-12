@@ -8,6 +8,7 @@ import Button from "@/components/ui/button";
 import FotoProfil from "@/components/akun/fotoprofil";
 import FieldProfil from "@/components/akun/fieldprofil";
 import { useProfil } from "@/context/profil";
+import { simpanFotoProfil } from "@/services/profilfotoservice";
 import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 
@@ -36,7 +37,12 @@ export default function EditProfilScreen() {
     });
 
     if (!hasil.canceled && hasil.assets[0]?.uri) {
-      setFotoUri(hasil.assets[0].uri);
+      try {
+        const uriPermanen = await simpanFotoProfil(hasil.assets[0].uri);
+        setFotoUri(uriPermanen);
+      } catch {
+        Alert.alert(T.gagalFoto.judul, T.gagalFoto.pesan);
+      }
     }
   };
 
