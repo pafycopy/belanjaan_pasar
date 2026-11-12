@@ -86,7 +86,7 @@ export default function EditProfilScreen() {
           <FotoProfil fotoUri={fotoUri} size={104} editable onPress={pilihFoto} />
           <Text style={styles.namaFoto}>{T.foto}</Text>
           <Text style={styles.petunjukFoto}>{T.petunjukFoto}</Text>
-          <Button label={T.tombolFoto} icon="camera-outline" variant="light" size="sm" onPress={pilihFoto} />
+          <Button style={styles.tombolFoto} label={T.tombolFoto} icon="camera-outline" variant="light" size="sm" onPress={pilihFoto} />
         </View>
 
         <View style={styles.formCard}>
@@ -140,7 +140,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   namaFoto: { fontSize: 15, fontWeight: "800", color: colors.text, marginTop: spacing.xs },
-  petunjukFoto: { fontSize: 12, color: colors.muted, textAlign: "center", marginBottom: spacing.sm },
+  petunjukFoto: { fontSize: 12, color: colors.muted, textAlign: "center", marginBottom: spacing.sm, },
+  tombolFoto: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: radius.md },
   formCard: { backgroundColor: colors.white, borderRadius: radius.card, padding: spacing.lg, gap: spacing.lg },
   heading: { gap: 4, marginBottom: spacing.xs },
   headingTitle: { fontSize: 16, fontWeight: "800", color: colors.text },
