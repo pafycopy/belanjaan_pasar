@@ -2,11 +2,13 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { TEKS } from "@/data/teks";
+import FotoProfil from "@/components/akun/fotoprofil";
 import { colors, radius, spacing } from "@/theme";
 
 type Props = {
   nama: string;
   telepon: string;
+  fotoUri: string | null;
   terverifikasi: boolean;
   poin: string;      // sudah diformat, mis. "2.450 Pts"
   voucher: string;   // sudah diformat, mis. "3 Kupon"
@@ -28,7 +30,7 @@ function Statistik({ label, nilai, onPress }: { label: string; nilai: string; on
 }
 
 // Kartu profil: foto (kosong dulu), nama, nomor HP, status terverifikasi, dan ringkasan poin & voucher
-export default function KartuProfil({ nama, telepon, terverifikasi, poin, voucher, onEdit, onFoto, onPoin, onVoucher }: Props) {
+export default function KartuProfil({ nama, telepon, fotoUri, terverifikasi, poin, voucher, onEdit, onFoto, onPoin, onVoucher }: Props) {
   return (
     <View style={styles.kartu}>
       {/* semburat hijau lembut di pojok kanan atas */}
@@ -42,7 +44,7 @@ export default function KartuProfil({ nama, telepon, terverifikasi, poin, vouche
 
       <View style={styles.atas}>
         <Pressable onPress={onFoto} style={styles.avatarWrap} accessibilityRole="button" accessibilityLabel={T.ubahFoto}>
-          <View style={styles.avatar} />
+          <FotoProfil fotoUri={fotoUri} size={58} editable onPress={onFoto} />
           <View style={styles.avatarBadge}>
             <Ionicons name="camera" size={13} color={colors.white} />
           </View>
@@ -89,20 +91,6 @@ const styles = StyleSheet.create({
   },
   atas: { flexDirection: "row", alignItems: "center", gap: spacing.lg },
   avatarWrap: { width: 58, height: 58 },
-  avatar: { width: 58, height: 58, borderRadius: 29, backgroundColor: colors.accentSoftStrong },
-  avatarBadge: {
-    position: "absolute",
-    right: -3,
-    bottom: -3,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.dark,
-    borderWidth: 2,
-    borderColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   info: { flex: 1, gap: 4 },
   nama: { fontSize: 17, fontWeight: "800", color: colors.text },
   telepon: { fontSize: 12, color: colors.textSoft },
