@@ -141,3 +141,14 @@ export function bagianHariWib(ms: number): "Pagi" | "Siang" | "Sore" | "Malam" {
   if (jam < 18) return "Sore";
   return "Malam";
 }
+
+/** "2026-11" menurut WIB */
+export function kunciBulanWib(ms: number): string {
+  return tanggalWIB(ms).slice(0, 7);
+}
+
+/** "2026-11" -> "Nov 2026" */
+export function labelBulanTahun(kunci: string): string {
+  const [tahun, bulan] = kunci.split("-").map(Number);
+  return `${BULAN[bulan - 1]} ${tahun}`;
+}

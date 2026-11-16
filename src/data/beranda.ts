@@ -71,7 +71,7 @@ export const menuItems: MenuPintasan[] = [
     icon: "receipt",
     iconImage: require("../../assets/icon/riwayat-transaksi.svg"),
     iconBackground: colors.shortcutGreen,
-    href: "/pesanan",
+    href: "/riwayat",
   },
 ];
 

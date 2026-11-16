@@ -291,6 +291,20 @@ export const TEKS = {
     tidakDitemukan: "Data pembayaran tidak ditemukan.",
   },
 
+  riwayat: {
+    judul: "Riwayat Transaksi",
+    cari: "Cari pesanan atau produk saya",
+    semuaWaktu: "Semua Waktu",
+    pilihBulan: "Pilih Bulan",
+    filterBulan: "Filter bulan",
+    tokoBawaan: "Toko Belanjaan Pasar",
+    jumlahBelanjaan: (jumlah: number) => `Total ${jumlah} Belanjaan:`,
+    beliLagi: "Beli Lagi",
+    nilai: "Nilai",
+    kosong: "Belum ada riwayat transaksi.",
+    kosongCari: "Transaksi tidak ditemukan.",
+  },
+
   pesanan: {
     judul: "Pesanan Saya",
     cari: "Cari No. Pesanan (#SM-...) atau produk",

@@ -3,8 +3,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors, radius } from "@/theme";
 import { IconName } from "@/types/ui";
 
-type Variant = "primary" | "light" | "outline" | "glass";
-type Size = "sm" | "md" | "lg";
+type Variant = "primary" | "light" | "outline" | "glass" | "soft";
+type Size = "xs" | "sm" | "md" | "lg";
 
 type Props = {
   label: string;
@@ -18,6 +18,7 @@ type Props = {
 };
 
 const UKURAN: Record<Size, { height: number; fontSize: number; iconSize: number; radius: number }> = {
+  xs: { height: 34, fontSize: 12, iconSize: 14, radius: radius.md },
   sm: { height: 42, fontSize: 13, iconSize: 14, radius: radius.md },
   md: { height: 44, fontSize: 13, iconSize: 16, radius: radius.lg },
   lg: { height: 48, fontSize: 14, iconSize: 18, radius: radius.lg },
@@ -27,6 +28,7 @@ const VARIAN: Record<Variant, { bg: string; fg: string; border?: string; weight:
   primary: { bg: colors.dark, fg: colors.white, weight: "700" },
   light: { bg: colors.white, fg: colors.text, border: colors.border, weight: "700" },
   outline: { bg: colors.white, fg: colors.textSoft, border: colors.border, weight: "600" },
+  soft: { bg: colors.accentSoftStrong, fg: colors.dark, weight: "700" },
   glass: { bg: "rgba(255,255,255,0.16)", fg: colors.white, weight: "700" }, // di atas latar hijau tua
 };
 
