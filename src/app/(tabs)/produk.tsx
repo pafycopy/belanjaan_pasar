@@ -3,6 +3,7 @@ import { FlatList, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import HeaderAddress from "@/components/beranda/headeraddress";
 import { useAlamat } from "@/context/alamat";
+import { usePesanan } from "@/context/pesanan";
 import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import SearchField from "@/components/ui/searchfield";
 import JudulSeksi from "@/components/ui/judulseksi";
@@ -12,42 +13,52 @@ import ScreenState from "@/components/ui/screenstate";
 import PromoCarousel from "@/components/beranda/promocarousel";
 import KartuProduk from "@/components/produk/kartuproduk";
 import KartuProdukRingkas from "@/components/produk/kartuprodukringkas";
-import { useFavorit } from "@/context/favorit";
 import { useKeranjang } from "@/context/keranjang";
 import { JAM_KIOS, promos } from "@/data/beranda";
 import { DAFTAR_PRODUK, KATEGORI_PRODUK, KATEGORI_PRODUK_SEMUA } from "@/data/produk";
+import { JUDUL_PRODUK_TERLARIS } from "@/data/terlaris";
 import { TEKS } from "@/data/teks";
 import { useTambahCepat } from "@/hooks/usetambahcepat";
-import { produkDariIds } from "@/utils/favorit";
 import { saringProduk } from "@/utils/produk";
+import { urutkanProdukTerlaris } from "@/utils/terlaris";
 import { colors, spacing } from "@/theme";
 
 const T = TEKS.katalog;
 
 export default function ProdukScreen() {
   const { terpilih, memuat } = useAlamat();
+  const alamatHeader = memuat
+    ? TEKS.header.memuat
+    : terpilih
+      ? terpilih.jalan
+      : TEKS.header.kosong;
 
-const alamatHeader = memuat
-  ? TEKS.header.memuat
-  : terpilih
-    ? terpilih.jalan
-    : TEKS.header.kosong;
   const router = useRouter();
   const { jumlahBaris } = useKeranjang();
-  const { ids } = useFavorit();
+  const { pesanan } = usePesanan();
   const tambahCepat = useTambahCepat();
 
   const [cari, setCari] = useState("");
   const [kategori, setKategori] = useState(KATEGORI_PRODUK_SEMUA);
 
-  const favorit = useMemo(() => produkDariIds(ids, DAFTAR_PRODUK), [ids]);
-  const daftar = useMemo(() => saringProduk(DAFTAR_PRODUK, cari, kategori), [cari, kategori]);
+  // Semua produk katalog tetap ditampilkan; produk dengan penjualan tertinggi
+  // dalam 30 hari terakhir ditempatkan lebih dahulu.
+  const produkTerlaris = useMemo(
+    () => urutkanProdukTerlaris(DAFTAR_PRODUK, pesanan),
+    [pesanan]
+  );
 
-  const keDetail = (id: string) => router.push({ pathname: "/produk/[id]", params: { id } });
+  const daftar = useMemo(
+    () => saringProduk(DAFTAR_PRODUK, cari, kategori),
+    [cari, kategori]
+  );
+
+  const keDetail = (id: string) =>
+    router.push({ pathname: "/produk/[id]", params: { id } });
 
   return (
     <View style={styles.screen}>
-        <HeaderAddress
+      <HeaderAddress
         address={alamatHeader}
         cartCount={jumlahBaris}
         hasNotification={JUMLAH_NOTIFIKASI_BARU > 0}
@@ -67,29 +78,23 @@ const alamatHeader = memuat
           />
         </View>
 
-        {/* Hanya tampil bila sudah ada produk favorit */}
-        {favorit.length > 0 ? (
-          <View style={styles.seksi}>
-            <JudulSeksi
-              judul={T.favoritJudul}
-              aksi={{ label: T.lihatSemua, onPress: () => router.navigate("/favorit") }}
-            />
-            <FlatList
-              horizontal
-              data={favorit}
-              keyExtractor={(p) => p.id}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.favoritList}
-              renderItem={({ item }) => (
-                <KartuProdukRingkas
-                  produk={item}
-                  onPress={() => keDetail(item.id)}
-                  onTambah={() => void tambahCepat(item)}
-                />
-              )}
-            />
-          </View>
-        ) : null}
+        <View style={styles.seksi}>
+          <JudulSeksi judul={JUDUL_PRODUK_TERLARIS} />
+          <FlatList
+            horizontal
+            data={produkTerlaris}
+            keyExtractor={(produk) => produk.id}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.produkTerlarisList}
+            renderItem={({ item }) => (
+              <KartuProdukRingkas
+                produk={item}
+                onPress={() => keDetail(item.id)}
+                onTambah={() => void tambahCepat(item)}
+              />
+            )}
+          />
+        </View>
 
         <View style={styles.seksi}>
           <JudulSeksi
@@ -122,7 +127,7 @@ const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xl },
   searchWrap: { paddingHorizontal: 14, paddingTop: spacing.md },
   seksi: { marginTop: spacing.lg },
-  favoritList: { paddingHorizontal: 14, gap: 10 },
+  produkTerlarisList: { paddingHorizontal: 14, gap: 10 },
   filters: { marginTop: spacing.lg },
   grid: {
     flexDirection: "row",
