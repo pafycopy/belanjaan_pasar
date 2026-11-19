@@ -3,6 +3,8 @@ import { useRouter } from "expo-router";
 import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
 import HeaderAddress from "@/components/beranda/headeraddress";
+import { useKeranjang } from "@/context/keranjang";
+import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import KartuProfil from "@/components/akun/kartuprofil";
 import { BarisMenu, GrupMenu } from "@/components/akun/barismenu";
 import { useAlamat } from "@/context/alamat";
@@ -19,6 +21,7 @@ const T = TEKS.akun;
 
 export default function AkunScreen() {
   const router = useRouter();
+  const { jumlahBaris } = useKeranjang();
   const { terpilih, memuat } = useAlamat();
   const { total: totalPoin } = usePoin();
   const { milik } = useVoucher();
@@ -33,7 +36,14 @@ export default function AkunScreen() {
 
   return (
     <View style={styles.screen}>
-      <HeaderAddress address={alamatHeader} showActions={false} onPressAddress={() => router.push("/alamat")} />
+     <HeaderAddress
+      address={alamatHeader}
+      cartCount={jumlahBaris}
+      hasNotification={JUMLAH_NOTIFIKASI_BARU > 0}
+      onPressAddress={() => router.push("/alamat")}
+      onPressCart={() => router.push("/keranjang")}
+      onPressNotification={() => router.push("/notifikasi")}
+    />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.profil}>

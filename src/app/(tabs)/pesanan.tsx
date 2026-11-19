@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import HeaderTab from "@/components/ui/headertab";
+import HeaderAddress from "@/components/beranda/headeraddress";
+import { useAlamat } from "@/context/alamat";
+import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import SearchField from "@/components/ui/searchfield";
 import ScreenState from "@/components/ui/screenstate";
 import KartuPesanan from "@/components/pesanan/kartupesanan";
@@ -19,6 +21,13 @@ const T = TEKS.pesanan;
 
 export default function PesananScreen() {
   const router = useRouter();
+  const { terpilih, memuat: alamatMemuat } = useAlamat();
+
+const alamatHeader = alamatMemuat
+  ? TEKS.header.memuat
+  : terpilih
+    ? terpilih.jalan
+    : TEKS.header.kosong;
   const { jumlahBaris } = useKeranjang();
   const { pesanan, memuat, majukan } = usePesanan();
   const pesanUlang = usePesanUlang();
@@ -40,13 +49,13 @@ export default function PesananScreen() {
 
   return (
     <View style={styles.screen}>
-      <HeaderTab
-        judul={T.judul}
-        ikonKanan="cart-outline"
-        jumlahBadge={jumlahBaris}
-        labelKanan={TEKS.katalog.keranjangAksesibilitas}
-        onKembali={() => router.back()}
-        onKanan={() => router.push("/keranjang")}
+      <HeaderAddress
+        address={alamatHeader}
+        cartCount={jumlahBaris}
+        hasNotification={JUMLAH_NOTIFIKASI_BARU > 0}
+        onPressAddress={() => router.push("/alamat")}
+        onPressCart={() => router.push("/keranjang")}
+        onPressNotification={() => router.push("/notifikasi")}
       />
 
       <ScrollView

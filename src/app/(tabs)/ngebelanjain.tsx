@@ -2,7 +2,11 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Button from "@/components/ui/button";
-import HeaderTab from "@/components/ui/headertab";
+import HeaderAddress from "@/components/beranda/headeraddress";
+import { useAlamat } from "@/context/alamat";
+import { useKeranjang } from "@/context/keranjang";
+import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
+import { TEKS } from "@/data/teks";
 import ScreenState from "@/components/ui/screenstate";
 import IlustrasiKosong from "@/components/ngebelanjain/ilustrasikosong";
 import KartuNgebelanjain from "@/components/ngebelanjain/kartupesanan";
@@ -23,6 +27,14 @@ const adaStatus = (x: string | undefined): x is StatusNgebelanjain => TAB_NGEBEL
 
 export default function NgebelanjainScreen() {
   const router = useRouter();
+  const { terpilih, memuat: alamatMemuat } = useAlamat();
+const { jumlahBaris } = useKeranjang();
+
+const alamatHeader = alamatMemuat
+  ? TEKS.header.memuat
+  : terpilih
+    ? terpilih.jalan
+    : TEKS.header.kosong;
   const { tab: tabParam, ts } = useLocalSearchParams<{ tab?: string; ts?: string }>();
   const { pesanan, memuat, perbarui } = useNgebelanjain();
 
@@ -129,7 +141,14 @@ export default function NgebelanjainScreen() {
 
   return (
     <View style={styles.screen}>
-      <HeaderTab judul={T.judul} />
+      <HeaderAddress
+        address={alamatHeader}
+        cartCount={jumlahBaris}
+        hasNotification={JUMLAH_NOTIFIKASI_BARU > 0}
+        onPressAddress={() => router.push("/alamat")}
+        onPressCart={() => router.push("/keranjang")}
+        onPressNotification={() => router.push("/notifikasi")}
+      />
 
       <View style={styles.status}>
         <Text style={styles.statusJudul}>{T.pesananSaya}</Text>

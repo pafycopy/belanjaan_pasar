@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { FlatList, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import HeaderTab from "@/components/ui/headertab";
+import HeaderAddress from "@/components/beranda/headeraddress";
+import { useAlamat } from "@/context/alamat";
+import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import SearchField from "@/components/ui/searchfield";
 import JudulSeksi from "@/components/ui/judulseksi";
 import Pill from "@/components/ui/pill";
@@ -23,6 +25,13 @@ import { colors, spacing } from "@/theme";
 const T = TEKS.katalog;
 
 export default function ProdukScreen() {
+  const { terpilih, memuat } = useAlamat();
+
+const alamatHeader = memuat
+  ? TEKS.header.memuat
+  : terpilih
+    ? terpilih.jalan
+    : TEKS.header.kosong;
   const router = useRouter();
   const { jumlahBaris } = useKeranjang();
   const { ids } = useFavorit();
@@ -38,13 +47,13 @@ export default function ProdukScreen() {
 
   return (
     <View style={styles.screen}>
-      <HeaderTab
-        judul={T.judul}
-        ikonKanan="cart-outline"
-        jumlahBadge={jumlahBaris}
-        labelKanan={T.keranjangAksesibilitas}
-        onKembali={() => router.back()}
-        onKanan={() => router.push("/keranjang")}
+        <HeaderAddress
+        address={alamatHeader}
+        cartCount={jumlahBaris}
+        hasNotification={JUMLAH_NOTIFIKASI_BARU > 0}
+        onPressAddress={() => router.push("/alamat")}
+        onPressCart={() => router.push("/keranjang")}
+        onPressNotification={() => router.push("/notifikasi")}
       />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>

@@ -94,7 +94,6 @@ export default function PilihLokasi() {
               kelola={kelola}
               onGunakan={() => {
                 pilih(a.id);
-                router.back();
               }}
               onUbah={() => keUbah(a.id)}
               onHapus={() => setHapusId(a.id)}
