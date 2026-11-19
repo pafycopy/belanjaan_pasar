@@ -26,7 +26,7 @@ export type Promo = {
 };
 
 type Props = {
-  promos: Promo[];
+  promos?: Promo[];
   onPressPromo?: (promo: Promo) => void;
   autoPlay?: boolean;                // bergeser otomatis (bawaan: aktif)
   cardHeight?: number;               // tinggi semua kartu
@@ -36,7 +36,7 @@ type Props = {
 };
 
 export default function PromoCarousel({
-  promos,
+  promos = [],
   onPressPromo,
   autoPlay = true,
   interval = 4000,
@@ -44,6 +44,9 @@ export default function PromoCarousel({
   style,
   cardStyle,
 }: Props) {
+  // Amankan komponen jika data promo belum tersedia atau nilainya bukan array.
+  const daftarPromo = Array.isArray(promos) ? promos : [];
+
   const [width, setWidth] = useState(0);
   const [index, setIndex] = useState(0);
   const listRef = useRef<FlatList<Promo>>(null);
@@ -56,25 +59,25 @@ export default function PromoCarousel({
   // Geser otomatis. Timer dimulai ulang setiap kali index berubah,
   // jadi setelah pengguna menggeser sendiri, hitungan 4 detik mulai dari awal.
   useEffect(() => {
-    if (!autoPlay || promos.length < 2 || width === 0) return;
+    if (!autoPlay || daftarPromo.length < 2 || width === 0) return;
     const timer = setTimeout(() => {
       if (touching.current) {
         setIndex((i) => i); // sedang disentuh: lewati, jadwalkan lagi
         return;
       }
-      const next = (index + 1) % promos.length;
+      const next = (index + 1) % daftarPromo.length;
       listRef.current?.scrollToOffset({ offset: next * width, animated: true });
       setIndex(next);
     }, interval);
     return () => clearTimeout(timer);
-  }, [index, autoPlay, interval, promos.length, width]);
+  }, [index, autoPlay, interval, daftarPromo.length, width]);
 
   return (
     <View style={style} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
       {width > 0 ? (
         <FlatList
           ref={listRef}
-          data={promos}
+          data={daftarPromo}
           keyExtractor={(p) => p.id}
           horizontal
           pagingEnabled
@@ -128,9 +131,9 @@ export default function PromoCarousel({
       ) : null}
 
       {/* Titik penanda: melayang di atas bagian bawah kartu */}
-      {promos.length > 1 ? (
+      {daftarPromo.length > 1 ? (
         <View pointerEvents="none" style={styles.dots}>
-          {promos.map((p, i) => (
+          {daftarPromo.map((p, i) => (
             <View key={p.id} style={[styles.dot, i === index && styles.dotActive]} />
           ))}
         </View>

@@ -10,11 +10,12 @@ import JudulSeksi from "@/components/ui/judulseksi";
 import Pill from "@/components/ui/pill";
 import ChipGroup from "@/components/ui/chipgroup";
 import ScreenState from "@/components/ui/screenstate";
-import PromoCarousel from "@/components/beranda/promocarousel";
+import PromoHariIni from "@/components/produk/promohariini";
 import KartuProduk from "@/components/produk/kartuproduk";
 import KartuProdukRingkas from "@/components/produk/kartuprodukringkas";
 import { useKeranjang } from "@/context/keranjang";
-import { JAM_KIOS, promos } from "@/data/beranda";
+import { useFavorit } from "@/context/favorit";
+import { JAM_KIOS } from "@/data/beranda";
 import { DAFTAR_PRODUK, KATEGORI_PRODUK, KATEGORI_PRODUK_SEMUA } from "@/data/produk";
 import { JUDUL_PRODUK_TERLARIS } from "@/data/terlaris";
 import { TEKS } from "@/data/teks";
@@ -36,6 +37,7 @@ export default function ProdukScreen() {
   const router = useRouter();
   const { jumlahBaris } = useKeranjang();
   const { pesanan } = usePesanan();
+  const { isFavorit, toggle } = useFavorit();
   const tambahCepat = useTambahCepat();
 
   const [cari, setCari] = useState("");
@@ -101,7 +103,12 @@ export default function ProdukScreen() {
             judul={T.promoJudul}
             kanan={<Pill icon="alarm-outline" label={T.promoSampai(JAM_KIOS.tutup)} />}
           />
-          <PromoCarousel promos={promos} cardHeight={170} />
+          <PromoHariIni
+            produk={DAFTAR_PRODUK}
+            isFavorit={isFavorit}
+            onToggleFavorit={(id) => void toggle(id)}
+            onPressProduk={keDetail}
+          />
         </View>
 
         <View style={styles.filters}>
