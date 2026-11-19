@@ -13,11 +13,11 @@ type Props = {
 export default function SearchBar({ placeholder, value, onChangeText, style, inputStyle }: Props) {
   return (
     <View style={[styles.container, style]}>
-      <Ionicons name="search" size={18} color="#9e9e9e" />
+      <Ionicons name="search" size={18} color={colors.placeholder} />
       <TextInput
         style={[styles.input, inputStyle]}
         placeholder={placeholder}
-        placeholderTextColor="#9e9e9e"
+        placeholderTextColor={colors.placeholder}
         value={value}
         onChangeText={onChangeText}
       />

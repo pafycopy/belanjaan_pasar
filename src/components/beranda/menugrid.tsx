@@ -75,7 +75,7 @@ function MenuIcon({ item }: MenuIconProps) {
         <Ionicons
           name={item.icon}
           size={iconSize}
-          color="#fff"
+          color={colors.white}
         />
       )}
     </View>

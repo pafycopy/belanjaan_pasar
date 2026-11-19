@@ -1,4 +1,5 @@
 import { IconName } from "@/types/ui";
+import { kategoriWarna } from "@/theme";
 
 export type KategoriAlamat = {
   id: string;
@@ -12,10 +13,10 @@ export type KategoriAlamat = {
 
 // Tambah / ubah kategori cukup di sini; chip di form dan ikon di daftar ikut berubah.
 export const KATEGORI_ALAMAT: readonly KategoriAlamat[] = [
-  { id: "rumah", label: "Rumah Utama", sebutan: "Rumah", utama: true, icon: "home", bg: "#e8f5e9", fg: "#2e7d32" },
-  { id: "warung", label: "Warung / Usaha", sebutan: "Warung / Usaha", icon: "storefront", bg: "#ffe8d6", fg: "#c2570c" },
-  { id: "katering", label: "Dapur Katering", sebutan: "Dapur Katering", icon: "restaurant", bg: "#e3ecff", fg: "#3b5bdb" },
-  { id: "kos", label: "Kos / Kontrakan", sebutan: "Kos / Kontrakan", icon: "business", bg: "#efe7ff", fg: "#6741d9" },
+  { id: "rumah", label: "Rumah Utama", sebutan: "Rumah", utama: true, icon: "home", ...kategoriWarna.rumah },
+  { id: "warung", label: "Warung / Usaha", sebutan: "Warung / Usaha", icon: "storefront", ...kategoriWarna.warung },
+  { id: "katering", label: "Dapur Katering", sebutan: "Dapur Katering", icon: "restaurant", ...kategoriWarna.katering },
+  { id: "kos", label: "Kos / Kontrakan", sebutan: "Kos / Kontrakan", icon: "business", ...kategoriWarna.kos },
 ];
 
 // Pilihan "+ Lainnya": user menulis nama label sendiri
@@ -24,11 +25,10 @@ export const KATEGORI_LAINNYA: KategoriAlamat = {
   label: "Lainnya",
   sebutan: "Lainnya",
   icon: "add",
-  bg: "#eeeeee",
-  fg: "#555555",
+  ...kategoriWarna.netral,
 };
 
-const GAYA_LABEL_KUSTOM = { icon: "location" as IconName, bg: "#eeeeee", fg: "#555555" };
+const GAYA_LABEL_KUSTOM = { icon: "location" as IconName, ...kategoriWarna.netral };
 
 export function cariKategori(label: string): KategoriAlamat | undefined {
   return KATEGORI_ALAMAT.find((k) => k.label === label);

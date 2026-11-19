@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   kotakTerklaim: { backgroundColor: colors.accentSoft },
-  kotakSiap: { backgroundColor: "#e3e7fc" },
+  kotakSiap: { backgroundColor: colors.accentSoftDeep },
   kotakKunci: { backgroundColor: colors.lockedBg },
   timbul: {
     elevation: 3,

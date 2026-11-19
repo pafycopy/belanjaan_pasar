@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, StyleProp, StyleSheet, Text, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, radius } from "@/theme";
+import { colors, radius, alpha } from "@/theme";
 import { IconName } from "@/types/ui";
 
 type Variant = "primary" | "light" | "outline" | "glass" | "soft";
@@ -29,7 +29,7 @@ const VARIAN: Record<Variant, { bg: string; fg: string; border?: string; weight:
   light: { bg: colors.white, fg: colors.text, border: colors.border, weight: "700" },
   outline: { bg: colors.white, fg: colors.textSoft, border: colors.border, weight: "600" },
   soft: { bg: colors.accentSoftStrong, fg: colors.dark, weight: "700" },
-  glass: { bg: "rgba(255,255,255,0.16)", fg: colors.white, weight: "700" }, // di atas latar hijau tua
+  glass: { bg: alpha.white16, fg: colors.white, weight: "700" }, // di atas latar hijau tua
 };
 
 export default function Button({

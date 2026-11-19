@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { View, Text, Pressable, ScrollView, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAlamat } from "@/context/alamat";
 import { koordinatDariTeks } from "@/services/lokasi";
 import { TEKS } from "@/data/teks";
 import { colors, spacing } from "@/theme";
-import ConfirmDialog from "@/components/alamat/confirmdialog";
 import AlamatItem from "@/components/alamat/alamatitem";
 import Button from "@/components/ui/button";
 import SearchField from "@/components/ui/searchfield";
@@ -14,9 +13,7 @@ import FooterBar from "@/components/ui/footerbar";
 
 export default function PilihLokasi() {
   const router = useRouter();
-  const { daftar, terpilihId, memuat, pilih, hapus } = useAlamat();
-  const [kelola, setKelola] = useState(false);
-  const [hapusId, setHapusId] = useState<string | null>(null);
+  const { daftar, terpilihId, memuat, pilih } = useAlamat();
   const [cari, setCari] = useState("");
   const [mencari, setMencari] = useState(false);
 
@@ -78,9 +75,6 @@ export default function PilihLokasi() {
               <Ionicons name="bookmark-outline" size={16} color={colors.text} />
               <Text style={styles.cardTitle}>{TEKS.daftar.judulTersimpan(daftar.length)}</Text>
             </View>
-            <Pressable onPress={() => setKelola((v) => !v)} hitSlop={8}>
-              <Text style={styles.manage}>{kelola ? TEKS.selesai : TEKS.kelola}</Text>
-            </Pressable>
           </View>
 
           {memuat ? <ActivityIndicator color={colors.primary} /> : null}
@@ -91,12 +85,8 @@ export default function PilihLokasi() {
               key={a.id}
               alamat={a}
               terpilih={a.id === terpilihId}
-              kelola={kelola}
-              onGunakan={() => {
-                pilih(a.id);
-              }}
-              onUbah={() => keUbah(a.id)}
-              onHapus={() => setHapusId(a.id)}
+              onPress={() => keUbah(a.id)}
+              onGunakan={() => pilih(a.id)}
             />
           ))}
         </View>
@@ -105,19 +95,6 @@ export default function PilihLokasi() {
       <FooterBar bordered={false} background={colors.surface} >
         <Button label={TEKS.daftar.tambahBaru} icon="add" onPress={keTambah} />
       </FooterBar>
-
-      <ConfirmDialog
-        visible={hapusId !== null}
-        title={TEKS.dialogHapus.judul}
-        message={TEKS.dialogHapus.pesan}
-        confirmLabel={TEKS.hapus}
-        cancelLabel={TEKS.batal}
-        onConfirm={() => {
-          if (hapusId) hapus(hapusId);
-          setHapusId(null);
-        }}
-        onCancel={() => setHapusId(null)}
-      />
     </View>
   );
 }
@@ -131,6 +108,5 @@ const styles = StyleSheet.create({
   cardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   cardTitleRow: { flexDirection: "row", alignItems: "center", gap: 6, flex: 1 },
   cardTitle: { fontSize: 12, fontWeight: "700", color: colors.text },
-  manage: { fontSize: 12, fontWeight: "700", color: colors.dark },
   empty: { fontSize: 12, color: colors.muted, textAlign: "center", paddingVertical: spacing.sm },
 });

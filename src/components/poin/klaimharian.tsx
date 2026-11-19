@@ -54,7 +54,7 @@ export default function KlaimHarian({ ringkasan, mengklaim, onKlaim }: Props) {
       />
 
       <View style={styles.hitung}>
-        <Ionicons name="hourglass" size={14} color="#c62828" />
+        <Ionicons name="hourglass" size={14} color={colors.dangerDark} />
         <Text style={styles.hitungLabel}>
           {TEKS.poin.klaim.hitungMundur[hitungMundur.jenis]}{" "}
           <Text style={styles.hitungNilai}>{durasi(hitungMundur.menit)}</Text>

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, radius, spacing } from "@/theme";
+import { colors, radius, spacing, alpha } from "@/theme";
 import { TEKS } from "@/data/teks";
 import { formatRibuan } from "@/utils/angka";
 import Button from "@/components/ui/button";
@@ -17,7 +17,7 @@ export default function KartuPoin({ total, onPressTukar, onPressRiwayat }: Props
     <View style={styles.card}>
       {/* hiasan latar */}
       <View style={styles.hiasan}>
-        <Ionicons name="star" size={46} color="rgba(255,255,255,0.06)" />
+        <Ionicons name="star" size={46} color={alpha.white06} />
       </View>
 
       <View style={styles.atas}>
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 65,
     borderWidth: 14,
-    borderColor: "rgba(255,255,255,0.05)",
+    borderColor: alpha.white05,
     alignItems: "center",
     justifyContent: "center",
   },

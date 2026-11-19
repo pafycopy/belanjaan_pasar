@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     backgroundColor: colors.accentSoft,
   },
-  chipAktif: { backgroundColor: "#1e7a39" },
+  chipAktif: { backgroundColor: colors.primaryDeep },
   teks: { fontSize: 12, fontWeight: "600", color: colors.text },
   teksAktif: { color: colors.white },
   lencana: {

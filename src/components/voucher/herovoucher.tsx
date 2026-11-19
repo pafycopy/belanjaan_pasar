@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, spacing } from "@/theme";
+import { colors, spacing, alpha } from "@/theme";
 import { TEKS } from "@/data/teks";
 import { formatRibuan } from "@/utils/angka";
 import Button from "@/components/ui/button";
@@ -25,7 +25,7 @@ export default function HeroVoucher({ total, tingkat, onPressRiwayat, onPressKla
       style={styles.card}
     >
       <View style={styles.hiasan} pointerEvents="none">
-        <Ionicons name="pricetag" size={74} color="rgba(255,255,255,0.08)" />
+        <Ionicons name="pricetag" size={74} color={alpha.white08} />
       </View>
 
       <View style={styles.atas}>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
     paddingRight: 10,
     borderRadius: 20,
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: alpha.black25,
   },
   bintang: {
     width: 16,

@@ -4,7 +4,6 @@ export const TEKS = {
   batal: "Batal",
   gunakan: "Gunakan",
   dipakai: "Dipakai",
-  kelola: "Kelola",
   selesai: "Selesai",
   opsional: "Opsional",
   alamatTidakDitemukan: "Alamat tidak ditemukan.",
@@ -29,6 +28,7 @@ export const TEKS = {
       `Alamat Tersimpan Lainnya (${jumlah})`,
     kosong:
       "Belum ada alamat tersimpan. Pilih titik di peta untuk menambahkan alamat pertamamu.",
+    ubahHint: "Ketuk untuk mengubah alamat",
   },
 
   pinpoint: {
@@ -43,6 +43,7 @@ export const TEKS = {
     pilihWilayah: "Pilih kecamatan & kelurahan",
     simpanSheet: "Simpan",
     simpan: "Simpan Alamat Pengantaran",
+    hapusAlamat: "Hapus Alamat",
     titikBelumDipilih:
       "Titik lokasi belum dipilih. Kembali dan pilih titik di peta.",
   },

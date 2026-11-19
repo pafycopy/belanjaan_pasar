@@ -30,7 +30,7 @@ export default function WalletCard({ items, style }: Props) {
             <View style={styles.iconSlot}>
               {item.iconBackground ? (
                 <View style={[styles.iconCircle, { backgroundColor: item.iconBackground }]}>
-                  <Ionicons name={item.icon} size={15} color="#fff" />
+                  <Ionicons name={item.icon} size={15} color={colors.white} />
                 </View>
               ) : (
                 <Ionicons name={item.icon} size={24} color={colors.text} />
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 16,
     elevation: 1,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },

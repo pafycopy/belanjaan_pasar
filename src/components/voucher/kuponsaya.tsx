@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors, spacing } from "@/theme";
+import { colors, spacing, alpha } from "@/theme";
 import { TEKS } from "@/data/teks";
 import { StatusMilik, Voucher, VoucherMilik } from "@/types/voucher";
 import { statusMilik, teksBerlaku, waktuKedaluwarsa } from "@/utils/voucher";
@@ -17,9 +17,9 @@ type Props = {
 const T = TEKS.voucher.milik;
 
 const GRADASI: Record<StatusMilik, [string, string, string]> = {
-  aktif: [colors.heroB, "#1f8038", colors.heroB],
-  terpakai: ["#7d8a80", "#98a49c", "#7d8a80"],
-  kedaluwarsa: ["#7d8a80", "#98a49c", "#7d8a80"],
+  aktif: [colors.heroB, colors.couponMid, colors.heroB],
+  terpakai: [colors.couponInactive, colors.couponInactiveLight, colors.couponInactive],
+  kedaluwarsa: [colors.couponInactive, colors.couponInactiveLight, colors.couponInactive],
 };
 
 // Kupon hijau di tab "Voucher Saya"
@@ -60,7 +60,7 @@ export default function KuponSaya({ voucher, milik, sekarang, onPakai }: Props) 
       </View>
 
       <View style={styles.pemisah}>
-        <PemisahTiket warnaGaris="rgba(255,255,255,0.45)" />
+        <PemisahTiket warnaGaris={alpha.white45} />
       </View>
 
       {voucher.rincianKupon ? (
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   atas: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing.md },
   teks: { flex: 1, gap: 2 },
   judul: { fontSize: 19, lineHeight: 25, fontWeight: "800", color: colors.white },
-  syarat: { fontSize: 12, color: "rgba(255,255,255,0.85)" },
+  syarat: { fontSize: 12, color: alpha.white85 },
   pakai: {
     minWidth: 64,
     paddingHorizontal: 16,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     alignItems: "center",
   },
-  pakaiMati: { backgroundColor: "rgba(255,255,255,0.35)" },
+  pakaiMati: { backgroundColor: alpha.white35 },
   pakaiTeks: { fontSize: 14, fontWeight: "800", color: colors.dark },
   pakaiTeksMati: { fontSize: 12, color: colors.white },
   pemisah: { marginTop: 6 },

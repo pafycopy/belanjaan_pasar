@@ -172,7 +172,7 @@ function Form({
         <Button label={TEKS.detail.simpan} onPress={onSimpan} loading={menyimpan} />
         {existing ? (
           <Button
-            label={TEKS.hapus}
+            label={TEKS.detail.hapusAlamat}
             variant="outline"
             size="md"
             onPress={() => setKonfirmasiHapus(true)}

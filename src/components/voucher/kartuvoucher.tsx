@@ -48,7 +48,7 @@ export default function KartuVoucher({ voucher, kedaluwarsa, menukar, onTukar }:
       <Text style={styles.deskripsi}>{voucher.deskripsi}</Text>
 
       <View style={styles.pemisah}>
-        <PemisahTiket warnaGaris="#d5d8e2" />
+        <PemisahTiket warnaGaris={colors.ticketLine} />
       </View>
 
       <View style={styles.footer}>

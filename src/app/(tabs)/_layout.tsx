@@ -57,12 +57,6 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* Favorit dibuka dari menu Beranda */}
-      <Tabs.Screen
-        name="favorit"
-        options={{ href: null }}
-      />
-
       <Tabs.Screen
         name="pesanan"
         options={{

@@ -7,7 +7,7 @@ export default function AlamatLayout() {
       screenOptions={{
         headerShown: true,
         headerStyle: { backgroundColor: colors.primary },
-        headerTintColor: "#fff",
+        headerTintColor: colors.white,
         headerTitleAlign: "center",
         headerTitleStyle: { fontSize: 14, fontWeight: "700" },
         headerShadowVisible: false,
