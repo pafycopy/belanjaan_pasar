@@ -43,6 +43,8 @@ export const TEKS = {
     pilihWilayah: "Pilih kecamatan & kelurahan",
     simpanSheet: "Simpan",
     simpan: "Simpan Alamat Pengantaran",
+    labelTitik: "Titik Pengantaran",
+    ubahTitik: "Ubah Titik",
     hapusAlamat: "Hapus Alamat",
     titikBelumDipilih:
       "Titik lokasi belum dipilih. Kembali dan pilih titik di peta.",

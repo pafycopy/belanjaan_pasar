@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { colors, spacing } from "@/theme";
@@ -23,6 +23,7 @@ import {
 import { cekField } from "@/utils/validasi";
 import ConfirmDialog from "@/components/alamat/confirmdialog";
 import PatokanCard from "@/components/alamat/patokancard";
+import PetaMini from "@/components/alamat/petamini";
 import WilayahSheet from "@/components/alamat/wilayahsheet";
 import Button from "@/components/ui/button";
 import ChipGroup from "@/components/ui/chipgroup";
@@ -87,6 +88,31 @@ function Form({
 
   const pakaiKustom = kategoriId === KATEGORI_LAINNYA.id;
 
+  // Kembali dari layar peta: isi ulang alamat dari hasil geocode titik baru.
+  // Isian lain (nama, patokan, kategori) tidak disentuh.
+  const { jalan, wilayah, kota, kodePos } = params;
+  useEffect(() => {
+    const dariPeta: Partial<Record<KunciForm, string>> = {};
+    if (jalan) dariPeta.jalan = jalan;
+    if (wilayah) dariPeta.wilayah = wilayah;
+    if (kota) dariPeta.kota = kota;
+    if (kodePos) dariPeta.kodePos = kodePos;
+    if (Object.keys(dariPeta).length > 0) form.ubahBanyak(dariPeta);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jalan, wilayah, kota, kodePos]);
+
+  // Buka layar peta di titik yang sedang dipakai; hasilnya kembali ke formulir ini
+  const keUbahTitik = () =>
+    router.push({
+      pathname: "/alamat/pinpoint",
+      params: {
+        ...(existing ? { id: existing.id } : {}),
+        lat: String(latitude),
+        lng: String(longitude),
+        dariDetail: "1",
+      },
+    });
+
   const onSimpan = async () => {
     // Label kustom hanya divalidasi bila "Lainnya" dipilih
     const errKustom = pakaiKustom ? cekField(nilai.kategoriKustom, ATURAN_KATEGORI_KUSTOM) : null;
@@ -119,6 +145,10 @@ function Form({
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <FormField label={TEKS.detail.labelTitik}>
+          <PetaMini latitude={latitude} longitude={longitude} onPress={keUbahTitik} />
+        </FormField>
+
         <FormField label={TEKS.detail.labelKategori} wajib>
           <ChipGroup items={PILIHAN_KATEGORI} selectedId={kategoriId} onSelect={setKategoriId} />
         </FormField>

@@ -20,7 +20,12 @@ export default function PilihLokasi() {
   const keTambah = () => router.push("/alamat/pinpoint");
   // Buka peta di posisi pengguna (izin GPS diminta di layar peta)
   const keGps = () => router.push({ pathname: "/alamat/pinpoint", params: { gps: "1" } });
-  const keUbah = (id: string) => router.push({ pathname: "/alamat/pinpoint", params: { id } });
+  // Ketuk kartu: langsung ke formulir ubah (titik lokasi diubah lewat kotak peta di dalamnya)
+  const keUbah = (a: { id: string; latitude: number; longitude: number }) =>
+    router.push({
+      pathname: "/alamat/detail",
+      params: { id: a.id, lat: String(a.latitude), lng: String(a.longitude) },
+    });
 
   const cariLokasi = async () => {
     const q = cari.trim();
@@ -85,7 +90,7 @@ export default function PilihLokasi() {
               key={a.id}
               alamat={a}
               terpilih={a.id === terpilihId}
-              onPress={() => keUbah(a.id)}
+              onPress={() => keUbah(a)}
               onGunakan={() => pilih(a.id)}
             />
           ))}

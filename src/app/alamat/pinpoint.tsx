@@ -12,7 +12,7 @@ import RoundIconButton from "@/components/ui/roundiconbutton";
 import PinMarker from "@/components/alamat/pinmarker";
 import PinCard from "@/components/alamat/pincard";
 
-type Params = { id?: string; gps?: string; lat?: string; lng?: string };
+type Params = { id?: string; gps?: string; lat?: string; lng?: string; dariDetail?: string };
 
 /* ---------- pembungkus: tunggu data siap ---------- */
 
@@ -32,7 +32,7 @@ export default function Pinpoint() {
 
 function Peta({ existing }: { existing?: Alamat }) {
   const router = useRouter();
-  const { gps, lat, lng } = useLocalSearchParams<Params>();
+  const { gps, lat, lng, dariDetail } = useLocalSearchParams<Params>();
 
   const mapRef = useRef<MapView>(null);
   const peta = usePinpoint({
@@ -66,7 +66,12 @@ function Peta({ existing }: { existing?: Alamat }) {
       <PinCard
         teks={peta.teksLokasi}
         mencari={peta.mencari}
-        onKonfirmasi={() => router.push({ pathname: "/alamat/detail", params: peta.paramsLanjut() })}
+        onKonfirmasi={() => {
+          const tujuan = { pathname: "/alamat/detail" as const, params: peta.paramsLanjut() };
+          // Dari formulir: kembali ke formulir yang sama (isian lain tidak hilang)
+          if (dariDetail === "1") router.dismissTo(tujuan);
+          else router.push(tujuan);
+        }}
       />
     </View>
   );

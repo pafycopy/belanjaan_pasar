@@ -28,11 +28,12 @@ type Opsi = {
 export function usePinpoint({ mapRef, existing, titikPencarian, bukaDiGps }: Opsi) {
   const urutanGeocode = useRef(0);
 
-  // Titik awal: alamat yang diubah > hasil pencarian > default (lalu digeser ke posisi user bila izin ada)
+  // Titik awal: titik dari pemanggil (hasil pencarian / titik yang sedang dipakai formulir)
+  // > alamat yang diubah > default (lalu digeser ke posisi user bila izin ada)
   const [wilayahAwal] = useState<Region>(() => {
-    const titik = existing
-      ? { latitude: existing.latitude, longitude: existing.longitude }
-      : (titikPencarian ?? KOORDINAT_DEFAULT);
+    const titik =
+      titikPencarian ??
+      (existing ? { latitude: existing.latitude, longitude: existing.longitude } : KOORDINAT_DEFAULT);
     return { ...titik, latitudeDelta: ZOOM_DELTA, longitudeDelta: ZOOM_DELTA };
   });
   const [titik, setTitik] = useState<Koordinat>({
