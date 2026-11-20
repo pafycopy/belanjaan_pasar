@@ -21,6 +21,15 @@ export function kapital(teks: string): string {
 }
 
 // Saring berdasarkan kata pencarian (nama) dan kategori (Produk.tag)
+// Selisih harga normal dan harga promo (0 bila bukan promo)
+export function hematRupiah(p: Pick<Produk, "harga" | "hargaCoret">): number {
+  return p.hargaCoret != null && p.hargaCoret > p.harga ? p.hargaCoret - p.harga : 0;
+}
+
+export function adaPromo(p: Pick<Produk, "harga" | "hargaCoret">): boolean {
+  return hematRupiah(p) > 0;
+}
+
 export function saringProduk(produk: readonly Produk[], cari: string, kategoriId: string): Produk[] {
   const kata = cari.trim().toLowerCase();
   return produk.filter(

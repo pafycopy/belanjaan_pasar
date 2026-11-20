@@ -7,20 +7,17 @@ import { usePesanan } from "@/context/pesanan";
 import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import SearchField from "@/components/ui/searchfield";
 import JudulSeksi from "@/components/ui/judulseksi";
-import Pill from "@/components/ui/pill";
 import ChipGroup from "@/components/ui/chipgroup";
 import ScreenState from "@/components/ui/screenstate";
 import PromoHariIni from "@/components/produk/promohariini";
-import KartuProduk from "@/components/produk/kartuproduk";
-import KartuProdukRingkas from "@/components/produk/kartuprodukringkas";
+import KartuProduk, { LEBAR_KARTU_GESER } from "@/components/produk/kartuproduk";
 import { useKeranjang } from "@/context/keranjang";
 import { useFavorit } from "@/context/favorit";
 import { JAM_KIOS } from "@/data/beranda";
 import { DAFTAR_PRODUK, KATEGORI_PRODUK, KATEGORI_PRODUK_SEMUA } from "@/data/produk";
 import { JUDUL_PRODUK_TERLARIS } from "@/data/terlaris";
 import { TEKS } from "@/data/teks";
-import { useTambahCepat } from "@/hooks/usetambahcepat";
-import { saringProduk } from "@/utils/produk";
+import { adaPromo, saringProduk } from "@/utils/produk";
 import { urutkanProdukTerlaris } from "@/utils/terlaris";
 import { colors, spacing } from "@/theme";
 
@@ -38,7 +35,6 @@ export default function ProdukScreen() {
   const { jumlahBaris } = useKeranjang();
   const { pesanan } = usePesanan();
   const { isFavorit, toggle } = useFavorit();
-  const tambahCepat = useTambahCepat();
 
   const [cari, setCari] = useState("");
   const [kategori, setKategori] = useState(KATEGORI_PRODUK_SEMUA);
@@ -49,6 +45,8 @@ export default function ProdukScreen() {
     () => urutkanProdukTerlaris(DAFTAR_PRODUK, pesanan),
     [pesanan]
   );
+
+  const produkPromo = useMemo(() => DAFTAR_PRODUK.filter(adaPromo), []);
 
   const daftar = useMemo(
     () => saringProduk(DAFTAR_PRODUK, cari, kategori),
@@ -89,27 +87,28 @@ export default function ProdukScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.produkTerlarisList}
             renderItem={({ item }) => (
-              <KartuProdukRingkas
+              <KartuProduk
                 produk={item}
+                style={styles.kartuGeser}
+                favorit={isFavorit(item.id)}
+                onToggleFavorit={() => void toggle(item.id)}
                 onPress={() => keDetail(item.id)}
-                onTambah={() => void tambahCepat(item)}
               />
             )}
           />
         </View>
 
-        <View style={styles.seksi}>
-          <JudulSeksi
-            judul={T.promoJudul}
-            kanan={<Pill icon="alarm-outline" label={T.promoSampai(JAM_KIOS.tutup)} />}
-          />
-          <PromoHariIni
-            produk={DAFTAR_PRODUK}
-            isFavorit={isFavorit}
-            onToggleFavorit={(id) => void toggle(id)}
-            onPressProduk={keDetail}
-          />
-        </View>
+        {produkPromo.length > 0 ? (
+          <View style={styles.seksi}>
+            <PromoHariIni
+              produk={produkPromo}
+              sampai={T.promoSampai(JAM_KIOS.tutup)}
+              isFavorit={isFavorit}
+              onToggleFavorit={(id) => void toggle(id)}
+              onPressProduk={keDetail}
+            />
+          </View>
+        ) : null}
 
         <View style={styles.filters}>
           <ChipGroup items={KATEGORI_PRODUK} selectedId={kategori} onSelect={setKategori} scroll />
@@ -118,7 +117,13 @@ export default function ProdukScreen() {
         {daftar.length > 0 ? (
           <View style={styles.grid}>
             {daftar.map((produk) => (
-              <KartuProduk key={produk.id} produk={produk} onPress={() => keDetail(produk.id)} />
+              <KartuProduk
+                key={produk.id}
+                produk={produk}
+                favorit={isFavorit(produk.id)}
+                onToggleFavorit={() => void toggle(produk.id)}
+                onPress={() => keDetail(produk.id)}
+              />
             ))}
           </View>
         ) : (
@@ -135,6 +140,7 @@ const styles = StyleSheet.create({
   searchWrap: { paddingHorizontal: 14, paddingTop: spacing.md },
   seksi: { marginTop: spacing.lg },
   produkTerlarisList: { paddingHorizontal: 14, gap: 10 },
+  kartuGeser: { width: LEBAR_KARTU_GESER, marginBottom: 0 },
   filters: { marginTop: spacing.lg },
   grid: {
     flexDirection: "row",

@@ -172,15 +172,16 @@ export const TEKS = {
   },
 
   katalog: {
-    judul: "Produk",
     cari: "Cari ayam, bebek, ati ampela...",
-    favoritJudul: "Produk Favorit Anda",
-    lihatSemua: "Lihat Semua",
     promoJudul: "Promo Hari Ini",
+    promoLabel: "PROMO HARI INI",
     promoSampai: (jam: string) => `s/d ${jam.replace(":", ".")} WIB`,
+    hemat: (rupiah: string) => `Hemat ${rupiah}`,
+    terjual: (jumlah: string, satuan: string) => `Terjual ${jumlah} ${satuan} hari ini`,
     kosong: "Produk tidak ditemukan. Coba ubah kata pencarian atau kategori.",
-    keranjangAksesibilitas: "Buka keranjang",
-    tambahAksesibilitas: (nama: string) => `Tambah ${nama} ke keranjang`,
+    lihatProduk: (nama: string) => `Lihat ${nama}`,
+    favoritTambah: (nama: string) => `Tambahkan ${nama} ke favorit`,
+    favoritHapus: (nama: string) => `Hapus ${nama} dari favorit`,
   },
 
   keranjang: {

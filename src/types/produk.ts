@@ -20,6 +20,8 @@ export type Produk = {
   ringkas?: string[];             // baris keterangan singkat di bawah nama
   deskripsi?: string;
   stok?: number;
+  hargaCoret?: number;            // harga normal sebelum promo; bila lebih besar dari `harga`, produk tampil sebagai promo
+  rating?: number;                // 0 - 5, mis. 4.9
   tag?: string[];                 // penanda untuk filter, mis. "promo", "ayam-bebek", "partingan"
   beratBersihGram?: number;       // estimasi berat bersih per satuan, untuk kapasitas keranjang
   pilihanJumlah?: number[];       // tombol jumlah cepat (selain "Custom")

@@ -9,6 +9,7 @@ import KiosStatusCard from "@/components/beranda/kiosstatuscard";
 import MenuGrid, { MenuItem } from "@/components/beranda/menugrid";
 import KartuProduk from "@/components/produk/kartuproduk";
 import { useAlamat } from "@/context/alamat";
+import { useFavorit } from "@/context/favorit";
 import { useKeranjang } from "@/context/keranjang";
 import { JAM_KIOS, menuItems, promos } from "@/data/beranda";
 import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
@@ -18,6 +19,7 @@ export default function Beranda() {
   const router = useRouter();
   const { terpilih, memuat } = useAlamat();
   const { jumlahBaris } = useKeranjang();
+  const { isFavorit, toggle } = useFavorit();
 
   const menu: MenuItem[] = menuItems.map(({ href, ...item }) => ({
     ...item,
@@ -69,6 +71,8 @@ export default function Beranda() {
               <KartuProduk
                 key={produk.id}
                 produk={produk}
+                favorit={isFavorit(produk.id)}
+                onToggleFavorit={() => void toggle(produk.id)}
                 onPress={() =>
                   router.push({
                     pathname: "/produk/[id]",
