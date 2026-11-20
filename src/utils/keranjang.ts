@@ -34,6 +34,11 @@ export function barisDenganProduk(
   });
 }
 
+// Jumlah harga baris-baris yang diberikan (hargaSatuan x jumlah)
+export function hitungSubtotal(baris: readonly BarisKeranjang[]): number {
+  return baris.reduce((total, { item }) => total + item.hargaSatuan * item.jumlah, 0);
+}
+
 export function hitungBeratGram(baris: readonly BarisKeranjang[]): number {
   return baris.reduce((total, { item, produk }) => total + (produk.beratBersihGram ?? 0) * item.jumlah, 0);
 }

@@ -16,6 +16,7 @@ export type BarisTagihan = {
 export type TagihanTransfer = {
   invoice: string;        // tanpa "#", mis. "SM-04028"
   metode: IdMetode;
+  uidKeranjang?: string[]; // item keranjang yang dibayar; hanya ini yang dihapus dari keranjang setelah lunas
   dibuatPada: number;     // ms
   batasBayar: number;     // ms, batas akhir transfer
   baris: BarisTagihan[];

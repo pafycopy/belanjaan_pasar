@@ -5,30 +5,26 @@ import { useRouter } from "expo-router";
 import HeaderHijau from "@/components/ui/headerhijau";
 import FooterBar from "@/components/ui/footerbar";
 import ItemKeranjangCard from "@/components/keranjang/itemkeranjang";
+import PilihSemua from "@/components/keranjang/pilihsemua";
 import KapasitasBerat from "@/components/keranjang/kapasitasberat";
 import OpsiPengiriman from "@/components/keranjang/pengiriman";
 import AlamatPengantaran from "@/components/keranjang/alamatpengantaran";
-import MetodePembayaranList from "@/components/keranjang/metodepembayaran";
 import RincianPembayaran from "@/components/keranjang/rincianpembayaran";
 import RingkasanPembayaran from "@/components/keranjang/ringkasanpembayaran";
 import RekomendasiProduk from "@/components/keranjang/rekomendasiproduk";
 import { useKeranjang } from "@/context/keranjang";
 import { useAlamat } from "@/context/alamat";
 import { DAFTAR_PRODUK } from "@/data/produk";
-import {
-  IdMetode,
-  IdPengiriman,
-  KAPASITAS_KERANJANG_KG,
-  METODE_BAWAAN,
-  METODE_PEMBAYARAN,
-  PENGIRIMAN_BAWAAN,
-} from "@/data/keranjang";
+import { IdPengiriman, KAPASITAS_KERANJANG_KG, PENGIRIMAN_BAWAAN } from "@/data/keranjang";
 import { TEKS } from "@/data/teks";
-import { barisDenganProduk, cariTarifOngkir, hitungBeratGram, hitungTagihan } from "@/utils/keranjang";
-import { cariProduk, formatHarga } from "@/utils/produk";
-import { formatAlamatLengkap } from "@/utils/alamat";
-import { buatTagihanTransfer } from "@/utils/pembayaran";
-import { pembayaranRepository } from "@/services/pembayaranrepository";
+import {
+  barisDenganProduk,
+  cariTarifOngkir,
+  hitungBeratGram,
+  hitungSubtotal,
+  hitungTagihan,
+} from "@/utils/keranjang";
+import { cariProduk } from "@/utils/produk";
 import { colors, spacing } from "@/theme";
 
 const T = TEKS.keranjang;
@@ -36,24 +32,39 @@ const GAMBAR_KOSONG = require("../../assets/images/keranjang/empty-cart.svg");
 
 export default function Keranjang() {
   const router = useRouter();
-  const { item, subtotal, memuat, ubahJumlah, hapus } = useKeranjang();
+  const { item, memuat, ubahJumlah, hapus } = useKeranjang();
   const { terpilih } = useAlamat();
   const [pengiriman, setPengiriman] = useState<IdPengiriman>(PENGIRIMAN_BAWAAN);
-  const [metode, setMetode] = useState<IdMetode>(METODE_BAWAAN);
+  const [dipilih, setDipilih] = useState<ReadonlySet<string>>(new Set());
   const [terscroll, setTerscroll] = useState(false);
-  const [membuatTagihan, setMembuatTagihan] = useState(false);
   const antar = pengiriman === "antar";
 
   const baris = useMemo(() => barisDenganProduk(item, cariProduk), [item]);
-  const beratGram = hitungBeratGram(baris);
   const kosong = !memuat && baris.length === 0;
+
+  // Hanya produk yang dipilih (radio) yang dihitung berat dan tagihannya
+  const barisDipilih = useMemo(() => baris.filter(({ item: i }) => dipilih.has(i.uid)), [baris, dipilih]);
+  const adaDipilih = barisDipilih.length > 0;
+  const semuaDipilih = baris.length > 0 && barisDipilih.length === baris.length;
+  const beratGram = hitungBeratGram(barisDipilih);
 
   // Ongkir hanya untuk "Antar ke Rumah"
   const tarif = antar ? cariTarifOngkir(terpilih?.jarakKm) : null;
-  const tagihan = hitungTagihan(subtotal, tarif);
+  const tagihan = hitungTagihan(hitungSubtotal(barisDipilih), tarif);
 
-  const bayar = async () => {
-    if (membuatTagihan) return;
+  const pilihItem = (uid: string) =>
+    setDipilih((sebelumnya) => {
+      const baru = new Set(sebelumnya);
+      if (baru.has(uid)) baru.delete(uid);
+      else baru.add(uid);
+      return baru;
+    });
+
+  const pilihSemua = () => setDipilih(semuaDipilih ? new Set() : new Set(baris.map(({ item: i }) => i.uid)));
+
+  // Pilihan metode dan pembuatan tagihan ada di halaman Pembayaran (/checkout)
+  const checkout = () => {
+    if (!adaDipilih) return;
     if (antar && !terpilih) {
       Alert.alert(T.alamatBelumDipilih.judul, T.alamatBelumDipilih.pesan, [
         { text: T.alamatBelumDipilih.pilih, onPress: () => router.push("/alamat") },
@@ -62,31 +73,10 @@ export default function Keranjang() {
       return;
     }
 
-    // Sementara hanya transfer BCA (manual) yang punya halaman petunjuk. QRIS dan COD menyusul.
-    if (metode !== "bca") {
-      const namaMetode = METODE_PEMBAYARAN.find((m) => m.id === metode)?.nama ?? "";
-      Alert.alert(T.pembayaranBelumAda.judul, T.pembayaranBelumAda.pesan(namaMetode, formatHarga(tagihan.total)));
-      return;
-    }
-
-    setMembuatTagihan(true);
-    try {
-      await pembayaranRepository.simpan(
-        buatTagihanTransfer({
-          baris,
-          tagihan,
-          tarif,
-          pengiriman,
-          metode,
-          alamat: terpilih ? formatAlamatLengkap(terpilih) : undefined,
-        })
-      );
-      router.push("/pembayaran");
-    } catch {
-      Alert.alert(TEKS.pembayaran.gagalBuat.judul, TEKS.pembayaran.gagalBuat.pesan);
-    } finally {
-      setMembuatTagihan(false);
-    }
+    router.push({
+      pathname: "/checkout",
+      params: { uids: barisDipilih.map(({ item: i }) => i.uid).join(","), kirim: pengiriman },
+    });
   };
 
   return (
@@ -131,11 +121,15 @@ export default function Keranjang() {
               </View>
 
               <View style={styles.list}>
+                <PilihSemua semua={semuaDipilih} jumlahDipilih={barisDipilih.length} onPress={pilihSemua} />
+
                 {baris.map(({ item: i, produk }) => (
                   <ItemKeranjangCard
                     key={i.uid}
                     item={i}
                     produk={produk}
+                    dipilih={dipilih.has(i.uid)}
+                    onPilih={() => pilihItem(i.uid)}
                     onKurang={() => void ubahJumlah(i.uid, i.jumlah - 1)}
                     onTambah={() => void ubahJumlah(i.uid, i.jumlah + 1)}
                     onHapus={() => void hapus(i.uid)}
@@ -154,23 +148,26 @@ export default function Keranjang() {
               </View>
             ) : null}
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>{T.pembayaran.judul}</Text>
-              <MetodePembayaranList dipilih={metode} onPilih={setMetode} />
-            </View>
-
-            <View style={styles.section}>
-              <RincianPembayaran
-                subtotal={tagihan.subtotal}
-                ongkir={tarif ? tagihan.ongkir : null}
-                labelOngkir={tarif?.label}
-                total={tagihan.total}
-              />
-            </View>
+            {/* Rincian dan total baru muncul setelah ada produk yang dipilih */}
+            {adaDipilih ? (
+              <View style={styles.section}>
+                <RincianPembayaran
+                  subtotal={tagihan.subtotal}
+                  ongkir={tarif ? tagihan.ongkir : null}
+                  labelOngkir={tarif?.label}
+                  total={tagihan.total}
+                />
+              </View>
+            ) : null}
           </ScrollView>
 
           <FooterBar bordered={false} background={colors.barBg}>
-            <RingkasanPembayaran total={tagihan.total} onBayar={() => void bayar()} disabled={membuatTagihan} />
+            <RingkasanPembayaran
+              total={adaDipilih ? tagihan.total : undefined}
+              label={T.ringkasan.checkout(barisDipilih.length)}
+              onPress={checkout}
+              disabled={!adaDipilih}
+            />
           </FooterBar>
         </>
       )}

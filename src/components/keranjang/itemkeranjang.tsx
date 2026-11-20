@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import GambarProduk from "@/components/produk/gambarproduk";
+import Radio from "@/components/ui/radio";
 import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { ItemKeranjang } from "@/types/keranjang";
@@ -10,16 +11,28 @@ import { formatHarga } from "@/utils/produk";
 type Props = {
   item: ItemKeranjang;
   produk: Produk;
+  dipilih: boolean;
+  onPilih: () => void;
   onKurang: () => void;
   onTambah: () => void;
   onHapus: () => void;
 };
 
-export default function ItemKeranjangCard({ item, produk, onKurang, onTambah, onHapus }: Props) {
+export default function ItemKeranjangCard({ item, produk, dipilih, onPilih, onKurang, onTambah, onHapus }: Props) {
   const potongan = produk.opsiPotongan?.find((o) => o.id === item.potonganId);
 
   return (
-    <View style={styles.card}>
+    <Pressable
+      onPress={onPilih}
+      style={[styles.card, dipilih && styles.cardDipilih]}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: dipilih }}
+      accessibilityLabel={TEKS.keranjang.pilihProduk(produk.nama)}
+    >
+      <View style={styles.radio}>
+        <Radio dipilih={dipilih} />
+      </View>
+
       <GambarProduk gambar={produk.gambar} style={styles.gambar} fit="contain" />
 
       <View style={styles.info}>
@@ -49,7 +62,7 @@ export default function ItemKeranjangCard({ item, produk, onKurang, onTambah, on
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -59,7 +72,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: radius.lg,
     padding: spacing.md,
+    borderWidth: 1.5,
+    borderColor: colors.white, // ketebalan tetap agar kartu tidak bergeser saat dipilih
   },
+  cardDipilih: { borderColor: colors.dark },
+  radio: { justifyContent: "center", marginRight: spacing.md },
   gambar: { width: 72, height: 72, borderRadius: radius.sm, backgroundColor: colors.white },
   info: { flex: 1, marginLeft: spacing.md, justifyContent: "space-between", gap: spacing.sm },
   namaRow: { flexDirection: "row", alignItems: "flex-start", gap: spacing.xs },

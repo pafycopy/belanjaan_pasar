@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    paddingHorizontal: 12,
+    paddingHorizontal: 6,
     paddingTop: spacing.md,
   },
 });

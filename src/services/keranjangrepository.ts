@@ -11,6 +11,7 @@ export interface KeranjangRepository {
   tambah(input: ItemKeranjangInput): Promise<ItemKeranjang[]>;
   ubahJumlah(uid: string, jumlah: number): Promise<ItemKeranjang[]>;
   hapus(uid: string): Promise<ItemKeranjang[]>;
+  hapusBanyak(uids: readonly string[]): Promise<ItemKeranjang[]>;
   kosongkan(): Promise<ItemKeranjang[]>;
 }
 
@@ -53,6 +54,10 @@ const keranjangLokal: KeranjangRepository = {
 
   async hapus(uid) {
     return simpan((await baca()).filter((i) => i.uid !== uid));
+  },
+
+  async hapusBanyak(uids) {
+    return simpan((await baca()).filter((i) => !uids.includes(i.uid)));
   },
 
   async kosongkan() {

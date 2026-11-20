@@ -36,6 +36,7 @@ export function buatTagihanTransfer(b: BahanTagihan): TagihanTransfer {
   return {
     invoice: buatInvoice(sekarang),
     metode: b.metode,
+    uidKeranjang: b.baris.map(({ item }) => item.uid),
     dibuatPada: sekarang,
     batasBayar: sekarang + BATAS_BAYAR_MENIT * 60_000,
     baris,

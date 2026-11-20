@@ -11,6 +11,7 @@ type KeranjangContextValue = {
   tambah: (input: ItemKeranjangInput) => Promise<void>;
   ubahJumlah: (uid: string, jumlah: number) => Promise<void>;
   hapus: (uid: string) => Promise<void>;
+  hapusBanyak: (uids: readonly string[]) => Promise<void>;
   kosongkan: () => Promise<void>;
 };
 
@@ -47,6 +48,10 @@ export function KeranjangProvider({ children }: { children: ReactNode }) {
     setItem(await repo.hapus(uid));
   };
 
+  const hapusBanyak = async (uids: readonly string[]) => {
+    setItem(await repo.hapusBanyak(uids));
+  };
+
   const kosongkan = async () => {
     setItem(await repo.kosongkan());
   };
@@ -65,6 +70,7 @@ export function KeranjangProvider({ children }: { children: ReactNode }) {
         tambah,
         ubahJumlah,
         hapus,
+        hapusBanyak,
         kosongkan,
       }}
     >

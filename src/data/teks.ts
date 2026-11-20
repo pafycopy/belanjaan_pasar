@@ -189,6 +189,9 @@ export const TEKS = {
     pesananSaya: "Pesanan Saya",
     jumlahProduk: (jumlah: number) => `${jumlah} Produk`,
     produkSegar: "Produk segar",
+    pilihSemua: "Pilih Semua",
+    dipilih: (jumlah: number) => `${jumlah} dipilih`,
+    pilihProduk: (nama: string) => `Pilih ${nama}`,
     kosong: {
       judul: "Belum Ada Pesanan",
       rekomendasi: "Pilihan Belanjaan Pasar saat ini",
@@ -212,13 +215,20 @@ export const TEKS = {
       kosongPesan: "Pilih atau tambah alamat pengantaran",
     },
     pembayaran: { judul: "Pilih Pembayaran" },
+    metode: "Metode Pembayaran",
+    checkoutKosong: "Tidak ada produk yang dipilih.",
     rincian: {
       judul: "Ringkasan Pembayaran",
       pesanan: "Total Pesanan",
       ongkir: (label: string) => `Ongkir Kurir (${label})`,
       total: "Total Tagihan",
     },
-    ringkasan: { total: "Total Akhir", bayar: "Bayar" },
+    ringkasan: {
+      total: "Total Akhir",
+      bayar: "Bayar",
+      checkout: (jumlah: number) => `Checkout (${jumlah})`,
+      belumDipilih: "Pilih produk yang ingin dibeli",
+    },
     alamatBelumDipilih: {
       judul: "Alamat belum dipilih",
       pesan: "Pilih alamat pengantaran terlebih dahulu.",

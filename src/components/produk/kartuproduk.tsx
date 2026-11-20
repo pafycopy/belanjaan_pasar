@@ -105,7 +105,7 @@ export default function KartuProduk({ produk, onPress, favorit = false, onToggle
 
 const styles = StyleSheet.create({
   kartu: {
-    width: "48.5%",
+    width: "49.5%",
     backgroundColor: colors.white,
     borderRadius: radius.lg,
     borderWidth: 1,

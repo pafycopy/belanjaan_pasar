@@ -62,7 +62,7 @@ export default function Pembayaran() {
 
 function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
   const router = useRouter();
-  const { kosongkan } = useKeranjang();
+  const { kosongkan, hapusBanyak } = useKeranjang();
   const { tambah: tambahPesanan } = usePesanan();
   const sekarang = useSekarang();
   const [menyelesaikan, setMenyelesaikan] = useState(false);
@@ -72,7 +72,8 @@ function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
   const totalTeks = formatHarga(tagihan.total);
 
   // Sementara belum ada verifikasi otomatis: pelanggan menyatakan sudah transfer, tagihan dicatat
-  // sebagai lunas, keranjang dikosongkan, lalu tampil layar "Pembayaran Berhasil".
+  // sebagai lunas, item yang dibayar dihapus dari keranjang (item yang tidak dipilih tetap ada),
+  // lalu tampil layar "Pembayaran Berhasil".
   const selesai = async () => {
     if (menyelesaikan) return;
     setMenyelesaikan(true);
@@ -80,7 +81,9 @@ function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
       const lunas: TagihanTransfer = { ...tagihan, dibayarPada: Date.now() };
       await pembayaranRepository.simpanLunas(lunas);
       await tambahPesanan(buatPesanan(lunas)); // muncul di tab Pesanan > Disiapkan
-      await kosongkan();
+      // Tagihan lama (tanpa daftar item) tetap mengosongkan seluruh keranjang
+      if (tagihan.uidKeranjang) await hapusBanyak(tagihan.uidKeranjang);
+      else await kosongkan();
       await pembayaranRepository.hapus();
       router.replace("/pembayaran-berhasil");
     } catch {
