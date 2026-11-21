@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import Nominal from "@/components/ui/nominal";
 import { GAMBAR_QRIS } from "@/data/ngebelanjain";
+import { REKENING_BCA } from "@/data/pembayaran";
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { useSekarang } from "@/hooks/usesekarang";
 import { colors, radius, spacing } from "@/theme";
@@ -33,6 +34,7 @@ function BarisTabel({ kiri, kanan, tebal }: { kiri: string; kanan: string; tebal
 export default function MenungguBayar({ pesanan: p, onKembali }: Props) {
   const sekarang = useSekarang();
   const qris = p.metode === "qris";
+  const transfer = p.metode === "transfer";
   const sisa = qris && p.batasBayar ? sisaDetik(p.batasBayar, sekarang) : 0;
   const habis = qris && sisa === 0;
   const t = p.tagihan;
@@ -53,7 +55,7 @@ export default function MenungguBayar({ pesanan: p, onKembali }: Props) {
       <ScrollView contentContainerStyle={styles.isi} showsVerticalScrollIndicator={false}>
         <View style={styles.kartu}>
           <View style={styles.batasBaris}>
-            <Text style={styles.batas}>{qris ? T2.batas : T2.cod}</Text>
+            <Text style={styles.batas}>{qris ? T2.batas : transfer ? "Transfer Bank (BCA Virtual Account)" : T2.cod}</Text>
             {qris ? (
               <View style={[styles.pil, habis && styles.pilHabis]}>
                 <Text style={styles.pilTeks}>{T2.menit(formatSisaWaktu(sisa))}</Text>
@@ -97,6 +99,11 @@ export default function MenungguBayar({ pesanan: p, onKembali }: Props) {
                 </View>
               )}
               <Text style={styles.qrisKet}>{T2.qrisKet}</Text>
+            </View>
+          ) : transfer ? (
+            <View style={styles.cod}>
+              <Ionicons name="business-outline" size={22} color={colors.dark} />
+              <Text style={styles.codTeks}>Transfer ke rekening BCA {REKENING_BCA.nomor} atas nama {REKENING_BCA.namaAkun}. Nominal: {t ? rp(t.total) : "sesuai tagihan"}.</Text>
             </View>
           ) : t ? (
             <View style={styles.cod}>

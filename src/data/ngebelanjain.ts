@@ -26,10 +26,11 @@ export type OpsiMetodeNgebelanjain = { id: MetodeNgebelanjain; nama: string; ket
 
 export const OPSI_METODE_NGEBELANJAIN: readonly OpsiMetodeNgebelanjain[] = [
   { id: "qris", nama: "QRIS", keterangan: "GoPay, ShopeePay, OVO, Dana", ikon: "qr-code-outline" },
+  { id: "transfer", nama: "Transfer Bank", keterangan: "BCA Virtual Account", ikon: "business-outline" },
   { id: "cod", nama: "Bayar di Tempat (COD)", keterangan: "Bayar tunai ke kurir saat pesanan sampai", ikon: "cash-outline" },
 ];
 
-export const NAMA_METODE_NGEBELANJAIN: Record<MetodeNgebelanjain, string> = { qris: "QRIS", cod: "COD" };
+export const NAMA_METODE_NGEBELANJAIN: Record<MetodeNgebelanjain, string> = { qris: "QRIS", transfer: "Transfer Bank (BCA Virtual Account)", cod: "COD" };
 
 // Nomor WhatsApp admin untuk "Chat via WhatsApp", format internasional tanpa + (mis. "628123456789").
 // WAJIB diisi sebelum dipakai; kosong = tombol chat menampilkan peringatan.

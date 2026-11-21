@@ -82,7 +82,7 @@ const alamatHeader = alamatMemuat
   } else if (tab === "pembayaran") {
     // QRIS hanya dianggap menunggu selama batas waktunya belum lewat
     const qrisAktif = pertama.metode === "qris" && (pertama.batasBayar ?? 0) > Date.now();
-    const menunggu = pertama.metode === "cod" || qrisAktif;
+    const menunggu = pertama.metode === "cod" || pertama.metode === "transfer" || qrisAktif;
     const kembali = () => void ubah(pertama, batalkanMetode);
 
     if (menunggu) {
@@ -125,6 +125,7 @@ const alamatHeader = alamatMemuat
             pesanan={p}
             onDetail={() => router.push({ pathname: "/ngebelanjain/[nomor]", params: { nomor: p.nomor } })}
             onChat={() => void chat(p)}
+            onBayar={() => router.push({ pathname: "/ngebelanjain/pembayaran/[nomor]", params: { nomor: p.nomor } })}
           />
         ))}
       </ScrollView>

@@ -85,4 +85,5 @@ const styles = StyleSheet.create({
   tombolPenuh: { flex: 1 },
   tombolDetail: { flex: 1 },
   tombolChat: { flex: 2 },
+  tombolAksi: { flex: 1 },
 });
