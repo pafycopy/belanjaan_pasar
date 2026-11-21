@@ -38,7 +38,15 @@ export const TEKS_NGEBELANJAIN = {
     tidakDitemukan: "Pesanan tidak ditemukan.",
   },
 
-  metode: { judul: "Metode Pembayaran", bayar: "Bayar Sekarang" },
+  metode: {
+    judul: "Metode Pembayaran",
+    bayar: "Bayar Sekarang",
+    konfirmasi: {
+      qris: "Konfirmasi Pembayaran QRIS",
+      transfer: "Konfirmasi Transfer Bank",
+      cod: "Konfirmasi Pesanan COD",
+    },
+  },
 
   menunggu: {
     judul: "Menunggu Pembayaran",
@@ -46,6 +54,10 @@ export const TEKS_NGEBELANJAIN = {
     batas: "Batas waktu pembayaran",
     menit: (waktu: string) => `${waktu} MENIT`,
     cod: "Bayar di Tempat (COD)",
+    transfer: "Transfer Bank BCA",
+    transferKet: (nomor: string, nama: string, total: string) =>
+      `Transfer ke rekening BCA ${nomor} atas nama ${nama}. Nominal: ${total}.`,
+    sesuaiTagihan: "sesuai tagihan",
     rincian: "Rincian",
     nominal: "Nominal",
     totalProduk: "Total Produk",

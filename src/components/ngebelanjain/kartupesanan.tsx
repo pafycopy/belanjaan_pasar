@@ -11,13 +11,13 @@ import { pecahDaftar } from "@/utils/ngebelanjain";
 type Props = {
   pesanan: PesananNgebelanjain;
   onDetail: () => void; // buka halaman detail pesanan
-  onChat: () => void;   // dipakai saat status "dibelanjain" dan "pembayaran"
+  onChat: () => void;   // "Hubungi Admin": dipakai saat status "dibelanjain" dan "pembayaran"
   onBayar: () => void;  // buka halaman pilihan metode pembayaran
 };
 
 const T = TEKS_NGEBELANJAIN;
 
-// Kartu pesanan untuk tahap "Sedang Diproses" dan "Sedang Dibelanjain"
+// Kartu pesanan untuk tahap "Sedang Diproses", "Sedang Dibelanjain", dan "Pembayaran Tersedia"
 export default function KartuNgebelanjain({ pesanan: p, onDetail, onChat, onBayar }: Props) {
   const dibelanjain = p.status === "dibelanjain";
   const pembayaran = p.status === "pembayaran";
@@ -54,12 +54,7 @@ export default function KartuNgebelanjain({ pesanan: p, onDetail, onChat, onBaya
 
       {pembayaran ? (
         <View style={styles.aksiKolom}>
-          <Button
-            label={T.chatWa}
-            size="lg"
-            onPress={onChat}
-            style={styles.tombolHubungiAdmin}
-          />
+          <Button label={T.chatWa} variant="orange" size="lg" onPress={onChat} />
           <Button label={T.metode.bayar} size="lg" onPress={onBayar} />
         </View>
       ) : (
@@ -97,10 +92,7 @@ const styles = StyleSheet.create({
   bacaLagiTeks: { fontSize: 12, fontWeight: "700", color: colors.dark },
   aksi: { flexDirection: "row", gap: spacing.sm },
   aksiKolom: { gap: spacing.sm },
-  // Oranye mengikuti tombol "Hubungi Admin" pada referensi UI.
-  tombolHubungiAdmin: { backgroundColor: "#FF922B" },
   tombolPenuh: { flex: 1 },
   tombolDetail: { flex: 1 },
   tombolChat: { flex: 2 },
-  tombolAksi: { flex: 1 },
 });

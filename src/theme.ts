@@ -6,6 +6,7 @@ export const colors = {
   surface: "#f2f3f5",
   white: "#fff",
   orange: "#ef6c00",
+  orangeBright: "#ff922b",             // tombol "Hubungi Admin"
   text: "#1f2937",
   muted: "#6b7280",
   border: "#e5e7eb",

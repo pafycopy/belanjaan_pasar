@@ -55,7 +55,7 @@ export default function MenungguBayar({ pesanan: p, onKembali }: Props) {
       <ScrollView contentContainerStyle={styles.isi} showsVerticalScrollIndicator={false}>
         <View style={styles.kartu}>
           <View style={styles.batasBaris}>
-            <Text style={styles.batas}>{qris ? T2.batas : transfer ? "Transfer Bank (BCA Virtual Account)" : T2.cod}</Text>
+            <Text style={styles.batas}>{qris ? T2.batas : transfer ? T2.transfer : T2.cod}</Text>
             {qris ? (
               <View style={[styles.pil, habis && styles.pilHabis]}>
                 <Text style={styles.pilTeks}>{T2.menit(formatSisaWaktu(sisa))}</Text>
@@ -103,7 +103,7 @@ export default function MenungguBayar({ pesanan: p, onKembali }: Props) {
           ) : transfer ? (
             <View style={styles.cod}>
               <Ionicons name="business-outline" size={22} color={colors.dark} />
-              <Text style={styles.codTeks}>Transfer ke rekening BCA {REKENING_BCA.nomor} atas nama {REKENING_BCA.namaAkun}. Nominal: {t ? rp(t.total) : "sesuai tagihan"}.</Text>
+              <Text style={styles.codTeks}>{T2.transferKet(REKENING_BCA.nomor, REKENING_BCA.namaAkun, t ? rp(t.total) : T2.sesuaiTagihan)}</Text>
             </View>
           ) : t ? (
             <View style={styles.cod}>

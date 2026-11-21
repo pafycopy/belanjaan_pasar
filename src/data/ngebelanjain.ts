@@ -22,15 +22,24 @@ export const TAB_NGEBELANJAIN: readonly TabNgebelanjain[] = [
   { id: "dibayar", label: "Sudah\nDibayar", ikon: "checkbox-outline" },
 ];
 
-export type OpsiMetodeNgebelanjain = { id: MetodeNgebelanjain; nama: string; keterangan: string; ikon: IconName };
+export type OpsiMetodeNgebelanjain = {
+  id: MetodeNgebelanjain;
+  nama: string;
+  keterangan?: string;
+  ikon: IconName;
+  logoTeks?: string;                              // wordmark sementara, sebelum file logo dipasang
+  pilihan?: { nama: string; logoTeks?: string };  // sub-pilihan di dalam grup (mis. bank)
+};
 
 export const OPSI_METODE_NGEBELANJAIN: readonly OpsiMetodeNgebelanjain[] = [
-  { id: "qris", nama: "QRIS", keterangan: "GoPay, ShopeePay, OVO, Dana", ikon: "qr-code-outline" },
-  { id: "transfer", nama: "Transfer Bank", keterangan: "BCA Virtual Account", ikon: "business-outline" },
+  { id: "qris", nama: "QRIS", ikon: "qr-code-outline", logoTeks: "QRIS" },
+  // Sementara transfer manual ke satu rekening BCA. Ganti nama jadi "BCA Virtual Account"
+  // setelah nomor VA per pesanan tersedia dari payment gateway.
+  { id: "transfer", nama: "Transfer Bank", ikon: "business", pilihan: { nama: "Transfer ke Rekening BCA", logoTeks: "BCA" } },
   { id: "cod", nama: "Bayar di Tempat (COD)", keterangan: "Bayar tunai ke kurir saat pesanan sampai", ikon: "cash-outline" },
 ];
 
-export const NAMA_METODE_NGEBELANJAIN: Record<MetodeNgebelanjain, string> = { qris: "QRIS", transfer: "Transfer Bank (BCA Virtual Account)", cod: "COD" };
+export const NAMA_METODE_NGEBELANJAIN: Record<MetodeNgebelanjain, string> = { qris: "QRIS", transfer: "Transfer Bank BCA", cod: "COD" };
 
 // Nomor WhatsApp admin untuk "Chat via WhatsApp", format internasional tanpa + (mis. "628123456789").
 // WAJIB diisi sebelum dipakai; kosong = tombol chat menampilkan peringatan.
