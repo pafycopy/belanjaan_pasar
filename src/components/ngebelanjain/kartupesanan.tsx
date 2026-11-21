@@ -1,59 +1,65 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Button from "@/components/ui/button";
+import KepalaPesanan from "@/components/ngebelanjain/kepalapesanan";
+import { MAKS_BARIS_DAFTAR } from "@/data/ngebelanjain";
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, radius, spacing } from "@/theme";
 import { PesananNgebelanjain } from "@/types/ngebelanjain";
 import { pecahDaftar } from "@/utils/ngebelanjain";
-import { formatJamWib } from "@/utils/waktu";
 
 type Props = {
   pesanan: PesananNgebelanjain;
-  onChat: () => void; // dipakai saat status "dibelanjain"
+  onDetail: () => void; // buka halaman detail pesanan
+  onChat: () => void;   // dipakai saat status "dibelanjain"
 };
 
 const T = TEKS_NGEBELANJAIN;
 
-// "04.30 WIB": zona waktu dibuat lebih kecil dan pudar
-function Waktu({ teks }: { teks: string }) {
-  const wib = teks.endsWith(" WIB");
-  return (
-    <Text style={styles.waktuNilai}>
-      {wib ? teks.slice(0, -4) : teks}
-      {wib ? <Text style={styles.zona}> WIB</Text> : null}
-    </Text>
-  );
-}
-
 // Kartu pesanan untuk tahap "Sedang Diproses" dan "Sedang Dibelanjain"
-export default function KartuNgebelanjain({ pesanan: p, onChat }: Props) {
+export default function KartuNgebelanjain({ pesanan: p, onDetail, onChat }: Props) {
   const dibelanjain = p.status === "dibelanjain";
+  const [terbuka, setTerbuka] = useState(false);
+
+  // Daftar panjang dipotong sampai MAKS_BARIS_DAFTAR baris; sisanya lewat "Baca selengkapnya"
   const baris = pecahDaftar(p.daftar);
+  const terpotong = baris.length > MAKS_BARIS_DAFTAR;
+  const tampil = terpotong && !terbuka ? baris.slice(0, MAKS_BARIS_DAFTAR) : baris;
 
   return (
     <View style={styles.kartu}>
-      <View style={styles.atas}>
-        <View style={styles.atasKiri}>
-          <View style={[styles.badge, { backgroundColor: dibelanjain ? colors.primaryDeep : colors.orange }]}>
-            <Text style={styles.badgeTeks}>{dibelanjain ? T.badge.dibelanjain : T.badge.diproses}</Text>
-          </View>
-          <Text style={styles.noPesanan}>{T.noPesanan(p.nomor)}</Text>
-        </View>
-        <View style={styles.atasKanan}>
-          <Text style={styles.waktuLabel}>{dibelanjain ? T.estimasiSelesai : T.dipesanPukul}</Text>
-          <Waktu teks={dibelanjain ? (p.estimasiSelesai ?? "-") : `${formatJamWib(p.dibuatPada)} WIB`} />
-        </View>
-      </View>
+      <KepalaPesanan pesanan={p} />
 
       <View style={styles.daftar}>
         <Text style={styles.judul}>{T.pesananAnda}</Text>
-        {baris.map((b, i) => (
+        {tampil.map((b, i) => (
           <Text key={i} style={styles.baris}>
             {b.teks}
           </Text>
         ))}
+
+        {terpotong ? (
+          <Pressable
+            onPress={() => setTerbuka((v) => !v)}
+            hitSlop={8}
+            style={styles.bacaLagi}
+            accessibilityRole="button"
+          >
+            <Text style={styles.bacaLagiTeks}>{terbuka ? T.lebihSedikit : T.bacaSelengkapnya}</Text>
+          </Pressable>
+        ) : null}
       </View>
 
-      {dibelanjain ? <Button label={T.chatWa} size="lg" onPress={onChat} /> : null}
+      <View style={styles.aksi}>
+        <Button
+          label={T.detail}
+          variant="outline"
+          size="lg"
+          onPress={onDetail}
+          style={dibelanjain ? styles.tombolDetail : styles.tombolPenuh}
+        />
+        {dibelanjain ? <Button label={T.chatWa} size="lg" onPress={onChat} style={styles.tombolChat} /> : null}
+      </View>
     </View>
   );
 }
@@ -70,16 +76,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  atas: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing.md },
-  atasKiri: { gap: 6, flexShrink: 1 },
-  badge: { alignSelf: "flex-start", borderRadius: radius.xl, paddingHorizontal: spacing.md, paddingVertical: 3 },
-  badgeTeks: { fontSize: 11, fontWeight: "800", color: colors.white },
-  noPesanan: { fontSize: 11, color: colors.textSoft },
-  atasKanan: { alignItems: "flex-end", gap: 2 },
-  waktuLabel: { fontSize: 11, fontWeight: "800", color: colors.textStrong },
-  waktuNilai: { fontSize: 15, fontWeight: "800", color: colors.textStrong },
-  zona: { fontSize: 11, fontWeight: "500", color: colors.muted },
   daftar: { gap: 3 },
   judul: { fontSize: 15, fontWeight: "800", color: colors.textStrong, marginBottom: 2 },
   baris: { fontSize: 13, lineHeight: 19, color: colors.text },
+  bacaLagi: { alignSelf: "flex-start", marginTop: spacing.xs },
+  bacaLagiTeks: { fontSize: 12, fontWeight: "700", color: colors.dark },
+  aksi: { flexDirection: "row", gap: spacing.sm },
+  tombolPenuh: { flex: 1 },
+  tombolDetail: { flex: 1 },
+  tombolChat: { flex: 2 },
 });

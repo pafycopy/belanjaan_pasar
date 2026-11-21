@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Button from "@/components/ui/button";
 import HeaderAddress from "@/components/beranda/headeraddress";
@@ -15,7 +15,8 @@ import MenungguBayar from "@/components/ngebelanjain/menunggubayar";
 import SudahDibayar from "@/components/ngebelanjain/sudahdibayar";
 import TabStatusNgebelanjain from "@/components/ngebelanjain/statuspesanan";
 import { useNgebelanjain } from "@/context/ngebelanjain";
-import { ILUSTRASI_NGEBELANJAIN_KOSONG, NOMOR_WA_NGEBELANJAIN, TAB_NGEBELANJAIN } from "@/data/ngebelanjain";
+import { useChatNgebelanjain } from "@/hooks/usechatngebelanjain";
+import { ILUSTRASI_NGEBELANJAIN_KOSONG, TAB_NGEBELANJAIN } from "@/data/ngebelanjain";
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, spacing } from "@/theme";
 import { MetodeNgebelanjain, PesananNgebelanjain, StatusNgebelanjain } from "@/types/ngebelanjain";
@@ -37,6 +38,7 @@ const alamatHeader = alamatMemuat
     : TEKS.header.kosong;
   const { tab: tabParam, ts } = useLocalSearchParams<{ tab?: string; ts?: string }>();
   const { pesanan, memuat, perbarui } = useNgebelanjain();
+  const chat = useChatNgebelanjain();
 
   const [tab, setTab] = useState<StatusNgebelanjain>("diproses");
   const [metodeDipilih, setMetodeDipilih] = useState<MetodeNgebelanjain>("qris");
@@ -58,21 +60,6 @@ const alamatHeader = alamatMemuat
   };
 
   const mulai = () => router.push("/ngebelanjain/daftar");
-
-  // Chat langsung ke WhatsApp admin dengan pesan yang sudah terisi nomor pesanan
-  const chat = async (p: PesananNgebelanjain) => {
-    if (!NOMOR_WA_NGEBELANJAIN) {
-      Alert.alert(T.waBelumDiatur.judul, T.waBelumDiatur.pesan);
-      return;
-    }
-    try {
-      await Linking.openURL(
-        `https://wa.me/${NOMOR_WA_NGEBELANJAIN}?text=${encodeURIComponent(T.chatWaPesan(p.nomor))}`
-      );
-    } catch {
-      Alert.alert(T.waGagal.judul, T.waGagal.pesan);
-    }
-  };
 
   /* ---------- isi sesuai tahap ---------- */
 
@@ -133,7 +120,12 @@ const alamatHeader = alamatMemuat
     isi = (
       <ScrollView contentContainerStyle={styles.daftar} showsVerticalScrollIndicator={false}>
         {daftar.map((p) => (
-          <KartuNgebelanjain key={p.nomor} pesanan={p} onChat={() => void chat(p)} />
+          <KartuNgebelanjain
+            key={p.nomor}
+            pesanan={p}
+            onDetail={() => router.push({ pathname: "/ngebelanjain/[nomor]", params: { nomor: p.nomor } })}
+            onChat={() => void chat(p)}
+          />
         ))}
       </ScrollView>
     );

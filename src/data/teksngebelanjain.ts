@@ -8,10 +8,18 @@ export const TEKS_NGEBELANJAIN = {
 
   noPesanan: (no: string) => `No. Pesanan: #${no}`,
   pesananAnda: "Pesanan Anda",
-  badge: { diproses: "Pesanan Diterima", dibelanjain: "Sedang Dibelanjain" },
+  badge: {
+    diproses: "Pesanan Diterima",
+    dibelanjain: "Sedang Dibelanjain",
+    pembayaran: "Pembayaran Tersedia",
+    dibayar: "Sudah Dibayar",
+  },
   dipesanPukul: "Dipesan pukul",
   estimasiSelesai: "Estimasi Selesai",
-  chatWa: "Chat via WhatsApp",
+  chatWa: "Hubungi Admin",
+  detail: "Detail",
+  bacaSelengkapnya: "Baca selengkapnya",
+  lebihSedikit: "Tampilkan lebih sedikit",
   chatWaPesan: (no: string) => `Halo, saya ingin menanyakan pesanan Ngebelanjain #${no}.`,
   waBelumDiatur: {
     judul: "WhatsApp belum diatur",
@@ -19,6 +27,16 @@ export const TEKS_NGEBELANJAIN = {
   },
   waGagal: { judul: "Tidak bisa membuka WhatsApp", pesan: "Pastikan WhatsApp terpasang di HP Anda." },
   gagal: { judul: "Terjadi kesalahan", pesan: "Perubahan belum tersimpan. Coba lagi." },
+
+  halamanDetail: {
+    judul: "Detail Pesanan",
+    daftarBelanja: "Daftar Belanja",
+    jumlahBarang: (n: number) => `${n} barang`,
+    pengiriman: "Pengiriman",
+    alamat: "Alamat Pengantaran",
+    waktuPesan: "Waktu Pemesanan",
+    tidakDitemukan: "Pesanan tidak ditemukan.",
+  },
 
   metode: { judul: "Metode Pembayaran", bayar: "Bayar Sekarang" },
 

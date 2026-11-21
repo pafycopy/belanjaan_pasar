@@ -47,3 +47,6 @@ export const ILUSTRASI_NGEBELANJAIN_KOSONG: ImageSource | number =
 // Data contoh untuk simulasi tugas admin di mode pengembangan (nanti diisi admin lewat server)
 export const ESTIMASI_SELESAI_CONTOH = "06.15 WIB";
 export const TAGIHAN_CONTOH = { totalProduk: 80000, jasaHelper: 10000, ongkir: 10000 } as const;
+
+// Daftar belanja di kartu pesanan dipotong sampai sekian baris; sisanya lewat "Baca selengkapnya"
+export const MAKS_BARIS_DAFTAR = 5;
