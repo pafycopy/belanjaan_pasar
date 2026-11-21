@@ -10,7 +10,6 @@ import { TEKS } from "@/data/teks";
 import ScreenState from "@/components/ui/screenstate";
 import IlustrasiKosong from "@/components/ngebelanjain/ilustrasikosong";
 import KartuNgebelanjain from "@/components/ngebelanjain/kartupesanan";
-import MetodeBayar from "@/components/ngebelanjain/metodebayar";
 import MenungguBayar from "@/components/ngebelanjain/menunggubayar";
 import SudahDibayar from "@/components/ngebelanjain/sudahdibayar";
 import TabStatusNgebelanjain from "@/components/ngebelanjain/statuspesanan";
@@ -19,8 +18,8 @@ import { useChatNgebelanjain } from "@/hooks/usechatngebelanjain";
 import { ILUSTRASI_NGEBELANJAIN_KOSONG, TAB_NGEBELANJAIN } from "@/data/ngebelanjain";
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, spacing } from "@/theme";
-import { MetodeNgebelanjain, PesananNgebelanjain, StatusNgebelanjain } from "@/types/ngebelanjain";
-import { batalkanMetode, majukanNgebelanjain, pilihMetode } from "@/utils/ngebelanjain";
+import { PesananNgebelanjain, StatusNgebelanjain } from "@/types/ngebelanjain";
+import { batalkanMetode, majukanNgebelanjain } from "@/utils/ngebelanjain";
 
 const T = TEKS_NGEBELANJAIN;
 
@@ -41,7 +40,6 @@ const alamatHeader = alamatMemuat
   const chat = useChatNgebelanjain();
 
   const [tab, setTab] = useState<StatusNgebelanjain>("diproses");
-  const [metodeDipilih, setMetodeDipilih] = useState<MetodeNgebelanjain>("qris");
 
   // Setelah mengirim permintaan, layar daftar membuka tab ini langsung di "Sedang Diproses"
   useEffect(() => {
@@ -80,25 +78,26 @@ const alamatHeader = alamatMemuat
     );
     footer = <Button label={T.mulai} size="lg" onPress={mulai} />;
   } else if (tab === "pembayaran") {
-    // QRIS hanya dianggap menunggu selama batas waktunya belum lewat
+    // Sebelum memilih metode, tampilkan kartu pesanan dan tombol Bayar Sekarang.
+    // Setelah metode dikonfirmasi, tampilkan rincian pembayaran sesuai metode tersebut.
     const qrisAktif = pertama.metode === "qris" && (pertama.batasBayar ?? 0) > Date.now();
     const menunggu = pertama.metode === "cod" || pertama.metode === "transfer" || qrisAktif;
-    const kembali = () => void ubah(pertama, batalkanMetode);
 
     if (menunggu) {
-      isi = <MenungguBayar pesanan={pertama} onKembali={kembali} />;
+      isi = <MenungguBayar pesanan={pertama} onKembali={() => void ubah(pertama, batalkanMetode)} />;
     } else {
       isi = (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <MetodeBayar dipilih={metodeDipilih} onPilih={setMetodeDipilih} />
+        <ScrollView contentContainerStyle={styles.daftar} showsVerticalScrollIndicator={false}>
+          {daftar.map((p) => (
+            <KartuNgebelanjain
+              key={p.nomor}
+              pesanan={p}
+              onDetail={() => router.push({ pathname: "/ngebelanjain/[nomor]", params: { nomor: p.nomor } })}
+              onChat={() => void chat(p)}
+              onBayar={() => router.push({ pathname: "/ngebelanjain/pembayaran/[nomor]", params: { nomor: p.nomor } })}
+            />
+          ))}
         </ScrollView>
-      );
-      footer = (
-        <Button
-          label={T.metode.bayar}
-          size="lg"
-          onPress={() => void ubah(pertama, (p) => pilihMetode(p, metodeDipilih))}
-        />
       );
     }
   } else if (tab === "dibayar") {

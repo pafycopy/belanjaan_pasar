@@ -11,14 +11,16 @@ import { pecahDaftar } from "@/utils/ngebelanjain";
 type Props = {
   pesanan: PesananNgebelanjain;
   onDetail: () => void; // buka halaman detail pesanan
-  onChat: () => void;   // dipakai saat status "dibelanjain"
+  onChat: () => void;   // dipakai saat status "dibelanjain" dan "pembayaran"
+  onBayar: () => void;  // buka halaman pilihan metode pembayaran
 };
 
 const T = TEKS_NGEBELANJAIN;
 
 // Kartu pesanan untuk tahap "Sedang Diproses" dan "Sedang Dibelanjain"
-export default function KartuNgebelanjain({ pesanan: p, onDetail, onChat }: Props) {
+export default function KartuNgebelanjain({ pesanan: p, onDetail, onChat, onBayar }: Props) {
   const dibelanjain = p.status === "dibelanjain";
+  const pembayaran = p.status === "pembayaran";
   const [terbuka, setTerbuka] = useState(false);
 
   // Daftar panjang dipotong sampai MAKS_BARIS_DAFTAR baris; sisanya lewat "Baca selengkapnya"
@@ -50,16 +52,28 @@ export default function KartuNgebelanjain({ pesanan: p, onDetail, onChat }: Prop
         ) : null}
       </View>
 
-      <View style={styles.aksi}>
-        <Button
-          label={T.detail}
-          variant="outline"
-          size="lg"
-          onPress={onDetail}
-          style={dibelanjain ? styles.tombolDetail : styles.tombolPenuh}
-        />
-        {dibelanjain ? <Button label={T.chatWa} size="lg" onPress={onChat} style={styles.tombolChat} /> : null}
-      </View>
+      {pembayaran ? (
+        <View style={styles.aksiKolom}>
+          <Button
+            label={T.chatWa}
+            size="lg"
+            onPress={onChat}
+            style={styles.tombolHubungiAdmin}
+          />
+          <Button label={T.metode.bayar} size="lg" onPress={onBayar} />
+        </View>
+      ) : (
+        <View style={styles.aksi}>
+          <Button
+            label={T.detail}
+            variant="outline"
+            size="lg"
+            onPress={onDetail}
+            style={dibelanjain ? styles.tombolDetail : styles.tombolPenuh}
+          />
+          {dibelanjain ? <Button label={T.chatWa} size="lg" onPress={onChat} style={styles.tombolChat} /> : null}
+        </View>
+      )}
     </View>
   );
 }
@@ -82,6 +96,9 @@ const styles = StyleSheet.create({
   bacaLagi: { alignSelf: "flex-start", marginTop: spacing.xs },
   bacaLagiTeks: { fontSize: 12, fontWeight: "700", color: colors.dark },
   aksi: { flexDirection: "row", gap: spacing.sm },
+  aksiKolom: { gap: spacing.sm },
+  // Oranye mengikuti tombol "Hubungi Admin" pada referensi UI.
+  tombolHubungiAdmin: { backgroundColor: "#FF922B" },
   tombolPenuh: { flex: 1 },
   tombolDetail: { flex: 1 },
   tombolChat: { flex: 2 },
