@@ -4,11 +4,13 @@ import { TEKS } from "@/data/teks";
 import { TagihanTransfer } from "@/types/pembayaran";
 import { Pesanan, StatusPesanan } from "@/types/pesanan";
 import { cariProduk } from "@/utils/produk";
+import { waktuTransaksi } from "@/utils/riwayat";
 import {
   bagianHariWib,
   berikutnyaJamWib,
   formatJamWib,
   formatTanggalJamWib,
+  kunciBulanWib,
   labelHariWib,
 } from "@/utils/waktu";
 
@@ -81,11 +83,17 @@ export function ringkasanProduk(p: Pesanan): { nama: string; deskripsi: string }
   return { nama: pertama.nama, deskripsi: bagian.join(" \u2022 ") };
 }
 
-// Saring per tab status, lalu per kata kunci (no. pesanan atau nama produk)
-export function saringPesanan(daftar: readonly Pesanan[], status: StatusPesanan, cari: string): Pesanan[] {
+// Saring per tab status, per bulan ("2026-11"; null = semua waktu), lalu per kata kunci (no. pesanan atau nama produk)
+export function saringPesanan(
+  daftar: readonly Pesanan[],
+  status: StatusPesanan,
+  cari: string,
+  bulan: string | null = null
+): Pesanan[] {
   const q = cari.trim().toLowerCase().replace(/^#/, "");
   return daftar.filter((p) => {
     if (p.status !== status) return false;
+    if (bulan !== null && kunciBulanWib(waktuTransaksi(p)) !== bulan) return false;
     if (!q) return true;
     return p.invoice.toLowerCase().includes(q) || p.baris.some((b) => b.nama.toLowerCase().includes(q));
   });

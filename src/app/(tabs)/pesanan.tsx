@@ -8,6 +8,7 @@ import SearchField from "@/components/ui/searchfield";
 import ScreenState from "@/components/ui/screenstate";
 import KartuPesanan from "@/components/pesanan/kartupesanan";
 import SegmenStatus from "@/components/pesanan/segmenstatus";
+import PilihBulanSheet, { OpsiBulan } from "@/components/riwayat/pilihbulansheet";
 import { useKeranjang } from "@/context/keranjang";
 import { usePesanan } from "@/context/pesanan";
 import { TAB_PESANAN } from "@/data/pesanan";
@@ -16,8 +17,11 @@ import { usePesanUlang } from "@/hooks/usepesanulang";
 import { colors, spacing } from "@/theme";
 import { Pesanan, StatusPesanan } from "@/types/pesanan";
 import { saringPesanan } from "@/utils/pesanan";
+import { daftarBulan } from "@/utils/riwayat";
+import { labelBulanTahun } from "@/utils/waktu";
 
 const T = TEKS.pesanan;
+const TR = TEKS.riwayat;
 
 export default function PesananScreen() {
   const router = useRouter();
@@ -34,12 +38,23 @@ const alamatHeader = alamatMemuat
 
   const [tab, setTab] = useState<StatusPesanan>("disiapkan");
   const [cari, setCari] = useState("");
+  const [bulanPilihan, setBulanPilihan] = useState<string | null>(null); // null = semua waktu
+  const [sheetTerbuka, setSheetTerbuka] = useState(false);
 
-  // Kolom cari hanya ada di tab Selesai (riwayat); tab lain selalu menampilkan semuanya
+  // Kolom cari dan filter bulan hanya ada di tab Selesai (riwayat); tab lain selalu menampilkan semuanya
   const bisaCari = tab === "selesai";
   const kata = bisaCari ? cari : "";
+  const bulan = bisaCari ? bulanPilihan : null;
 
-  const daftar = useMemo(() => saringPesanan(pesanan, tab, kata), [pesanan, tab, kata]);
+  const daftar = useMemo(() => saringPesanan(pesanan, tab, kata, bulan), [pesanan, tab, kata, bulan]);
+
+  const opsiBulan = useMemo<OpsiBulan[]>(
+    () => [
+      { kunci: null, label: TR.semuaWaktu },
+      ...daftarBulan(pesanan).map((k) => ({ kunci: k, label: labelBulanTahun(k) })),
+    ],
+    [pesanan]
+  );
   const sekarang = Date.now();
 
   const keDetail = (p: Pesanan) =>
@@ -64,6 +79,7 @@ const alamatHeader = alamatMemuat
         contentContainerStyle={styles.content}
       >
         <View style={styles.atas}>
+          <SegmenStatus items={TAB_PESANAN} selectedId={tab} onSelect={setTab} />
           {bisaCari ? (
             <SearchField
               value={cari}
@@ -71,9 +87,14 @@ const alamatHeader = alamatMemuat
               onSubmit={() => undefined}
               placeholder={T.cari}
               icon="search-outline"
+              aksi={{
+                icon: "calendar-outline",
+                onPress: () => setSheetTerbuka(true),
+                aksesibilitas: TR.filterBulan,
+                aktif: bulan !== null,
+              }}
             />
           ) : null}
-          <SegmenStatus items={TAB_PESANAN} selectedId={tab} onSelect={setTab} />
         </View>
 
         {memuat ? (
@@ -96,10 +117,22 @@ const alamatHeader = alamatMemuat
           </View>
         ) : (
           <View style={styles.kosong}>
-            <ScreenState message={kata.trim() ? T.kosong.cari : T.kosong[tab]} />
+            <ScreenState message={kata.trim() || bulan ? T.kosong.cari : T.kosong[tab]} />
           </View>
         )}
       </ScrollView>
+
+      {sheetTerbuka ? (
+        <PilihBulanSheet
+          opsi={opsiBulan}
+          dipilih={bulanPilihan}
+          onPilih={(kunci) => {
+            setBulanPilihan(kunci);
+            setSheetTerbuka(false);
+          }}
+          onTutup={() => setSheetTerbuka(false)}
+        />
+      ) : null}
     </View>
   );
 }

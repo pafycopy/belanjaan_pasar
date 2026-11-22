@@ -14,7 +14,6 @@ export const GRUP_MENU_AKUN: readonly GrupMenuAkun[] = [
     judul: "Pengaturan",
     menu: [
       { id: "alamat", label: "Daftar Alamat Pengantaran", ikon: "location-outline", href: "/alamat" },
-      { id: "rekening", label: "Rekening Bank & Pembayaran", ikon: "card-outline" },
       { id: "keamanan", label: "Keamanan Akun & PIN Transaksi", ikon: "shield-checkmark-outline" },
     ],
   },

@@ -1,4 +1,5 @@
 
+import { Pressable } from "react-native";
 import { Tabs } from "expo-router";
 import { Image } from "expo-image";
 import { colors } from "@/theme";
@@ -13,15 +14,18 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 11,
         },
+        // Hilangkan efek ripple (bulatan besar) bawaan Android saat tab ditekan
+        tabBarButton: (props) => <Pressable {...props} android_ripple={null} />,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Beranda",
-          tabBarIcon: () => (
+          tabBarIcon: ({ color }) => (
             <Image
               source={require("../../../assets/icon/home-nav.svg")}
+              tintColor={color}
               style={{ width: 21, height: 18 }}
               contentFit="contain"
             />
@@ -33,9 +37,10 @@ export default function TabsLayout() {
         name="produk"
         options={{
           title: "Produk",
-          tabBarIcon: () => (
+          tabBarIcon: ({ color }) => (
             <Image
               source={require("../../../assets/icon/produk-nav.svg")}
+              tintColor={color}
               style={{ width: 20, height: 20 }}
               contentFit="contain"
             />
@@ -47,9 +52,10 @@ export default function TabsLayout() {
         name="ngebelanjain"
         options={{
           title: "Ngebelanjain",
-          tabBarIcon: () => (
+          tabBarIcon: ({ color }) => (
             <Image
               source={require("../../../assets/icon/ngeblanjain-nav.svg")}
+              tintColor={color}
               style={{ width: 29, height: 21 }}
               contentFit="contain"
             />
@@ -61,9 +67,10 @@ export default function TabsLayout() {
         name="pesanan"
         options={{
           title: "Pesanan",
-          tabBarIcon: () => (
+          tabBarIcon: ({ color }) => (
             <Image
               source={require("../../../assets/icon/pesanan-nav.svg")}
+              tintColor={color}
               style={{ width: 20, height: 20 }}
               contentFit="contain"
             />
@@ -75,9 +82,10 @@ export default function TabsLayout() {
         name="akun"
         options={{
           title: "Akun",
-          tabBarIcon: () => (
+          tabBarIcon: ({ color }) => (
             <Image
               source={require("../../../assets/icon/akun-nav.svg")}
+              tintColor={color}
               style={{ width: 20, height: 20 }}
               contentFit="contain"
             />
