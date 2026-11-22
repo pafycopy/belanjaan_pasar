@@ -11,6 +11,7 @@ const WARNA_BADGE: Record<StatusNgebelanjain, string> = {
   dibelanjain: colors.primaryDeep,
   pembayaran: colors.orange,
   dibayar: colors.dark,
+  selesai: colors.dark,
 };
 
 // "04.30 WIB": zona waktu dibuat lebih kecil dan pudar

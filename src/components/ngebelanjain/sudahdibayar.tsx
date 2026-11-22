@@ -1,30 +1,24 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Button from "@/components/ui/button";
 import Nominal from "@/components/ui/nominal";
-import { NAMA_METODE_NGEBELANJAIN } from "@/data/ngebelanjain";
+import BarisRincian from "@/components/ngebelanjain/barisrincian";
+import DaftarRingkasan from "@/components/ngebelanjain/daftarringkasan";
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, radius, spacing } from "@/theme";
 import { PesananNgebelanjain } from "@/types/ngebelanjain";
 import { pecahDaftar } from "@/utils/ngebelanjain";
-import { formatJamWib } from "@/utils/waktu";
 
-type Props = { pesanan: PesananNgebelanjain };
+type Props = {
+  pesanan: PesananNgebelanjain;
+  onDetail: () => void; // buka halaman Detail Pembayaran
+};
 
 const T = TEKS_NGEBELANJAIN.dibayar;
 
-function Baris({ kiri, kanan, hijau }: { kiri: string; kanan: string; hijau?: boolean }) {
-  return (
-    <View style={styles.baris}>
-      <Text style={styles.kiriTebal}>{kiri}</Text>
-      <Text style={[styles.kanan, hijau && styles.hijau]}>{kanan}</Text>
-    </View>
-  );
-}
-
-// Kartu "Sudah Dibayar": bukti pembayaran Ngebelanjain
-export default function SudahDibayar({ pesanan: p }: Props) {
+// Kartu ringkas tab "Sudah Dibayar". Rincian lengkap (metode, waktu) ada di halaman Detail Pembayaran.
+export default function SudahDibayar({ pesanan: p, onDetail }: Props) {
   const baris = pecahDaftar(p.daftar);
-  const metode = p.metode ? NAMA_METODE_NGEBELANJAIN[p.metode] : "-";
 
   return (
     <View style={styles.kartu}>
@@ -33,22 +27,10 @@ export default function SudahDibayar({ pesanan: p }: Props) {
         <Text style={styles.chipTeks}>{T.chip}</Text>
       </View>
 
-      <Baris kiri={T.nomor} kanan={`#${p.nomor}`} hijau />
-      <Baris kiri={T.ringkasan} kanan={T.produk(baris.length)} hijau />
+      <BarisRincian kiri={T.nomor} kanan={`#${p.nomor}`} hijau />
+      <BarisRincian kiri={T.ringkasan} kanan={T.produk(baris.length)} hijau />
 
-      <View style={styles.daftar}>
-        {baris.map((b, i) => (
-          <View key={i} style={styles.baris}>
-            <Text style={styles.nama}>{b.nama}</Text>
-            <Text style={styles.jumlah}>{b.jumlah}</Text>
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.garis} />
-
-      <Baris kiri={T.metode} kanan={metode} />
-      <Baris kiri={T.waktu} kanan={p.dibayarPada ? `${formatJamWib(p.dibayarPada)} WIB` : "-"} />
+      <DaftarRingkasan baris={baris} bacaLagi={T.bacaSelengkapnya} />
 
       <View style={styles.totalBaris}>
         <View style={styles.totalKiri}>
@@ -58,9 +40,7 @@ export default function SudahDibayar({ pesanan: p }: Props) {
         <Text style={styles.lunas}>{T.lunas}</Text>
       </View>
 
-      <View style={styles.catatan}>
-        <Text style={styles.catatanTeks}>{T.catatan}</Text>
-      </View>
+      <Button label={T.detailPembayaran} variant="muted" size="lg" onPress={onDetail} />
     </View>
   );
 }
@@ -78,18 +58,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   chipTeks: { fontSize: 11, fontWeight: "800", color: colors.dark },
-  baris: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
-  kiriTebal: { fontSize: 13, fontWeight: "800", color: colors.textStrong },
-  kanan: { fontSize: 13, fontWeight: "700", color: colors.textStrong },
-  hijau: { color: colors.dark },
-  daftar: { gap: 6 },
-  nama: { flex: 1, fontSize: 13, color: colors.text },
-  jumlah: { fontSize: 13, color: colors.text, textAlign: "right" },
-  garis: { height: 1, backgroundColor: colors.border },
   totalBaris: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
   totalKiri: { gap: 2, flexShrink: 1 },
   totalLabel: { fontSize: 12, color: colors.textSoft },
   lunas: { fontSize: 15, fontWeight: "800", color: colors.dark },
-  catatan: { backgroundColor: colors.accentSoft, borderRadius: radius.md, padding: spacing.md },
-  catatanTeks: { fontSize: 12, lineHeight: 18, color: colors.textSoft, textAlign: "center" },
 });

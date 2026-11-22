@@ -114,7 +114,11 @@ const alamatHeader = alamatMemuat
     isi = (
       <ScrollView contentContainerStyle={styles.daftar} showsVerticalScrollIndicator={false}>
         {daftar.map((p) => (
-          <SudahDibayar key={p.nomor} pesanan={p} />
+          <SudahDibayar
+            key={p.nomor}
+            pesanan={p}
+            onDetail={() => router.push({ pathname: "/ngebelanjain/dibayar/[nomor]", params: { nomor: p.nomor } })}
+          />
         ))}
       </ScrollView>
     );

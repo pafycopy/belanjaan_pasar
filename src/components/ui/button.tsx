@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors, radius, alpha } from "@/theme";
 import { IconName } from "@/types/ui";
 
-type Variant = "primary" | "light" | "outline" | "glass" | "soft" | "orange";
+type Variant = "primary" | "light" | "outline" | "glass" | "soft" | "orange" | "muted";
 type Size = "xs" | "sm" | "md" | "lg";
 
 type Props = {
@@ -30,6 +30,7 @@ const VARIAN: Record<Variant, { bg: string; fg: string; border?: string; weight:
   outline: { bg: colors.white, fg: colors.textSoft, border: colors.border, weight: "600" },
   soft: { bg: colors.accentSoftStrong, fg: colors.dark, weight: "700" },
   orange: { bg: colors.orangeBright, fg: colors.white, weight: "700" },
+  muted: { bg: colors.canvas, fg: colors.text, weight: "700" },
   glass: { bg: alpha.white16, fg: colors.white, weight: "700" }, // di atas latar hijau tua
 };
 
