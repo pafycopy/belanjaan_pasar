@@ -1,17 +1,16 @@
-export type NadaTag = "hijau" | "peach";
+// Hanya dua jenis voucher: potongan belanja dan gratis ongkir
+export type JenisVoucher = "potongan" | "ongkir";
 
 // Voucher yang tersedia di katalog (nanti dari API)
 export type Voucher = {
   id: string;
-  tag: string;               // chip kecil, contoh: "Potongan Rp 10.000"
-  nadaTag: NadaTag;
-  kategori?: string;         // teks abu di samping chip, contoh: "Halal MUI"
+  jenis: JenisVoucher;       // menentukan chip kecil di pojok kiri kartu
   judul: string;
   deskripsi: string;
   biaya: number;             // harga dalam poin
-  berlakuSampai?: string;    // "YYYY-MM-DD"
-  catatan?: string;          // info kecil di footer bila tidak ada tanggal berlaku
+  berlakuSampai: string;     // "YYYY-MM-DD" (WIB). Lewat tanggal ini voucher hilang dari daftar tukar
   populer?: boolean;         // tampilkan pita "Paling Populer"
+  kuota: number;             // sisa kuota; 0 = habis
 
   // Tampilan kupon di "Voucher Saya"
   judulKupon?: string;                          // judul singkat (kalau beda dari `judul`)

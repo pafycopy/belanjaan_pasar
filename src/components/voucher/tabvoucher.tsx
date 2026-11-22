@@ -13,7 +13,7 @@ type Props = {
 // Pilihan dua tab: Tukar Voucher | Voucher Saya (dengan jumlah voucher yang dimiliki)
 export default function TabVoucher({ aktif, jumlahMilik, onChange }: Props) {
   return (
-    <View style={[styles.wadah, aktif === "saya" && styles.wadahTerang]}>
+    <View style={styles.wadah}>
       <Pressable
         style={[styles.tab, aktif === "tukar" && styles.tabAktif]}
         onPress={() => onChange("tukar")}
@@ -47,9 +47,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 3,
     borderRadius: 14,
-    backgroundColor: colors.accentSoftStrong,
-  },
-  wadahTerang: {
     backgroundColor: colors.white,
     elevation: 1,
     shadowColor: colors.shadow,

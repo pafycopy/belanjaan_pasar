@@ -116,9 +116,11 @@ export const TEKS = {
     tab: { tukar: "Tukar Voucher", saya: "Voucher Saya" },
     populer: "Paling Populer",
     berlaku: (tanggal: string) => `Berlaku s/d ${tanggal}`,
-    biaya: (n: string) => `Biaya: ${n} Pts`,
+    jenis: { potongan: "Potongan Belanja", ongkir: "Gratis Ongkir" },
+    kuotaTersisa: (n: number) => `Kuota Tersisa: ${n}`,
     tombolTukar: (n: string) => `Tukar ${n} Pts`,
-    kedaluwarsa: "Kedaluwarsa",
+    habis: "Habis",
+    kosongKatalog: "Belum ada voucher yang bisa ditukar saat ini.",
     konfirmasi: {
       judul: "Tukar voucher?",
       pesan: (nama: string, biaya: string) => `${nama}\nPoinmu akan berkurang ${biaya} Pts.`,

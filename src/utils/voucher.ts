@@ -1,19 +1,17 @@
-import { MASA_BERLAKU_DEFAULT_HARI } from "@/data/voucher";
 import { StatusMilik, Voucher, VoucherMilik } from "@/types/voucher";
 import { formatTanggal, tanggalWIB } from "@/utils/waktu";
 
 const HARI_MS = 24 * 3600 * 1000;
 
-// Voucher di katalog sudah tidak bisa ditukar kalau tanggal berlakunya lewat (tanggal WIB)
+// Voucher di katalog hilang dari daftar tukar kalau tanggal berlakunya sudah lewat (tanggal WIB).
+// Tanggal berlaku itu sendiri masih bisa ditukar sampai akhir harinya.
 export function sudahKedaluwarsa(v: Voucher, sekarang: number = Date.now()): boolean {
-  return !!v.berlakuSampai && v.berlakuSampai < tanggalWIB(sekarang);
+  return v.berlakuSampai < tanggalWIB(sekarang);
 }
 
-// Kapan voucher milik pengguna berakhir (ms): akhir hari tanggal berlaku (WIB),
-// atau MASA_BERLAKU_DEFAULT_HARI hari sejak ditukar kalau tidak ada tanggal.
-export function waktuKedaluwarsa(v: Voucher, ditukarPada: string): number {
-  if (v.berlakuSampai) return Date.parse(`${v.berlakuSampai}T23:59:59+07:00`);
-  return new Date(ditukarPada).getTime() + MASA_BERLAKU_DEFAULT_HARI * HARI_MS;
+// Kapan voucher berakhir (ms): akhir hari tanggal berlaku (WIB)
+export function waktuKedaluwarsa(v: Voucher): number {
+  return Date.parse(`${v.berlakuSampai}T23:59:59+07:00`);
 }
 
 export function statusMilik(
@@ -22,7 +20,7 @@ export function statusMilik(
   sekarang: number = Date.now()
 ): StatusMilik {
   if (m.dipakaiPada) return "terpakai";
-  return waktuKedaluwarsa(v, m.ditukarPada) < sekarang ? "kedaluwarsa" : "aktif";
+  return waktuKedaluwarsa(v) < sekarang ? "kedaluwarsa" : "aktif";
 }
 
 // "Berlaku dalam: 2 jam" kalau tinggal kurang dari sehari, selain itu "Berlaku s/d 31 Okt 2026"

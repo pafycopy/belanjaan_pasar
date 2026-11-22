@@ -26,7 +26,7 @@ const GRADASI: Record<StatusMilik, [string, string, string]> = {
 export default function KuponSaya({ voucher, milik, sekarang, onPakai }: Props) {
   const status = statusMilik(milik, voucher, sekarang);
   const aktif = status === "aktif";
-  const berakhir = waktuKedaluwarsa(voucher, milik.ditukarPada);
+  const berakhir = waktuKedaluwarsa(voucher);
 
   const infoWaktu =
     status === "aktif"
@@ -44,19 +44,9 @@ export default function KuponSaya({ voucher, milik, sekarang, onPakai }: Props) 
       end={{ x: 1, y: 1 }}
       style={styles.card}
     >
-      <View style={styles.atas}>
-        <View style={styles.teks}>
-          <Text style={styles.judul}>{voucher.judulKupon ?? voucher.judul}</Text>
-          {voucher.syaratKupon ? <Text style={styles.syarat}>{voucher.syaratKupon}</Text> : null}
-        </View>
-
-        <Pressable
-          style={[styles.pakai, !aktif && styles.pakaiMati]}
-          onPress={onPakai}
-          disabled={!aktif}
-        >
-          <Text style={[styles.pakaiTeks, !aktif && styles.pakaiTeksMati]}>{labelTombol}</Text>
-        </Pressable>
+      <View style={styles.teks}>
+        <Text style={styles.judul}>{voucher.judulKupon ?? voucher.judul}</Text>
+        {voucher.syaratKupon ? <Text style={styles.syarat}>{voucher.syaratKupon}</Text> : null}
       </View>
 
       <View style={styles.pemisah}>
@@ -69,21 +59,32 @@ export default function KuponSaya({ voucher, milik, sekarang, onPakai }: Props) 
           <Text style={styles.info}>{voucher.rincianKupon.kanan}</Text>
         </View>
       ) : null}
-      <Text style={styles.info}>{infoWaktu}</Text>
+      <View style={styles.bawah}>
+        <Text style={[styles.info, styles.infoWaktu]}>{infoWaktu}</Text>
+
+        <Pressable
+          style={[styles.pakai, !aktif && styles.pakaiMati]}
+          onPress={onPakai}
+          disabled={!aktif}
+        >
+          <Text style={[styles.pakaiTeks, !aktif && styles.pakaiTeksMati]}>{labelTombol}</Text>
+        </Pressable>
+      </View>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   card: { borderRadius: 14, padding: spacing.lg, gap: 6 },
-  atas: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing.md },
-  teks: { flex: 1, gap: 2 },
+  teks: { gap: 2 },
   judul: { fontSize: 19, lineHeight: 25, fontWeight: "800", color: colors.white },
   syarat: { fontSize: 12, color: alpha.white85 },
+  bawah: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
+  infoWaktu: { flex: 1 },
   pakai: {
     minWidth: 64,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 10,
     backgroundColor: colors.white,
     alignItems: "center",

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Alert, FlatList, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSekarang } from "@/hooks/usesekarang";
 import { colors, spacing } from "@/theme";
 import { TEKS } from "@/data/teks";
@@ -25,6 +26,7 @@ const T = TEKS.voucher;
 
 export default function VoucherScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { total, memuat: memuatPoin } = usePoin();
   const { milik, memuat: memuatVoucher, tukar } = useVoucher();
   const [tab, setTab] = useState<IdTabVoucher>("tukar");
@@ -46,6 +48,9 @@ export default function VoucherScreen() {
     itemMilik.forEach((i) => (hitung[i.status] += 1));
     return hitung;
   }, [itemMilik]);
+
+  // Voucher yang tanggal berlakunya sudah lewat hilang dari daftar tukar
+  const katalog = useMemo(() => KATALOG_VOUCHER.filter((v) => !sudahKedaluwarsa(v, sekarang)), [sekarang]);
 
   const dataMilik = useMemo(() => itemMilik.filter((i) => i.status === filter), [itemMilik, filter]);
 
@@ -100,19 +105,18 @@ export default function VoucherScreen() {
 
   const kepala = (
     <View style={styles.kepala}>
-      {tab === "tukar" ? (
-        <HeroVoucher
-          total={total}
-          tingkat={TINGKAT_MEMBER}
-          onPressRiwayat={segera}
-          onPressKlaim={() => router.navigate("/poin")}
-        />
-      ) : (
-        <FilterStatus aktif={filter} jumlah={jumlah} onChange={setFilter} />
-      )}
+      <HeroVoucher
+        total={total}
+        tingkat={TINGKAT_MEMBER}
+        onPressRiwayat={segera}
+        onPressKlaim={() => router.navigate("/poin")}
+      />
       <TabVoucher aktif={tab} jumlahMilik={jumlah.aktif} onChange={setTab} />
+      {tab === "saya" ? <FilterStatus aktif={filter} jumlah={jumlah} onChange={setFilter} /> : null}
     </View>
   );
+
+  const isiStyle = [styles.isi, { paddingBottom: spacing.xl + insets.bottom }];
 
   const pemisah = () => <View style={{ height: spacing.md }} />;
 
@@ -124,19 +128,19 @@ export default function VoucherScreen() {
         <ScreenState loading />
       ) : tab === "tukar" ? (
         <FlatList
-          data={KATALOG_VOUCHER}
+          data={katalog}
           keyExtractor={(v) => v.id}
           renderItem={({ item }) => (
             <KartuVoucher
               voucher={item}
-              kedaluwarsa={sudahKedaluwarsa(item)}
               menukar={menukarId === item.id}
               onTukar={() => konfirmasi(item)}
             />
           )}
           ListHeaderComponent={kepala}
+          ListEmptyComponent={<ScreenState message={T.kosongKatalog} />}
           ItemSeparatorComponent={pemisah}
-          contentContainerStyle={styles.isi}
+          contentContainerStyle={isiStyle}
         />
       ) : (
         <FlatList
@@ -156,7 +160,7 @@ export default function VoucherScreen() {
           }
           ListFooterComponent={<SyaratKetentuan />}
           ItemSeparatorComponent={pemisah}
-          contentContainerStyle={styles.isi}
+          contentContainerStyle={isiStyle}
         />
       )}
     </View>
