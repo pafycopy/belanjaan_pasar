@@ -23,6 +23,7 @@ export type PesananNgebelanjain = {
   estimasiSelesai?: string;   // mis. "06.15 WIB", terisi saat dibelanjain
   tagihan?: TagihanNgebelanjain; // terisi saat pembayaran tersedia
   metode?: MetodeNgebelanjain;   // terisi saat pelanggan memilih cara bayar
-  batasBayar?: number;        // ms, batas bayar QRIS
+  batasBayar?: number;        // ms, batas bayar QRIS / Virtual Account
+  pembayaranKedaluwarsa?: boolean; // true jika tagihan terakhir habis waktunya
   dibayarPada?: number;       // ms
 };

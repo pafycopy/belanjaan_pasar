@@ -19,7 +19,7 @@ import { ILUSTRASI_NGEBELANJAIN_KOSONG, TAB_NGEBELANJAIN } from "@/data/ngebelan
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, spacing } from "@/theme";
 import { PesananNgebelanjain, StatusNgebelanjain } from "@/types/ngebelanjain";
-import { batalkanMetode, cariPesananAktif, majukanNgebelanjain } from "@/utils/ngebelanjain";
+import { batalkanMetode, cariPesananAktif, kedaluwarsaMetode, majukanNgebelanjain } from "@/utils/ngebelanjain";
 
 const T = TEKS_NGEBELANJAIN;
 
@@ -52,6 +52,16 @@ const alamatHeader = alamatMemuat
   );
   const pertama: PesananNgebelanjain | undefined = daftar[0];
   const pesananAktif = cariPesananAktif(pesanan);
+
+  useEffect(() => {
+    if (tab !== "pembayaran" || !pertama || (pertama.metode !== "qris" && pertama.metode !== "transfer")) return;
+    if (typeof pertama.batasBayar !== "number") return;
+    if (pertama.batasBayar > Date.now()) {
+      router.replace({ pathname: "/ngebelanjain/tagihan/[nomor]", params: { nomor: pertama.nomor } });
+    } else {
+      void perbarui(pertama.nomor, kedaluwarsaMetode).catch(() => Alert.alert(T.gagal.judul, T.gagal.pesan));
+    }
+  }, [tab, pertama?.nomor, pertama?.metode, pertama?.batasBayar, perbarui, router]);
 
   const ubah = async (p: PesananNgebelanjain, fn: (x: PesananNgebelanjain) => PesananNgebelanjain) => {
     try {
@@ -90,8 +100,7 @@ const alamatHeader = alamatMemuat
   } else if (tab === "pembayaran") {
     // Sebelum memilih metode, tampilkan kartu pesanan dan tombol Bayar Sekarang.
     // Setelah metode dikonfirmasi, tampilkan rincian pembayaran sesuai metode tersebut.
-    const qrisAktif = pertama.metode === "qris" && (pertama.batasBayar ?? 0) > Date.now();
-    const menunggu = pertama.metode === "cod" || pertama.metode === "transfer" || qrisAktif;
+    const menunggu = pertama.metode === "cod";
 
     if (menunggu) {
       isi = <MenungguBayar pesanan={pertama} onKembali={() => void ubah(pertama, batalkanMetode)} />;

@@ -61,12 +61,22 @@ export function hitungTagihan(totalProduk: number, jasaHelper: number, ongkir: n
 
 // Pelanggan memilih cara bayar. QRIS punya batas waktu; COD tidak.
 export function pilihMetode(p: PesananNgebelanjain, metode: MetodeNgebelanjain, sekarang: number = Date.now()): PesananNgebelanjain {
-  return { ...p, metode, batasBayar: metode === "qris" ? sekarang + BATAS_BAYAR_MENIT * 60_000 : undefined };
+  return {
+    ...p,
+    metode,
+    batasBayar: metode === "cod" ? undefined : sekarang + BATAS_BAYAR_MENIT * 60_000,
+    pembayaranKedaluwarsa: false,
+  };
 }
 
 // Pelanggan kembali memilih metode (atau waktu QRIS habis)
 export function batalkanMetode(p: PesananNgebelanjain): PesananNgebelanjain {
-  return { ...p, metode: undefined, batasBayar: undefined };
+  return { ...p, metode: undefined, batasBayar: undefined, pembayaranKedaluwarsa: false };
+}
+
+// Dipakai saat hitung mundur QRIS / Virtual Account habis. Pesanan tetap di Pembayaran Tersedia.
+export function kedaluwarsaMetode(p: PesananNgebelanjain): PesananNgebelanjain {
+  return { ...p, metode: undefined, batasBayar: undefined, pembayaranKedaluwarsa: true };
 }
 
 // Hanya untuk simulasi di mode pengembangan. Aslinya: admin yang menerima pesanan, mengisi tagihan

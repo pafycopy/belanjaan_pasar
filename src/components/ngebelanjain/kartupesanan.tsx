@@ -55,7 +55,7 @@ export default function KartuNgebelanjain({ pesanan: p, onDetail, onChat, onBaya
       {pembayaran ? (
         <View style={styles.aksiKolom}>
           <Button label={T.chatWa} variant="orange" size="lg" onPress={onChat} />
-          <Button label={T.metode.bayar} size="lg" onPress={onBayar} />
+          <Button label={p.pembayaranKedaluwarsa ? "Pembayaran Baru" : T.metode.bayar} size="lg" onPress={onBayar} />
         </View>
       ) : (
         <View style={styles.aksi}>

@@ -49,7 +49,7 @@ export const TEKS_NGEBELANJAIN = {
     bayar: "Bayar Sekarang",
     konfirmasi: {
       qris: "Konfirmasi Pembayaran QRIS",
-      transfer: "Konfirmasi Transfer Bank",
+      transfer: "Konfirmasi BCA Virtual Account",
       cod: "Konfirmasi Pesanan COD",
     },
   },

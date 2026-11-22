@@ -33,19 +33,18 @@ export type OpsiMetodeNgebelanjain = {
 
 export const OPSI_METODE_NGEBELANJAIN: readonly OpsiMetodeNgebelanjain[] = [
   { id: "qris", nama: "QRIS", ikon: "qr-code-outline", logoTeks: "QRIS" },
-  // Sementara transfer manual ke satu rekening BCA. Ganti nama jadi "BCA Virtual Account"
-  // setelah nomor VA per pesanan tersedia dari payment gateway.
-  { id: "transfer", nama: "Transfer Bank", ikon: "business", pilihan: { nama: "Transfer ke Rekening BCA", logoTeks: "BCA" } },
+  // BCA Virtual Account sementara memakai nomor simulasi sampai payment gateway terintegrasi.
+  { id: "transfer", nama: "Transfer Bank", ikon: "business", pilihan: { nama: "BCA Virtual Account", logoTeks: "BCA" } },
   { id: "cod", nama: "Bayar di Tempat (COD)", keterangan: "Bayar tunai ke kurir saat pesanan sampai", ikon: "cash-outline" },
 ];
 
-export const NAMA_METODE_NGEBELANJAIN: Record<MetodeNgebelanjain, string> = { qris: "QRIS", transfer: "Transfer Bank BCA", cod: "COD" };
+export const NAMA_METODE_NGEBELANJAIN: Record<MetodeNgebelanjain, string> = { qris: "QRIS", transfer: "BCA Virtual Account", cod: "COD" };
 
 // Nomor WhatsApp admin untuk "Chat via WhatsApp", format internasional tanpa + (mis. "628123456789").
 // WAJIB diisi sebelum dipakai; kosong = tombol chat menampilkan peringatan.
 export const NOMOR_WA_NGEBELANJAIN = "";
 
-// Gambar QRIS toko untuk layar "Menunggu Pembayaran". Kosong = tampil kotak pengganti.
+// Gambar QRIS toko untuk halaman tagihan Ngebelanjain. Kosong = tampil QRIS demo non-pembayaran.
 // Pasang: taruh file di assets/images lalu isi, mis.
 //   export const GAMBAR_QRIS = require("../../assets/images/qris.png");
 export const GAMBAR_QRIS: ImageSource | number | undefined = undefined;

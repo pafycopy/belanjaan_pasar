@@ -31,7 +31,11 @@ export default function PembayaranNgebelanjain() {
     setMenyimpan(true);
     try {
       await perbarui(pesananAktif.nomor, (p) => pilihMetode(p, dipilih));
-      router.replace({ pathname: "/(tabs)/ngebelanjain", params: { tab: "pembayaran", ts: String(Date.now()) } });
+      if (dipilih === "cod") {
+        router.replace({ pathname: "/(tabs)/ngebelanjain", params: { tab: "pembayaran", ts: String(Date.now()) } });
+      } else {
+        router.replace({ pathname: "/ngebelanjain/tagihan/[nomor]", params: { nomor: pesananAktif.nomor } });
+      }
     } catch {
       setMenyimpan(false);
       Alert.alert(T.gagal.judul, T.gagal.pesan);
