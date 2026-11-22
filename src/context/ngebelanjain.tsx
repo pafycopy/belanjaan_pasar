@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { ngebelanjainRepository as repo } from "@/services/ngebelanjainrepository";
 import { PesananNgebelanjain } from "@/types/ngebelanjain";
+import { cariPesananAktif } from "@/utils/ngebelanjain";
 
 type NgebelanjainContextValue = {
   pesanan: PesananNgebelanjain[];
@@ -31,6 +32,10 @@ export function NgebelanjainProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const tambah = async (baru: PesananNgebelanjain) => {
+    if (memuat) throw new Error("Data pesanan masih dimuat.");
+    if (cariPesananAktif(pesanan)) {
+      throw new Error("Bayar pesanan Ngebelanjain sebelumnya sebelum membuat pesanan baru.");
+    }
     setPesanan(await repo.tambah(baru));
   };
 

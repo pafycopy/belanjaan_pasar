@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PesananNgebelanjain } from "@/types/ngebelanjain";
+import { cariPesananAktif } from "@/utils/ngebelanjain";
 
 /**
  * Kontrak akses pesanan Ngebelanjain (pola sama dengan repository lain).
@@ -13,7 +14,7 @@ export interface NgebelanjainRepository {
 }
 
 const KUNCI = "belanjaan_pasar:ngebelanjain:v1";
-const STATUS = ["diproses", "dibelanjain", "pembayaran", "dibayar"];
+const STATUS = ["diproses", "dibelanjain", "pembayaran", "dibayar", "selesai"];
 
 function valid(x: unknown): x is PesananNgebelanjain {
   if (!x || typeof x !== "object") return false;
@@ -49,8 +50,11 @@ const ngebelanjainLokal: NgebelanjainRepository = {
 
   // Terbaru di atas
   async tambah(pesanan) {
-    const lain = (await baca()).filter((p) => p.nomor !== pesanan.nomor);
-    return simpan([pesanan, ...lain]);
+    const daftar = await baca();
+    if (cariPesananAktif(daftar)) {
+      throw new Error("Masih ada pesanan Ngebelanjain yang belum dibayar.");
+    }
+    return simpan([pesanan, ...daftar.filter((p) => p.nomor !== pesanan.nomor)]);
   },
 
   async perbarui(nomor, ubah) {

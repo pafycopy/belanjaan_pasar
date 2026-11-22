@@ -5,6 +5,11 @@ export const TEKS_NGEBELANJAIN = {
   kosongJudul: "Belum ada pesanan Ngebelanjain.",
   kosongPesan: "Yuk, titip kebutuhan belanja pasar dan biar kami yang belanjain!",
   mulai: "Mulai Ngebelanjain",
+  terkunci: {
+    judul: "Selesaikan pembayaran sebelumnya",
+    pesan: "Kamu masih memiliki pesanan Ngebelanjain yang belum dibayar. Selesaikan pembayaran pesanan tersebut terlebih dahulu sebelum membuat pesanan baru.",
+    kembali: "Kembali ke Pesanan",
+  },
 
   noPesanan: (no: string) => `No. Pesanan: #${no}`,
   pesananAnda: "Pesanan Anda",

@@ -1,7 +1,7 @@
 import { IdPengiriman } from "@/data/keranjang";
 
 // Tahapan pesanan Ngebelanjain. Perpindahan antar tahap dilakukan admin (nanti lewat server).
-export type StatusNgebelanjain = "diproses" | "dibelanjain" | "pembayaran" | "dibayar";
+export type StatusNgebelanjain = "diproses" | "dibelanjain" | "pembayaran" | "dibayar" | "selesai";
 
 export type MetodeNgebelanjain = "qris" | "transfer" | "cod";
 

@@ -19,7 +19,7 @@ import { ILUSTRASI_NGEBELANJAIN_KOSONG, TAB_NGEBELANJAIN } from "@/data/ngebelan
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, spacing } from "@/theme";
 import { PesananNgebelanjain, StatusNgebelanjain } from "@/types/ngebelanjain";
-import { batalkanMetode, majukanNgebelanjain } from "@/utils/ngebelanjain";
+import { batalkanMetode, cariPesananAktif, majukanNgebelanjain } from "@/utils/ngebelanjain";
 
 const T = TEKS_NGEBELANJAIN;
 
@@ -46,8 +46,12 @@ const alamatHeader = alamatMemuat
     if (adaStatus(tabParam)) setTab(tabParam);
   }, [tabParam, ts]);
 
-  const daftar = useMemo(() => pesanan.filter((p) => p.status === tab), [pesanan, tab]);
+  const daftar = useMemo(
+    () => pesanan.filter((p) => (tab === "dibayar" ? p.status === "dibayar" || p.status === "selesai" : p.status === tab)),
+    [pesanan, tab]
+  );
   const pertama: PesananNgebelanjain | undefined = daftar[0];
+  const pesananAktif = cariPesananAktif(pesanan);
 
   const ubah = async (p: PesananNgebelanjain, fn: (x: PesananNgebelanjain) => PesananNgebelanjain) => {
     try {
@@ -69,14 +73,20 @@ const alamatHeader = alamatMemuat
     isi = <ScreenState loading />;
   } else if (!pertama) {
     latar = colors.white;
-    isi = (
+    isi = pesananAktif ? (
+      <View style={styles.kosong}>
+        <IlustrasiKosong gambar={ILUSTRASI_NGEBELANJAIN_KOSONG} />
+        <Text style={styles.kosongJudul}>{T.terkunci.judul}</Text>
+        <Text style={styles.kosongPesan}>{T.terkunci.pesan}</Text>
+      </View>
+    ) : (
       <View style={styles.kosong}>
         <IlustrasiKosong gambar={ILUSTRASI_NGEBELANJAIN_KOSONG} />
         <Text style={styles.kosongJudul}>{T.kosongJudul}</Text>
         <Text style={styles.kosongPesan}>{T.kosongPesan}</Text>
       </View>
     );
-    footer = <Button label={T.mulai} size="lg" onPress={mulai} />;
+    if (!pesananAktif) footer = <Button label={T.mulai} size="lg" onPress={mulai} />;
   } else if (tab === "pembayaran") {
     // Sebelum memilih metode, tampilkan kartu pesanan dan tombol Bayar Sekarang.
     // Setelah metode dikonfirmasi, tampilkan rincian pembayaran sesuai metode tersebut.

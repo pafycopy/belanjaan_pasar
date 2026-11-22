@@ -5,6 +5,17 @@ import { MetodeNgebelanjain, PesananNgebelanjain, TagihanNgebelanjain } from "@/
 
 export type BarisDaftar = { nama: string; jumlah: string; teks: string };
 
+// Pemesanan baru terkunci hanya selama pesanan sebelumnya belum dibayar.
+// Setelah pembayaran tercatat, status proses/pengiriman tidak lagi mengunci pesanan baru.
+export function adaPesananAktif(p: PesananNgebelanjain): boolean {
+  const sudahDibayar = p.status === "dibayar" || p.status === "selesai" || typeof p.dibayarPada === "number";
+  return !sudahDibayar;
+}
+
+export function cariPesananAktif(daftar: readonly PesananNgebelanjain[]): PesananNgebelanjain | undefined {
+  return daftar.find(adaPesananAktif);
+}
+
 // "Cabai rawit merah - 500 gram" -> nama "Cabai rawit merah", jumlah "500 gram".
 // Pemisah (-, – atau —) harus dikelilingi spasi; baris tanpa pemisah dianggap nama saja.
 export function pecahDaftar(daftar: string): BarisDaftar[] {
@@ -76,6 +87,8 @@ export function majukanNgebelanjain(p: PesananNgebelanjain, sekarang: number = D
       };
     case "pembayaran":
       return { ...p, status: "dibayar", metode: p.metode ?? "qris", batasBayar: undefined, dibayarPada: sekarang };
+    case "dibayar":
+      return { ...p, status: "selesai" };
     default:
       return p;
   }

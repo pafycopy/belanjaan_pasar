@@ -12,7 +12,7 @@ import { TEKS } from "@/data/teks";
 import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, radius, spacing } from "@/theme";
 import { formatAlamatLengkap } from "@/utils/alamat";
-import { buatPesananNgebelanjain, pecahDaftar } from "@/utils/ngebelanjain";
+import { buatPesananNgebelanjain, cariPesananAktif, pecahDaftar } from "@/utils/ngebelanjain";
 
 const T = TEKS_NGEBELANJAIN;
 const TD = T.daftar;
@@ -20,7 +20,8 @@ const TD = T.daftar;
 export default function DaftarNgebelanjain() {
   const router = useRouter();
   const { terpilih } = useAlamat();
-  const { pesanan, tambah } = useNgebelanjain();
+  const { pesanan, memuat, tambah } = useNgebelanjain();
+  const pesananAktif = cariPesananAktif(pesanan);
 
   const [daftar, setDaftar] = useState("");
   const [pengiriman, setPengiriman] = useState<IdPengiriman>("antar");
@@ -30,6 +31,10 @@ export default function DaftarNgebelanjain() {
   // Pesanan baru masuk ke tab "Sedang Diproses" (menunggu diterima admin)
   const kirim = async () => {
     if (mengirim) return;
+    if (memuat || cariPesananAktif(pesanan)) {
+      Alert.alert(T.terkunci.judul, T.terkunci.pesan);
+      return;
+    }
     if (pecahDaftar(daftar).length === 0) {
       Alert.alert(TD.kosong.judul, TD.kosong.pesan);
       return;
@@ -59,6 +64,19 @@ export default function DaftarNgebelanjain() {
       Alert.alert(T.gagal.judul, T.gagal.pesan);
     }
   };
+
+  if (memuat || pesananAktif) {
+    return (
+      <View style={styles.screen}>
+        <HeaderHijau judul={T.judul} />
+        <View style={styles.terkunci}>
+          <Text style={styles.terkunciJudul}>{memuat ? "Memuat pesanan..." : T.terkunci.judul}</Text>
+          {!memuat ? <Text style={styles.terkunciPesan}>{T.terkunci.pesan}</Text> : null}
+          <Button label={T.terkunci.kembali} size="lg" onPress={() => router.dismissTo({ pathname: "/ngebelanjain" })} />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.screen}>
@@ -123,5 +141,8 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   footer: { paddingHorizontal: 14, paddingTop: spacing.sm, paddingBottom: spacing.lg, gap: spacing.sm },
+  terkunci: { flex: 1, justifyContent: "center", padding: spacing.xl, gap: spacing.md },
+  terkunciJudul: { fontSize: 17, fontWeight: "800", color: colors.textStrong, textAlign: "center" },
+  terkunciPesan: { fontSize: 13, lineHeight: 20, color: colors.textSoft, textAlign: "center" },
   catatan: { fontSize: 11, lineHeight: 16, color: colors.brown, textAlign: "center" },
 });
