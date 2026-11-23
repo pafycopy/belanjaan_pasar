@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import GambarProduk from "@/components/produk/gambarproduk";
-import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { Produk } from "@/types/produk";
 import { formatHarga } from "@/utils/produk";
@@ -30,11 +29,14 @@ export default function KartuProdukRingkas({ produk, onPress, onTambah }: Props)
       <View style={styles.bawah}>
         <Text style={styles.harga}>{formatHarga(produk.harga)}</Text>
         <Pressable
-          onPress={onTambah}
+          onPress={(event) => {
+            event.stopPropagation();
+            onTambah();
+          }}
           hitSlop={8}
           style={styles.tambah}
           accessibilityRole="button"
-          accessibilityLabel={TEKS.katalog.tambahAksesibilitas(produk.nama)}
+          accessibilityLabel={`Tambah ${produk.nama} ke keranjang`}
         >
           <Ionicons name="add" size={20} color={colors.white} />
         </Pressable>
