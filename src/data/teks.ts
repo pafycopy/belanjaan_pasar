@@ -184,6 +184,7 @@ export const TEKS = {
     lihatProduk: (nama: string) => `Lihat ${nama}`,
     favoritTambah: (nama: string) => `Tambahkan ${nama} ke favorit`,
     favoritHapus: (nama: string) => `Hapus ${nama} dari favorit`,
+    tambahAksesibilitas: (nama: string) => `Tambahkan ${nama} ke keranjang`,
   },
 
   keranjang: {

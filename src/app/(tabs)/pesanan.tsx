@@ -14,6 +14,7 @@ import { usePesanan } from "@/context/pesanan";
 import { TAB_PESANAN } from "@/data/pesanan";
 import { TEKS } from "@/data/teks";
 import { usePesanUlang } from "@/hooks/usepesanulang";
+import { useSekarang } from "@/hooks/usesekarang";
 import { colors, spacing } from "@/theme";
 import { Pesanan, StatusPesanan } from "@/types/pesanan";
 import { saringPesanan } from "@/utils/pesanan";
@@ -55,7 +56,8 @@ const alamatHeader = alamatMemuat
     ],
     [pesanan]
   );
-  const sekarang = Date.now();
+  // Waktu yang diperbarui berkala, bukan Date.now() saat render
+  const sekarang = useSekarang(60_000);
 
   const keDetail = (p: Pesanan) =>
     router.push({ pathname: "/pesanan/[invoice]", params: { invoice: p.invoice } });
