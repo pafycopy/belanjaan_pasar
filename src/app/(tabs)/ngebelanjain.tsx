@@ -131,13 +131,6 @@ const alamatHeader = alamatMemuat
         ))}
       </ScrollView>
     );
-    footer = (
-      <Button
-        label={T.dibayar.detail}
-        size="lg"
-        onPress={() => Alert.alert(T.dibayar.segera.judul, T.dibayar.segera.pesan)}
-      />
-    );
   } else {
     isi = (
       <ScrollView contentContainerStyle={styles.daftar} showsVerticalScrollIndicator={false}>
