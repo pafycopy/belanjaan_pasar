@@ -73,7 +73,7 @@ export default function KartuProduk({
 
       {labelVarian ? (
         <Text style={styles.varian} numberOfLines={1}>
-          Varian: {labelVarian}
+        {labelVarian}
         </Text>
       ) : null}
 
@@ -97,8 +97,22 @@ export default function KartuProduk({
         </View>
         {promo ? (
           <View style={styles.infoDiskon}>
-            <Text style={styles.hargaCoret}>{formatHarga(produk.hargaCoret ?? 0)}</Text>
-            <Text style={styles.hemat}>Hemat {formatHarga(hematRupiah(produk))}</Text>
+            <Text
+              style={styles.hargaCoret}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.75}
+            >
+              {formatHarga(produk.hargaCoret ?? 0)}
+            </Text>
+            <Text
+              style={styles.hemat}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+            >
+              Hemat {formatHarga(hematRupiah(produk))}
+            </Text>
           </View>
         ) : null}
       </View>
@@ -192,16 +206,33 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
   teksBadgeDiskon: { color: "#C93636", fontSize: 10, lineHeight: 13, fontWeight: "600" },
-  infoDiskon: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 2 },
+  infoDiskon: {
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 2,
+    minWidth: 0,
+    width: "100%",
+  },
   hargaCoret: {
-  color: "#737373",
-  fontSize: 14,
-  lineHeight: 32,
-  fontWeight: "500",
-  textDecorationLine: "line-through",
-  textDecorationColor: "#090909",
-},
-  hemat: { color: colors.primary, fontSize: 12, lineHeight: 18, fontWeight: "600" },
+    flexShrink: 1,
+    minWidth: 0,
+    color: "#737373",
+    fontSize: 12,
+    lineHeight: 18,
+    fontWeight: "500",
+    textDecorationLine: "line-through",
+    textDecorationColor: "#737373",
+  },
+  hemat: {
+    flexShrink: 1,
+    minWidth: 0,
+    color: colors.primary,
+    fontSize: 12,
+    lineHeight: 18,
+    fontWeight: "600",
+  },
   footer: {
     flexDirection: "row",
     alignItems: "center",
