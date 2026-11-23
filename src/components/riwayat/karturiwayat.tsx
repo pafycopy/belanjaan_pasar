@@ -1,89 +1,67 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import GambarProduk from "@/components/produk/gambarproduk";
-import Button from "@/components/ui/button";
-import { GAYA_STATUS_RIWAYAT } from "@/data/riwayat";
-import { TEKS } from "@/data/teks";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, radius, spacing } from "@/theme";
-import { Pesanan } from "@/types/pesanan";
-import { jumlahBarang, ringkasRiwayat } from "@/utils/riwayat";
-import { cariProduk, formatHarga } from "@/utils/produk";
+import { Transaksi, StatusTransaksi } from "@/types/transaksi";
+import { formatHarga } from "@/utils/produk";
+import { formatJamWib } from "@/utils/waktu";
 
-type Props = {
-  pesanan: Pesanan;
-  onDetail: () => void;
-  onBeliLagi: () => void;
-  onNilai: () => void;
+type Props = { transaksi: Transaksi; onPress: () => void };
+
+const GAYA: Record<StatusTransaksi, { label: string; bg: string; fg: string }> = {
+  menunggu: { label: "Menunggu", bg: colors.peachSoft, fg: colors.orange },
+  berhasil: { label: "Berhasil", bg: colors.mintFade, fg: colors.dark },
+  gagal: { label: "Gagal", bg: "#FCE8E8", fg: "#C62828" },
+  kedaluwarsa: { label: "Kedaluwarsa", bg: colors.canvas, fg: colors.muted },
+  dibatalkan: { label: "Dibatalkan", bg: colors.canvas, fg: colors.muted },
 };
 
-// Kartu transaksi: toko + status, produk pertama, lalu total dan tombol Beli Lagi / Nilai
-export default function KartuRiwayat({ pesanan: p, onDetail, onBeliLagi, onNilai }: Props) {
-  const produk = p.baris[0] ? cariProduk(p.baris[0].produkId) : undefined;
-  const ringkas = ringkasRiwayat(p);
-  const gaya = GAYA_STATUS_RIWAYAT[p.status];
-  const selesai = p.status === "selesai";
-
+export default function KartuRiwayat({ transaksi: t, onPress }: Props) {
+  const gaya = GAYA[t.statusTransaksi];
+  const jenis = t.jenisTransaksi === "ngebelanjain" ? "Pembayaran – Ngebelanjain" : "Pembayaran – Pesanan";
+  const tanggal = new Date(t.dibuatLogPada + 7 * 60 * 60 * 1000);
+  const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][tanggal.getUTCDay()];
+  const bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][tanggal.getUTCMonth()];
   return (
-    <View style={styles.kartu}>
+    <Pressable style={styles.kartu} onPress={onPress} accessibilityRole="button">
       <View style={styles.atas}>
-        <Text style={styles.toko} numberOfLines={1}>
-          {produk?.toko ?? TEKS.riwayat.tokoBawaan}
-        </Text>
-        <View style={[styles.lencana, { backgroundColor: gaya.bg }]}>
-          <Text style={[styles.lencanaTeks, { color: gaya.fg }]}>{TEKS.pesanan.status[p.status]}</Text>
+        <Text style={styles.judul} numberOfLines={1}>{jenis}</Text>
+        <View style={[styles.badge, { backgroundColor: gaya.bg }]}>
+          <Text style={[styles.badgeTeks, { color: gaya.fg }]}>{gaya.label}</Text>
         </View>
       </View>
-
-      <Pressable style={styles.produk} onPress={onDetail} accessibilityRole="button">
-        <GambarProduk gambar={produk?.gambar} style={styles.gambar} fit="contain" />
-        <View style={styles.info}>
-          <Text style={styles.nama} numberOfLines={2}>
-            {ringkas.nama}
-          </Text>
-          {ringkas.keterangan ? <Text style={styles.keterangan}>{ringkas.keterangan}</Text> : null}
-        </View>
-        <Text style={styles.jumlah}>x{ringkas.jumlah}</Text>
-      </Pressable>
-
       <View style={styles.bawah}>
-        <View style={styles.total}>
-          <Text style={styles.totalLabel}>{TEKS.riwayat.jumlahBelanjaan(jumlahBarang(p))}</Text>
-          <Text style={styles.totalNilai}>{formatHarga(p.total)}</Text>
+        <View style={styles.kiri}>
+          <Text style={styles.tanggal}>{`${hari}, ${tanggal.getUTCDate()} ${bulan}`}</Text>
+          <View style={styles.waktu}>
+            <Ionicons name="time-outline" size={12} color={colors.textSoft} />
+            <Text style={styles.jam}>{formatJamWib(t.dibuatLogPada)}</Text>
+          </View>
         </View>
-
-        <View style={styles.aksi}>
-          <Button label={TEKS.riwayat.beliLagi} size="xs" onPress={onBeliLagi} style={styles.tombol} />
-          {selesai ? (
-            <Button label={TEKS.riwayat.nilai} size="xs" variant="soft" onPress={onNilai} style={styles.tombol} />
-          ) : null}
+        <View style={styles.kanan}>
+          <Text style={styles.total}>{formatHarga(t.total)}</Text>
+          <View style={styles.rincian}>
+            <Text style={styles.rincianTeks}>Rincian Pembayaran</Text>
+            <Ionicons name="chevron-forward" size={13} color={colors.textSoft} />
+          </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   kartu: { backgroundColor: colors.white, borderRadius: radius.lg, padding: spacing.md, gap: spacing.md },
-  atas: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
-  toko: { flex: 1, fontSize: 13, fontWeight: "700", color: colors.text },
-  lencana: { borderRadius: radius.xl, paddingHorizontal: spacing.md, paddingVertical: 3 },
-  lencanaTeks: { fontSize: 11, fontWeight: "700" },
-  produk: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: spacing.md,
-    backgroundColor: colors.accentSoft,
-    borderRadius: radius.md,
-    padding: spacing.sm,
-  },
-  gambar: { width: 64, height: 64, borderRadius: radius.sm, backgroundColor: colors.white },
-  info: { flex: 1, gap: 2, paddingTop: spacing.xs },
-  nama: { fontSize: 14, fontWeight: "700", color: colors.text, lineHeight: 19 },
-  keterangan: { fontSize: 12, color: colors.textSoft },
-  jumlah: { fontSize: 12, color: colors.muted, paddingTop: spacing.xs },
-  bawah: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
-  total: { flexShrink: 1, gap: 2 },
-  totalLabel: { fontSize: 10, color: colors.muted },
-  totalNilai: { fontSize: 14, fontWeight: "800", color: colors.text },
-  aksi: { flexDirection: "row", gap: spacing.sm },
-  tombol: { paddingHorizontal: spacing.lg },
+  atas: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  judul: { flex: 1, fontSize: 12, fontWeight: "600", color: colors.text },
+  badge: { borderRadius: radius.xl, paddingHorizontal: spacing.sm, paddingVertical: 3 },
+  badgeTeks: { fontSize: 10, fontWeight: "700" },
+  bawah: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" },
+  kiri: { gap: spacing.xs },
+  tanggal: { color: colors.dark, fontSize: 12, fontWeight: "700" },
+  waktu: { flexDirection: "row", alignItems: "center", gap: 4 },
+  jam: { fontSize: 10, color: colors.textSoft },
+  kanan: { alignItems: "flex-end", gap: 3 },
+  total: { fontSize: 16, fontWeight: "800", color: colors.dark },
+  rincian: { flexDirection: "row", alignItems: "center", gap: 2 },
+  rincianTeks: { fontSize: 10, color: colors.textSoft },
 });

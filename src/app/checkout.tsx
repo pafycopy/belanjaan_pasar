@@ -18,6 +18,7 @@ import {
 } from "@/data/keranjang";
 import { TEKS } from "@/data/teks";
 import { pembayaranRepository } from "@/services/pembayaranrepository";
+import { transaksiRepository } from "@/services/transaksirepository";
 import { colors, spacing } from "@/theme";
 import { formatAlamatLengkap } from "@/utils/alamat";
 import { barisDenganProduk, cariTarifOngkir, hitungSubtotal, hitungTagihan } from "@/utils/keranjang";
@@ -62,16 +63,16 @@ export default function Checkout() {
 
     setMembuatTagihan(true);
     try {
-      await pembayaranRepository.simpan(
-        buatTagihanTransfer({
-          baris,
-          tagihan,
-          tarif,
-          pengiriman,
-          metode,
-          alamat: terpilih ? formatAlamatLengkap(terpilih) : undefined,
-        })
-      );
+      const tagihanBaru = buatTagihanTransfer({
+        baris,
+        tagihan,
+        tarif,
+        pengiriman,
+        metode,
+        alamat: terpilih ? formatAlamatLengkap(terpilih) : undefined,
+      });
+      await pembayaranRepository.simpan(tagihanBaru);
+      await transaksiRepository.catatMenunggu(tagihanBaru);
       router.push("/pembayaran");
     } catch {
       Alert.alert(TEKS.pembayaran.gagalBuat.judul, TEKS.pembayaran.gagalBuat.pesan);

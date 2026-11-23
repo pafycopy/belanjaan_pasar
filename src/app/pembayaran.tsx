@@ -15,6 +15,7 @@ import { PETUNJUK_BCA, REKENING_BCA } from "@/data/pembayaran";
 import { TEKS } from "@/data/teks";
 import { useSekarang } from "@/hooks/usesekarang";
 import { pembayaranRepository } from "@/services/pembayaranrepository";
+import { transaksiRepository } from "@/services/transaksirepository";
 import { colors, spacing } from "@/theme";
 import { TagihanTransfer } from "@/types/pembayaran";
 import { sisaDetik } from "@/utils/pembayaran";
@@ -66,10 +67,18 @@ function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
   const { tambah: tambahPesanan } = usePesanan();
   const sekarang = useSekarang();
   const [menyelesaikan, setMenyelesaikan] = useState(false);
+  const [kedaluwarsaDicatat, setKedaluwarsaDicatat] = useState(false);
 
   const sisa = sisaDetik(tagihan.batasBayar, sekarang);
   const habis = sisa === 0;
   const totalTeks = formatHarga(tagihan.total);
+
+  useEffect(() => {
+    if (habis && !kedaluwarsaDicatat) {
+      setKedaluwarsaDicatat(true);
+      void transaksiRepository.perbarui(tagihan.invoice, "kedaluwarsa", Date.now());
+    }
+  }, [habis, kedaluwarsaDicatat, tagihan.invoice]);
 
   // Sementara belum ada verifikasi otomatis: pelanggan menyatakan sudah transfer, tagihan dicatat
   // sebagai lunas, item yang dibayar dihapus dari keranjang (item yang tidak dipilih tetap ada),
@@ -78,9 +87,11 @@ function IsiPembayaran({ tagihan }: { tagihan: TagihanTransfer }) {
     if (menyelesaikan) return;
     setMenyelesaikan(true);
     try {
-      const lunas: TagihanTransfer = { ...tagihan, dibayarPada: Date.now() };
+      const waktuBayar = Date.now();
+      const lunas: TagihanTransfer = { ...tagihan, dibayarPada: waktuBayar };
       await pembayaranRepository.simpanLunas(lunas);
       await tambahPesanan(buatPesanan(lunas)); // muncul di tab Pesanan > Disiapkan
+      await transaksiRepository.perbarui(tagihan.invoice, "berhasil", waktuBayar);
       // Tagihan lama (tanpa daftar item) tetap mengosongkan seluruh keranjang
       if (tagihan.uidKeranjang) await hapusBanyak(tagihan.uidKeranjang);
       else await kosongkan();

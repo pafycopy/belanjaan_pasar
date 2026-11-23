@@ -7,19 +7,20 @@ import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import SearchField from "@/components/ui/searchfield";
 import ScreenState from "@/components/ui/screenstate";
 import KartuPesanan from "@/components/pesanan/kartupesanan";
+import KartuNgebelanjainSelesai from "@/components/pesanan/kartungebelanjainselesai";
 import SegmenStatus from "@/components/pesanan/segmenstatus";
 import PilihBulanSheet, { OpsiBulan } from "@/components/riwayat/pilihbulansheet";
 import { useKeranjang } from "@/context/keranjang";
 import { usePesanan } from "@/context/pesanan";
+import { useNgebelanjain } from "@/context/ngebelanjain";
 import { TAB_PESANAN } from "@/data/pesanan";
 import { TEKS } from "@/data/teks";
 import { usePesanUlang } from "@/hooks/usepesanulang";
-import { useSekarang } from "@/hooks/usesekarang";
 import { colors, spacing } from "@/theme";
 import { Pesanan, StatusPesanan } from "@/types/pesanan";
 import { saringPesanan } from "@/utils/pesanan";
 import { daftarBulan } from "@/utils/riwayat";
-import { labelBulanTahun } from "@/utils/waktu";
+import { kunciBulanWib, labelBulanTahun } from "@/utils/waktu";
 
 const T = TEKS.pesanan;
 const TR = TEKS.riwayat;
@@ -35,6 +36,7 @@ const alamatHeader = alamatMemuat
     : TEKS.header.kosong;
   const { jumlahBaris } = useKeranjang();
   const { pesanan, memuat, majukan } = usePesanan();
+  const { pesanan: daftarNgebelanjain, memuat: ngebelanjainMemuat } = useNgebelanjain();
   const pesanUlang = usePesanUlang();
 
   const [tab, setTab] = useState<StatusPesanan>("disiapkan");
@@ -48,16 +50,33 @@ const alamatHeader = alamatMemuat
   const bulan = bisaCari ? bulanPilihan : null;
 
   const daftar = useMemo(() => saringPesanan(pesanan, tab, kata, bulan), [pesanan, tab, kata, bulan]);
+  const daftarNgebelanjainSelesai = useMemo(() => {
+    if (tab !== "selesai") return [];
+    const q = kata.trim().toLowerCase().replace(/^#/, "");
+    return daftarNgebelanjain.filter((p) => {
+      if (p.status !== "selesai") return false;
+      const waktu = p.dibayarPada ?? p.dibuatPada;
+      if (bulan !== null && kunciBulanWib(waktu) !== bulan) return false;
+      if (!q) return true;
+      return p.nomor.toLowerCase().includes(q) || p.daftar.toLowerCase().includes(q);
+    });
+  }, [daftarNgebelanjain, tab, kata, bulan]);
+  const daftarSelesaiGabungan = useMemo(() => [
+    ...daftar.map((p) => ({ jenis: "pesanan" as const, waktu: p.diterimaPada ?? p.dibayarPada, data: p })),
+    ...daftarNgebelanjainSelesai.map((p) => ({ jenis: "ngebelanjain" as const, waktu: p.dibayarPada ?? p.dibuatPada, data: p })),
+  ].sort((a, b) => b.waktu - a.waktu), [daftar, daftarNgebelanjainSelesai]);
 
   const opsiBulan = useMemo<OpsiBulan[]>(
     () => [
       { kunci: null, label: TR.semuaWaktu },
-      ...daftarBulan(pesanan).map((k) => ({ kunci: k, label: labelBulanTahun(k) })),
+      ...[...new Set([
+        ...daftarBulan(pesanan),
+        ...daftarNgebelanjain.filter((p) => p.status === "selesai").map((p) => kunciBulanWib(p.dibayarPada ?? p.dibuatPada)),
+      ])].sort().reverse().map((k) => ({ kunci: k, label: labelBulanTahun(k) })),
     ],
-    [pesanan]
+    [pesanan, daftarNgebelanjain]
   );
-  // Waktu yang diperbarui berkala, bukan Date.now() saat render
-  const sekarang = useSekarang(60_000);
+  const sekarang = Date.now();
 
   const keDetail = (p: Pesanan) =>
     router.push({ pathname: "/pesanan/[invoice]", params: { invoice: p.invoice } });
@@ -99,8 +118,34 @@ const alamatHeader = alamatMemuat
           ) : null}
         </View>
 
-        {memuat ? (
+        {memuat || (bisaCari && ngebelanjainMemuat) ? (
           <ScreenState loading />
+        ) : bisaCari ? daftarSelesaiGabungan.length > 0 ? (
+          <View style={styles.daftar}>
+            {daftarSelesaiGabungan.map((item) => item.jenis === "pesanan" ? (
+              <KartuPesanan
+                key={item.data.invoice}
+                pesanan={item.data}
+                sekarang={sekarang}
+                onDetail={() => keDetail(item.data)}
+                onChat={() => segera(T.segera.chat)}
+                onNilai={() => segera(T.segera.nilai)}
+                onLihatFoto={() => segera(T.segera.foto)}
+                onPesanUlang={() => void pesanUlang(item.data)}
+                onMajukan={__DEV__ ? () => void majukan(item.data.invoice) : undefined}
+              />
+            ) : (
+              <KartuNgebelanjainSelesai
+                key={item.data.nomor}
+                pesanan={item.data}
+                onPress={() => router.push({ pathname: "/ngebelanjain/dibayar/[nomor]", params: { nomor: item.data.nomor } })}
+              />
+            ))}
+          </View>
+        ) : (
+          <View style={styles.kosong}>
+            <ScreenState message={kata.trim() || bulan ? T.kosong.cari : T.kosong[tab]} />
+          </View>
         ) : daftar.length > 0 ? (
           <View style={styles.daftar}>
             {daftar.map((p) => (
