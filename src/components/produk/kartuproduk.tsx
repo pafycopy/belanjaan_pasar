@@ -38,6 +38,9 @@ export default function KartuProduk({
   const labelVarian = varianProduk.length > 2
     ? `${varianProduk[0]} - ${varianProduk[varianProduk.length - 1]}`
     : varianProduk.join(" - ");
+  const persenDiskon = promo && produk.hargaCoret
+    ? Math.ceil(((produk.hargaCoret - produk.harga) / produk.hargaCoret) * 100)
+    : 0;
 
   return (
     <Pressable
@@ -76,8 +79,22 @@ export default function KartuProduk({
 
       <View style={styles.pemisah} />
 
-      <View style={styles.barisHarga}>
-        <Text style={[styles.harga, promo && styles.hargaPromo]}>{formatHarga(produk.harga)}</Text>
+      <View style={styles.bagianHarga}>
+        <View style={styles.barisHarga}>
+          <Text
+            style={[styles.harga, promo && styles.hargaPromo]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.78}
+          >
+            {formatHarga(produk.harga)}
+          </Text>
+          {promo ? (
+            <View style={styles.badgeDiskon}>
+              <Text style={styles.teksBadgeDiskon}>Diskon {persenDiskon}%</Text>
+            </View>
+          ) : null}
+        </View>
         {promo ? (
           <View style={styles.infoDiskon}>
             <Text style={styles.hargaCoret}>{formatHarga(produk.hargaCoret ?? 0)}</Text>
@@ -149,12 +166,42 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     marginBottom: spacing.sm,
   },
-  barisHarga: { minHeight: 42 },
-  harga: { color: colors.primary, fontSize: 22, lineHeight: 28, fontWeight: "900" },
+  bagianHarga: { minHeight: 54 },
+  barisHarga: {
+    minHeight: 29,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  harga: {
+    flex: 1,
+    minWidth: 0,
+    color: colors.primary,
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: "900",
+    flexShrink: 1,
+  },
   hargaPromo: { color: colors.primary },
-  infoDiskon: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: 1 },
-  hargaCoret: { color: colors.textSoft, fontSize: 10, textDecorationLine: "line-through" },
-  hemat: { color: colors.brown, fontSize: 10, fontWeight: "700" },
+  badgeDiskon: {
+    flexShrink: 0,
+    backgroundColor: "#F6D9D9",
+    borderRadius: 6,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    marginLeft: "auto",
+  },
+  teksBadgeDiskon: { color: "#C93636", fontSize: 10, lineHeight: 13, fontWeight: "600" },
+  infoDiskon: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 2 },
+  hargaCoret: {
+  color: "#737373",
+  fontSize: 14,
+  lineHeight: 32,
+  fontWeight: "500",
+  textDecorationLine: "line-through",
+  textDecorationColor: "#090909",
+},
+  hemat: { color: colors.primary, fontSize: 12, lineHeight: 18, fontWeight: "600" },
   footer: {
     flexDirection: "row",
     alignItems: "center",
