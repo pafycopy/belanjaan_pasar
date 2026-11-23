@@ -66,7 +66,7 @@ export default function KartuProduk({
             accessibilityRole="button"
             accessibilityLabel={favorit ? TEKS.katalog.favoritHapus(produk.nama) : TEKS.katalog.favoritTambah(produk.nama)}
           >
-            <Ionicons name={favorit ? "heart" : "heart-outline"} size={25} color={colors.textStrong} />
+            <Ionicons name={favorit ? "heart" : "heart-outline"} size={25} color={favorit ? colors.danger : colors.textStrong} />
           </Pressable>
         ) : null}
       </View>
