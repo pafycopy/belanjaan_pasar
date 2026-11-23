@@ -39,9 +39,11 @@ export default function PilihJumlah({ satuan, pilihan, jumlah, maks, onUbah, onC
               </Pressable>
             );
           })}
-          <Pressable style={[styles.chip, styles.chipCustom, !adaCocok && styles.chipAktif]} onPress={onCustom}>
-            <Text style={[styles.chipText, !adaCocok && styles.teksAktif]}>{TEKS.produk.custom}</Text>
-          </Pressable>
+          {pilihan.length < 5 ? (
+            <Pressable style={[styles.chip, styles.chipCustom, !adaCocok && styles.chipAktif]} onPress={onCustom}>
+              <Text style={[styles.chipText, !adaCocok && styles.teksAktif]}>{TEKS.produk.custom}</Text>
+            </Pressable>
+          ) : null}
         </View>
 
         <Stepper value={jumlah} onChange={onUbah} min={1} max={maks} />
@@ -54,11 +56,11 @@ const styles = StyleSheet.create({
   wrap: { gap: spacing.sm },
   label: { fontSize: 13, color: colors.textSoft },
   baris: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
-  chips: { flexDirection: "row", gap: 6, flexShrink: 1 },
+  chips: { flexDirection: "row", gap: 4, flexShrink: 1 },
   chip: {
-    minWidth: 44,
+    minWidth: 34,
     height: 40,
-    paddingHorizontal: 6,
+    paddingHorizontal: 2,
     borderRadius: radius.sm,
     backgroundColor: colors.accentSoft,
     alignItems: "center",
@@ -67,6 +69,6 @@ const styles = StyleSheet.create({
   chipCustom: { minWidth: 58 },
   chipAktif: { backgroundColor: colors.dark },
   chipMati: { opacity: 0.4 },
-  chipText: { fontSize: 12, fontWeight: "600", color: colors.text, lineHeight: 15 },
+  chipText: { fontSize: 10, fontWeight: "600", color: colors.text, lineHeight: 14 },
   teksAktif: { color: colors.white },
 });

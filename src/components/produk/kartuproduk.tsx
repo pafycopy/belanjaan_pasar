@@ -29,6 +29,15 @@ export default function KartuProduk({
   style,
 }: Props) {
   const promo = adaPromo(produk);
+  // Fallback data demo untuk katalog Ayam Broiler selama backend belum tersedia.
+  const varianProduk = produk.varian?.length
+    ? produk.varian
+    : ["ayam-bakar", "ayam-kfc", "ayam-potong-8", "ayam-jumbo"].includes(produk.id)
+      ? ["1 Ekor", "2 Ekor", "3 Ekor", "4 Ekor", "5 Ekor"]
+      : [];
+  const labelVarian = varianProduk.length > 2
+    ? `${varianProduk[0]} - ${varianProduk[varianProduk.length - 1]}`
+    : varianProduk.join(" - ");
 
   return (
     <Pressable
@@ -59,9 +68,9 @@ export default function KartuProduk({
         ) : null}
       </View>
 
-      {produk.varian?.length ? (
+      {labelVarian ? (
         <Text style={styles.varian} numberOfLines={1}>
-          Varian: {produk.varian.join(" - ")}
+          Varian: {labelVarian}
         </Text>
       ) : null}
 
