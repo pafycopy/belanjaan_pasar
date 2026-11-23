@@ -30,6 +30,13 @@ export function adaPromo(p: Pick<Produk, "harga" | "hargaCoret">): boolean {
   return hematRupiah(p) > 0;
 }
 
+// Persen diskon dibulatkan, mis. 130000 -> 119000 = 8 (0 bila bukan promo)
+export function persenDiskon(p: Pick<Produk, "harga" | "hargaCoret">): number {
+  const hemat = hematRupiah(p);
+  if (hemat === 0 || !p.hargaCoret) return 0;
+  return Math.max(1, Math.round((hemat / p.hargaCoret) * 100));
+}
+
 export function saringProduk(produk: readonly Produk[], cari: string, kategoriId: string): Produk[] {
   const kata = cari.trim().toLowerCase();
   return produk.filter(

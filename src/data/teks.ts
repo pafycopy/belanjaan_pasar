@@ -179,6 +179,8 @@ export const TEKS = {
     promoLabel: "PROMO HARI INI",
     promoSampai: (jam: string) => `s/d ${jam.replace(":", ".")} WIB`,
     hemat: (rupiah: string) => `Hemat ${rupiah}`,
+    diskon: (persen: number) => `Diskon ${persen} %`,
+    ulasan: (jumlah: number) => `(${jumlah} ulasan)`,
     terjual: (jumlah: string, satuan: string) => `Terjual ${jumlah} ${satuan} hari ini`,
     kosong: "Produk tidak ditemukan. Coba ubah kata pencarian atau kategori.",
     lihatProduk: (nama: string) => `Lihat ${nama}`,
