@@ -1,47 +1,43 @@
 import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import GambarProduk from "@/components/produk/gambarproduk";
-import { SATUAN_BAWAAN } from "@/data/produk";
 import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { Produk } from "@/types/produk";
-import { useTerjualHariIni } from "@/hooks/useterjual";
 import { adaPromo, formatHarga, hematRupiah } from "@/utils/produk";
-import { formatJumlahTerjual } from "@/utils/terlaris";
 
-const T = TEKS.katalog;
-
-// Lebar kartu bila ditaruh di daftar yang digeser ke samping (Terlaris, Promo Hari Ini)
+// Lebar kartu bila ditaruh di daftar yang digeser ke samping (Terlaris, Promo Hari Ini).
 export const LEBAR_KARTU_GESER = 190;
 
 type Props = {
   produk: Produk;
   onPress: () => void;
   favorit?: boolean;
-  onToggleFavorit?: () => void; // bila diisi, tombol hati tampil
-  style?: StyleProp<ViewStyle>; // mis. lebar kartu
+  onToggleFavorit?: () => void;
+  style?: StyleProp<ViewStyle>;
 };
 
 /**
- * Kartu produk dengan dua tampilan:
- * - promo (produk.hargaCoret > harga): label PROMO HARI INI, harga coret, dan badge "Hemat"
- * - biasa: jumlah terjual hari ini (dihitung dari pesanan yang sudah dibayar) dan rating (bila ada)
+ * Kartu katalog bersama untuk katalog reguler, Promo Hari Ini, dan Produk Terlaris.
+ * Urutan konten dijaga konsisten: gambar, nama/favorit, varian, harga, lalu toko/rating.
  */
-export default function KartuProduk({ produk, onPress, favorit = false, onToggleFavorit, style }: Props) {
+export default function KartuProduk({
+  produk,
+  onPress,
+  favorit = false,
+  onToggleFavorit,
+  style,
+}: Props) {
   const promo = adaPromo(produk);
-  const terjual = useTerjualHariIni(produk.id);
-  const adaInfo = terjual > 0 || produk.rating != null;
 
   return (
     <Pressable
       style={({ pressed }) => [styles.kartu, style, pressed && styles.ditekan]}
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={T.lihatProduk(produk.nama)}
+      accessibilityLabel={TEKS.katalog.lihatProduk(produk.nama)}
     >
       <GambarProduk gambar={produk.gambar} style={styles.gambar} fit="contain" />
-
-      {promo ? <Text style={styles.labelPromo}>{T.promoLabel}</Text> : null}
 
       <View style={styles.barisNama}>
         <Text style={styles.nama} numberOfLines={2}>
@@ -56,47 +52,43 @@ export default function KartuProduk({ produk, onPress, favorit = false, onToggle
             hitSlop={8}
             style={styles.tombolFavorit}
             accessibilityRole="button"
-            accessibilityLabel={favorit ? T.favoritHapus(produk.nama) : T.favoritTambah(produk.nama)}
+            accessibilityLabel={favorit ? TEKS.katalog.favoritHapus(produk.nama) : TEKS.katalog.favoritTambah(produk.nama)}
           >
-            <Ionicons name={favorit ? "heart" : "heart-outline"} size={21} color={colors.danger} />
+            <Ionicons name={favorit ? "heart" : "heart-outline"} size={25} color={colors.textStrong} />
           </Pressable>
         ) : null}
       </View>
 
-      {promo ? (
-        <View style={styles.barisInfo}>
-          <Text style={styles.hargaCoret}>{formatHarga(produk.hargaCoret ?? 0)}</Text>
-          <View style={styles.badgeHemat}>
-            <Text style={styles.badgeHematTeks}>{T.hemat(formatHarga(hematRupiah(produk)))}</Text>
-          </View>
-        </View>
-      ) : adaInfo ? (
-        <View style={[styles.barisInfo, styles.barisInfoSebar]}>
-          {terjual > 0 ? (
-            <View style={styles.pillTerjual}>
-              <Ionicons name="checkmark-circle" size={12} color={colors.dark} />
-              <Text style={styles.pillTerjualTeks} numberOfLines={1}>
-                {T.terjual(formatJumlahTerjual(terjual), produk.satuan ?? SATUAN_BAWAAN)}
-              </Text>
-            </View>
-          ) : (
-            <View />
-          )}
-          {produk.rating != null ? (
-            <View style={styles.rating}>
-              <Text style={styles.ratingTeks}>{produk.rating.toFixed(1)}</Text>
-              <Ionicons name="star" size={13} color={colors.gold} />
-            </View>
-          ) : null}
-        </View>
+      {produk.varian?.length ? (
+        <Text style={styles.varian} numberOfLines={1}>
+          Varian: {produk.varian.join(" - ")}
+        </Text>
       ) : null}
 
+      <View style={styles.pemisah} />
+
       <View style={styles.barisHarga}>
-        <Text style={styles.harga}>{formatHarga(produk.harga)}</Text>
-        {produk.toko ? (
-          <Text style={styles.toko} numberOfLines={2}>
-            {produk.toko}
-          </Text>
+        <Text style={[styles.harga, promo && styles.hargaPromo]}>{formatHarga(produk.harga)}</Text>
+        {promo ? (
+          <View style={styles.infoDiskon}>
+            <Text style={styles.hargaCoret}>{formatHarga(produk.hargaCoret ?? 0)}</Text>
+            <Text style={styles.hemat}>Hemat {formatHarga(hematRupiah(produk))}</Text>
+          </View>
+        ) : null}
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.toko} numberOfLines={1}>
+          {produk.toko ?? ""}
+        </Text>
+        {produk.rating != null ? (
+          <View style={styles.rating}>
+            <Ionicons name="star" size={16} color={colors.gold} />
+            <Text style={styles.ratingTeks}>{produk.rating.toFixed(1)}</Text>
+            {produk.jumlahUlasan != null ? (
+              <Text style={styles.jumlahUlasan}>({produk.jumlahUlasan} ulasan)</Text>
+            ) : null}
+          </View>
         ) : null}
       </View>
     </Pressable>
@@ -106,6 +98,7 @@ export default function KartuProduk({ produk, onPress, favorit = false, onToggle
 const styles = StyleSheet.create({
   kartu: {
     width: "49.5%",
+    minHeight: 300,
     backgroundColor: colors.white,
     borderRadius: radius.lg,
     borderWidth: 1,
@@ -114,48 +107,56 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   ditekan: { opacity: 0.92 },
-  gambar: { aspectRatio: 1.1, borderRadius: radius.sm, backgroundColor: colors.white },
-  labelPromo: {
+  gambar: {
+    aspectRatio: 1,
+    borderRadius: radius.md,
+    backgroundColor: colors.white,
+  },
+  barisNama: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginTop: spacing.sm,
-    color: colors.dark,
-    fontSize: 10,
+    minHeight: 42,
+    gap: spacing.xs,
+  },
+  nama: {
+    flex: 1,
+    color: colors.textStrong,
+    fontSize: 15,
+    lineHeight: 19,
     fontWeight: "800",
-    letterSpacing: 0.25,
   },
-  barisNama: { flexDirection: "row", alignItems: "flex-start", marginTop: spacing.xs, minHeight: 40 },
-  nama: { flex: 1, color: colors.text, fontSize: 14, lineHeight: 20, fontWeight: "700" },
-  tombolFavorit: { marginLeft: spacing.xs, padding: 1 },
-  barisInfo: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.xs },
-  barisInfoSebar: { justifyContent: "space-between" },
-  hargaCoret: { color: colors.muted, fontSize: 12, textDecorationLine: "line-through" },
-  badgeHemat: {
-    backgroundColor: colors.peachSoft,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-    flexShrink: 1,
+  tombolFavorit: { padding: 1, marginTop: -2 },
+  varian: {
+    color: colors.primary,
+    fontSize: 12,
+    lineHeight: 17,
+    fontStyle: "italic",
+    marginTop: spacing.xs,
   },
-  badgeHematTeks: { color: colors.brown, fontSize: 10, fontWeight: "800" },
-  pillTerjual: {
+  pemisah: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  barisHarga: { minHeight: 42 },
+  harga: { color: colors.primary, fontSize: 22, lineHeight: 28, fontWeight: "900" },
+  hargaPromo: { color: colors.primary },
+  infoDiskon: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: 1 },
+  hargaCoret: { color: colors.textSoft, fontSize: 10, textDecorationLine: "line-through" },
+  hemat: { color: colors.brown, fontSize: 10, fontWeight: "700" },
+  footer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    flexShrink: 1,
-    backgroundColor: colors.primarySoft,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-  },
-  pillTerjualTeks: { flexShrink: 1, color: colors.text, fontSize: 10, fontWeight: "600" },
-  rating: { flexDirection: "row", alignItems: "center", gap: 3 },
-  ratingTeks: { color: colors.text, fontSize: 13, fontWeight: "800" },
-  barisHarga: {
-    flexDirection: "row",
-    alignItems: "flex-end",
     justifyContent: "space-between",
-    gap: spacing.sm,
-    marginTop: spacing.sm,
+    gap: spacing.xs,
+    marginTop: "auto",
+    paddingTop: spacing.md,
+    minHeight: 38,
   },
-  harga: { color: colors.dark, fontSize: 18, fontWeight: "800" },
-  toko: { flexShrink: 1, color: colors.text, fontSize: 10, textAlign: "right" },
+  toko: { flex: 1, minWidth: 0, color: colors.textStrong, fontSize: 12, fontWeight: "700" },
+  rating: { flexDirection: "row", alignItems: "center", gap: 3, flexShrink: 0 },
+  ratingTeks: { color: colors.textStrong, fontSize: 13, fontWeight: "800" },
+  jumlahUlasan: { color: colors.textSoft, fontSize: 9 },
 });
