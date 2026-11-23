@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import HeaderHijau from "@/components/ui/headerhijau";
 import Button from "@/components/ui/button";
 import OpsiPengiriman from "@/components/keranjang/pengiriman";
@@ -19,11 +19,12 @@ const TD = T.daftar;
 
 export default function DaftarNgebelanjain() {
   const router = useRouter();
+  const { isiUlang } = useLocalSearchParams<{ isiUlang?: string }>();
   const { terpilih } = useAlamat();
   const { pesanan, memuat, tambah } = useNgebelanjain();
   const pesananAktif = cariPesananAktif(pesanan);
 
-  const [daftar, setDaftar] = useState("");
+  const [daftar, setDaftar] = useState(() => (typeof isiUlang === "string" ? isiUlang : ""));
   const [pengiriman, setPengiriman] = useState<IdPengiriman>("antar");
   const [mengirim, setMengirim] = useState(false);
   const antar = pengiriman === "antar";

@@ -90,7 +90,7 @@ export default function KartuPesanan({
           <Text style={styles.noPesanan}>{T.noPesanan(p.invoice)}</Text>
         </View>
         <View style={styles.atasKanan}>
-          <Text style={styles.waktuLabel}>{waktu.label}</Text>
+          {p.status !== "selesai" ? <Text style={styles.waktuLabel}>{waktu.label}</Text> : null}
           <Waktu teks={waktu.nilai} />
         </View>
       </View>
@@ -125,8 +125,8 @@ export default function KartuPesanan({
             <Ionicons name="image-outline" size={18} color={colors.placeholder} />
           </View>
           <View style={styles.kotakIsi}>
-            <Text style={styles.kotakJudul}>{T.buktiFoto(titik)}</Text>
-            <Text style={styles.kotakKet}>{T.buktiKet}</Text>
+            <Text style={styles.kotakJudul}>Terkirim</Text>
+            <Text style={styles.kotakKet}>Diterima Oleh Ardy</Text>
           </View>
           <Pressable onPress={onLihatFoto} hitSlop={8} style={styles.lihatFoto} accessibilityRole="button">
             <Text style={styles.lihatFotoTeks}>{T.lihatFoto}</Text>

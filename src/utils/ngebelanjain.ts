@@ -98,7 +98,7 @@ export function majukanNgebelanjain(p: PesananNgebelanjain, sekarang: number = D
     case "pembayaran":
       return { ...p, status: "dibayar", metode: p.metode ?? "qris", batasBayar: undefined, dibayarPada: sekarang };
     case "dibayar":
-      return { ...p, status: "selesai" };
+      return { ...p, status: "selesai", selesaiPada: sekarang };
     default:
       return p;
   }

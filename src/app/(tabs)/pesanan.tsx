@@ -138,7 +138,8 @@ const alamatHeader = alamatMemuat
               <KartuNgebelanjainSelesai
                 key={item.data.nomor}
                 pesanan={item.data}
-                onPress={() => router.push({ pathname: "/ngebelanjain/dibayar/[nomor]", params: { nomor: item.data.nomor } })}
+                onNilai={() => segera("Penilaian produk Ngebelanjain belum tersedia.")}
+                onPesanUlang={() => router.push({ pathname: "/ngebelanjain/daftar", params: { isiUlang: item.data.daftar } })}
               />
             ))}
           </View>

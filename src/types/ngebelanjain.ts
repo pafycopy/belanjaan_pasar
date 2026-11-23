@@ -26,4 +26,6 @@ export type PesananNgebelanjain = {
   batasBayar?: number;        // ms, batas bayar QRIS / Virtual Account
   pembayaranKedaluwarsa?: boolean; // true jika tagihan terakhir habis waktunya
   dibayarPada?: number;       // ms
+  selesaiPada?: number;       // ms, terisi saat pesanan ditandai selesai
+  fotoBuktiUri?: string;      // URL/URI foto bukti belanja yang diunggah kurir
 };
