@@ -11,6 +11,7 @@ import ScreenState from "@/components/ui/screenstate";
 import IlustrasiKosong from "@/components/ngebelanjain/ilustrasikosong";
 import KartuNgebelanjain from "@/components/ngebelanjain/kartupesanan";
 import MenungguBayar from "@/components/ngebelanjain/menunggubayar";
+import PembayaranKedaluwarsa from "@/components/ngebelanjain/pembayarankedaluwarsa";
 import SudahDibayar from "@/components/ngebelanjain/sudahdibayar";
 import TabStatusNgebelanjain from "@/components/ngebelanjain/statuspesanan";
 import { useNgebelanjain } from "@/context/ngebelanjain";
@@ -102,7 +103,17 @@ const alamatHeader = alamatMemuat
     // Setelah metode dikonfirmasi, tampilkan rincian pembayaran sesuai metode tersebut.
     const menunggu = pertama.metode === "cod";
 
-    if (menunggu) {
+    if (pertama.pembayaranKedaluwarsa && !pertama.metode) {
+      // Waktu bayar QRIS / Virtual Account habis: tampilkan pemberitahuan dan tombol Pembayaran Baru
+      isi = <PembayaranKedaluwarsa pesanan={pertama} onTutup={() => void ubah(pertama, batalkanMetode)} />;
+      footer = (
+        <Button
+          label={T.kedaluwarsa.baru}
+          size="lg"
+          onPress={() => router.push({ pathname: "/ngebelanjain/pembayaran/[nomor]", params: { nomor: pertama.nomor } })}
+        />
+      );
+    } else if (menunggu) {
       isi = <MenungguBayar pesanan={pertama} onKembali={() => void ubah(pertama, batalkanMetode)} />;
     } else {
       isi = (

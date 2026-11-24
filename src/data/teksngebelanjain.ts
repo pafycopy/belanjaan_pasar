@@ -60,21 +60,33 @@ export const TEKS_NGEBELANJAIN = {
     batas: "Batas waktu pembayaran",
     menit: (waktu: string) => `${waktu} MENIT`,
     cod: "Bayar di Tempat (COD)",
-    transfer: "Transfer Bank BCA",
-    transferKet: (nomor: string, nama: string, total: string) =>
-      `Transfer ke rekening BCA ${nomor} atas nama ${nama}. Nominal: ${total}.`,
+    va: {
+      label: "Nomor Virtual Account BCA",
+      salin: "Salin",
+      tersalin: "Tersalin",
+      ket: (total: string) =>
+        `Bayar tepat ${total} ke nomor Virtual Account di atas lewat ATM, m-banking, atau internet banking BCA.`,
+      simulasi: "Nomor VA simulasi untuk pengembangan",
+    },
     sesuaiTagihan: "sesuai tagihan",
+    poweredBy: "Powered by QRIS",
+    nmid: (id: string) => `NMID: ${id}`,
+    tidakDitemukan: "Tagihan pembayaran tidak ditemukan.",
+    gagalPerbarui: { judul: "Gagal memperbarui pesanan", pesan: "Silakan kembali ke Pembayaran Tersedia." },
+    gagalLunas: { judul: "Pembayaran belum dapat diperbarui", pesan: "Coba lagi." },
+    simulasiLunas: "DEV: Simulasikan Pembayaran Berhasil",
     rincian: "Rincian",
     nominal: "Nominal",
     totalProduk: "Total Produk",
     jasaHelper: "Jasa Helper",
     ongkir: "Ongkir",
     totalBayar: "Total Pembayaran:",
-    qrisKosong: "Gambar QRIS belum dipasang",
-    qrisKet: "Scan QRIS di atas untuk membayar",
+    qrisKosong: "QRIS DEMO",
     codKet: (total: string) => `Bayar tunai ke kurir saat pesanan sampai. Siapkan uang sebesar ${total}.`,
     habis: "Waktu pembayaran habis. Kembali untuk memilih metode pembayaran lagi.",
   },
+
+  kedaluwarsa: { judul: "Pembayaran Kedaluwarsa", baru: "Pembayaran Baru", tutup: "Tutup" },
 
   dibayar: {
     chip: "Pembayaran Berhasil!",

@@ -28,12 +28,12 @@ const TR = TEKS.riwayat;
 export default function PesananScreen() {
   const router = useRouter();
   const { terpilih, memuat: alamatMemuat } = useAlamat();
+  const alamatHeader = alamatMemuat
+    ? TEKS.header.memuat
+    : terpilih
+      ? terpilih.jalan
+      : TEKS.header.kosong;
 
-const alamatHeader = alamatMemuat
-  ? TEKS.header.memuat
-  : terpilih
-    ? terpilih.jalan
-    : TEKS.header.kosong;
   const { jumlahBaris } = useKeranjang();
   const { pesanan, memuat, majukan } = usePesanan();
   const { pesanan: daftarNgebelanjain, memuat: ngebelanjainMemuat } = useNgebelanjain();
@@ -41,15 +41,18 @@ const alamatHeader = alamatMemuat
 
   const [tab, setTab] = useState<StatusPesanan>("disiapkan");
   const [cari, setCari] = useState("");
-  const [bulanPilihan, setBulanPilihan] = useState<string | null>(null); // null = semua waktu
+  const [bulanPilihan, setBulanPilihan] = useState<string | null>(null);
   const [sheetTerbuka, setSheetTerbuka] = useState(false);
 
-  // Kolom cari dan filter bulan hanya ada di tab Selesai (riwayat); tab lain selalu menampilkan semuanya
   const bisaCari = tab === "selesai";
   const kata = bisaCari ? cari : "";
   const bulan = bisaCari ? bulanPilihan : null;
 
-  const daftar = useMemo(() => saringPesanan(pesanan, tab, kata, bulan), [pesanan, tab, kata, bulan]);
+  const daftar = useMemo(
+    () => saringPesanan(pesanan, tab, kata, bulan),
+    [pesanan, tab, kata, bulan]
+  );
+
   const daftarNgebelanjainSelesai = useMemo(() => {
     if (tab !== "selesai") return [];
     const q = kata.trim().toLowerCase().replace(/^#/, "");
@@ -61,6 +64,7 @@ const alamatHeader = alamatMemuat
       return p.nomor.toLowerCase().includes(q) || p.daftar.toLowerCase().includes(q);
     });
   }, [daftarNgebelanjain, tab, kata, bulan]);
+
   const daftarSelesaiGabungan = useMemo(() => [
     ...daftar.map((p) => ({ jenis: "pesanan" as const, waktu: p.diterimaPada ?? p.dibayarPada, data: p })),
     ...daftarNgebelanjainSelesai.map((p) => ({ jenis: "ngebelanjain" as const, waktu: p.dibayarPada ?? p.dibuatPada, data: p })),
@@ -76,10 +80,14 @@ const alamatHeader = alamatMemuat
     ],
     [pesanan, daftarNgebelanjain]
   );
+
   const sekarang = Date.now();
 
   const keDetail = (p: Pesanan) =>
     router.push({ pathname: "/pesanan/[invoice]", params: { invoice: p.invoice } });
+
+  const keDetailNgebelanjain = (nomor: string) =>
+    router.push({ pathname: "/ngebelanjain/[nomor]", params: { nomor } });
 
   const segera = (pesan: string) => Alert.alert(T.segera.judul, pesan);
 
@@ -138,6 +146,7 @@ const alamatHeader = alamatMemuat
               <KartuNgebelanjainSelesai
                 key={item.data.nomor}
                 pesanan={item.data}
+                onDetail={() => keDetailNgebelanjain(item.data.nomor)}
                 onNilai={() => segera("Penilaian produk Ngebelanjain belum tersedia.")}
                 onPesanUlang={() => router.push({ pathname: "/ngebelanjain/daftar", params: { isiUlang: item.data.daftar } })}
               />

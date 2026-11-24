@@ -14,7 +14,13 @@ import { pilihMetode } from "@/utils/ngebelanjain";
 
 const T = TEKS_NGEBELANJAIN;
 
-// Halaman pilihan metode pembayaran, dibuka dari tombol "Bayar Sekarang" di kartu pesanan
+// Penanda pilihan: lingkaran lavender, atau hijau tua berisi titik putih bila dipilih
+function Penanda({ aktif }: { aktif: boolean }) {
+  return <View style={[styles.penanda, aktif && styles.penandaAktif]}>{aktif ? <View style={styles.titik} /> : null}</View>;
+}
+
+// Halaman pilihan metode pembayaran, dibuka dari tombol "Bayar Sekarang" di kartu pesanan.
+// QRIS dan BCA Virtual Account lanjut ke halaman Menunggu Pembayaran; COD kembali ke tab.
 export default function PembayaranNgebelanjain() {
   const router = useRouter();
   const { nomor } = useLocalSearchParams<{ nomor?: string }>();
@@ -58,19 +64,21 @@ export default function PembayaranNgebelanjain() {
             <View style={styles.daftar}>
               {OPSI_METODE_NGEBELANJAIN.map((o) => {
                 const aktif = dipilih === o.id;
+                const grup = Boolean(o.pilihan);
+
                 return (
-                  <View key={o.id} style={styles.item}>
+                  <View key={o.id} style={styles.blok}>
                     <Pressable
-                      onPress={() => setDipilih(o.id)}
-                      style={styles.baris}
-                      accessibilityRole="radio"
-                      accessibilityState={{ selected: aktif }}
+                      onPress={() => (grup ? setTerbuka((v) => !v) : setDipilih(o.id))}
+                      style={styles.kartu}
+                      accessibilityRole={grup ? "button" : "radio"}
+                      accessibilityState={grup ? { expanded: terbuka } : { selected: aktif }}
                     >
                       <View style={styles.logo}>
                         {o.logoTeks ? (
-                          <Text style={styles.logoQris}>{o.logoTeks}</Text>
+                          <Text style={styles.logoKotak}>{o.logoTeks}</Text>
                         ) : (
-                          <Ionicons name={o.ikon} size={22} color={colors.green} />
+                          <Ionicons name={o.ikon} size={22} color={colors.dark} />
                         )}
                       </View>
 
@@ -79,34 +87,23 @@ export default function PembayaranNgebelanjain() {
                         {o.keterangan ? <Text style={styles.keterangan}>{o.keterangan}</Text> : null}
                       </View>
 
-                      {o.pilihan ? (
-                        <Pressable
-                          hitSlop={10}
-                          onPress={() => {
-                            setDipilih(o.id);
-                            setTerbuka((v) => !v);
-                          }}
-                        >
-                          <Ionicons
-                            name={terbuka && aktif ? "chevron-up" : "chevron-down"}
-                            size={18}
-                            color={colors.textSoft}
-                          />
-                        </Pressable>
+                      {grup ? (
+                        <Ionicons name={terbuka ? "chevron-up" : "chevron-down"} size={18} color={colors.textStrong} />
                       ) : (
-                        <View style={[styles.radio, aktif && styles.radioAktif]}>
-                          {aktif ? <View style={styles.titik} /> : null}
-                        </View>
+                        <Penanda aktif={aktif} />
                       )}
                     </Pressable>
 
-                    {o.pilihan && aktif && terbuka ? (
-                      <Pressable onPress={() => setDipilih(o.id)} style={styles.sub}>
+                    {o.pilihan && terbuka ? (
+                      <Pressable
+                        onPress={() => setDipilih(o.id)}
+                        style={[styles.kartu, styles.sub]}
+                        accessibilityRole="radio"
+                        accessibilityState={{ selected: aktif }}
+                      >
                         {o.pilihan.logoTeks ? <Text style={styles.logoBank}>{o.pilihan.logoTeks}</Text> : null}
                         <Text style={styles.subNama}>{o.pilihan.nama}</Text>
-                        <View style={[styles.radio, styles.radioAktif]}>
-                          <View style={styles.titik} />
-                        </View>
+                        <Penanda aktif={aktif} />
                       </Pressable>
                     ) : null}
                   </View>
@@ -134,41 +131,41 @@ const styles = StyleSheet.create({
   content: { padding: 16, gap: 10 },
   label: { fontSize: 12, color: colors.textSoft, fontWeight: "600" },
   daftar: { gap: spacing.sm },
-  item: { backgroundColor: colors.white, borderRadius: radius.lg, overflow: "hidden" },
-  baris: { minHeight: 54, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 12 },
-  logo: { width: 28, alignItems: "center", justifyContent: "center" },
-  logoQris: {
+  blok: { gap: spacing.sm },
+  kartu: {
+    minHeight: 54,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 12,
+    backgroundColor: colors.accentSoft,
+    borderRadius: radius.lg,
+  },
+  logo: { width: 32, alignItems: "center", justifyContent: "center" },
+  logoKotak: {
     fontSize: 9,
     fontWeight: "900",
     color: colors.textStrong,
     borderWidth: 1,
-    borderColor: colors.border,
-    padding: 3,
+    borderColor: colors.textStrong,
+    paddingHorizontal: 3,
+    paddingVertical: 2,
   },
   teks: { flex: 1, gap: 1 },
-  nama: { fontSize: 13, fontWeight: "600", color: colors.textStrong },
+  nama: { fontSize: 13, fontWeight: "700", color: colors.textStrong },
   keterangan: { fontSize: 11, color: colors.textSoft },
-  radio: {
-    width: 19,
-    height: 19,
+  sub: { paddingVertical: 12, paddingLeft: 44 },
+  logoBank: { color: colors.brandBca, fontWeight: "900", fontStyle: "italic", fontSize: 14 },
+  subNama: { flex: 1, fontSize: 13, fontWeight: "700", color: colors.textStrong },
+  penanda: {
+    width: 20,
+    height: 20,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: colors.border,
+    backgroundColor: colors.accentSoftStrong,
     alignItems: "center",
     justifyContent: "center",
   },
-  radioAktif: { borderColor: colors.green },
-  titik: { width: 9, height: 9, borderRadius: 5, backgroundColor: colors.green },
-  sub: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    padding: 12,
-    paddingLeft: 48,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  logoBank: { color: colors.brandBca, fontWeight: "900", fontStyle: "italic", fontSize: 12 },
-  subNama: { flex: 1, fontSize: 12, color: colors.textStrong },
+  penandaAktif: { backgroundColor: colors.dark },
+  titik: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.white },
   footer: { padding: 14, paddingBottom: spacing.lg, backgroundColor: colors.canvas },
 });

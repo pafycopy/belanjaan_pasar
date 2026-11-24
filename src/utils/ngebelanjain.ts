@@ -103,3 +103,13 @@ export function majukanNgebelanjain(p: PesananNgebelanjain, sekarang: number = D
       return p;
   }
 }
+
+// Nomor Virtual Account simulasi, sampai payment gateway terintegrasi: "8808" + nomor pesanan 10 digit
+export function buatNomorVa(nomorPesanan: string): string {
+  return `8808${nomorPesanan.replace(/\D/g, "").padStart(10, "0")}`;
+}
+
+// "88080000000001" -> "8808 0000 0000 01"
+export function formatNomorVa(nomor: string): string {
+  return nomor.replace(/(\d{4})(?=\d)/g, "$1 ");
+}

@@ -49,6 +49,9 @@ export const NOMOR_WA_NGEBELANJAIN = "";
 //   export const GAMBAR_QRIS = require("../../assets/images/qris.png");
 export const GAMBAR_QRIS: ImageSource | number | undefined = undefined;
 
+// NMID merchant dari penyedia QRIS, tampil di bawah kode QR. Kosong = baris NMID disembunyikan.
+export const NMID_QRIS = "";
+
 // Ilustrasi untuk kondisi kosong pada menu Ngebelanjain.
 export const ILUSTRASI_NGEBELANJAIN_KOSONG: ImageSource | number =
   require("../../assets/images/ngeblanjain-empty.svg");
