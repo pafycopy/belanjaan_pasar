@@ -1,4 +1,4 @@
-import { View, TextInput, StyleSheet, StyleProp, ViewStyle, TextStyle } from "react-native";
+import { Pressable, View, TextInput, StyleSheet, StyleProp, ViewStyle, TextStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/theme";
 
@@ -6,13 +6,20 @@ type Props = {
   placeholder?: string;
   value?: string;
   onChangeText?: (text: string) => void;
+  onPress?: () => void;
   style?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
 };
 
-export default function SearchBar({ placeholder, value, onChangeText, style, inputStyle }: Props) {
+export default function SearchBar({ placeholder, value, onChangeText, onPress, style, inputStyle }: Props) {
   return (
-    <View style={[styles.container, style]}>
+    <Pressable
+      style={[styles.container, style]}
+      onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole={onPress ? "button" : undefined}
+      accessibilityLabel={placeholder ?? "Cari produk"}
+    >
       <Ionicons name="search" size={18} color={colors.placeholder} />
       <TextInput
         style={[styles.input, inputStyle]}
@@ -20,8 +27,10 @@ export default function SearchBar({ placeholder, value, onChangeText, style, inp
         placeholderTextColor={colors.placeholder}
         value={value}
         onChangeText={onChangeText}
+        editable={!onPress}
+        pointerEvents={onPress ? "none" : "auto"}
       />
-    </View>
+    </Pressable>
   );
 }
 

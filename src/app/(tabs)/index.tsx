@@ -48,7 +48,7 @@ export default function Beranda() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.searchWrap}>
-          <SearchBar placeholder={TEKS.beranda.cari} />
+          <SearchBar placeholder={TEKS.beranda.cari} onPress={() => router.push("/search")} />
         </View>
 
         <PromoCarousel promos={promos} style={styles.promo} cardHeight={170} />

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { FlatList, ScrollView, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import HeaderAddress from "@/components/beranda/headeraddress";
 import { useAlamat } from "@/context/alamat";
@@ -36,7 +36,6 @@ export default function ProdukScreen() {
   const { pesanan } = usePesanan();
   const { isFavorit, toggle } = useFavorit();
 
-  const [cari, setCari] = useState("");
   const [kategori, setKategori] = useState(KATEGORI_PRODUK_SEMUA);
 
   // Semua produk katalog tetap ditampilkan; produk dengan penjualan tertinggi
@@ -49,8 +48,8 @@ export default function ProdukScreen() {
   const produkPromo = useMemo(() => DAFTAR_PRODUK.filter(adaPromo), []);
 
   const daftar = useMemo(
-    () => saringProduk(DAFTAR_PRODUK, cari, kategori),
-    [cari, kategori]
+    () => saringProduk(DAFTAR_PRODUK, "", kategori),
+    [kategori]
   );
 
   const keDetail = (id: string) =>
@@ -69,13 +68,21 @@ export default function ProdukScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.searchWrap}>
-          <SearchField
-            value={cari}
-            onChangeText={setCari}
-            onSubmit={() => undefined}
-            placeholder={T.cari}
-            icon="search-outline"
-          />
+          <Pressable
+            onPress={() => router.push("/search")}
+            accessibilityRole="button"
+            accessibilityLabel="Buka pencarian produk"
+          >
+            <View pointerEvents="none">
+              <SearchField
+                value=""
+                onChangeText={() => undefined}
+                onSubmit={() => undefined}
+                placeholder={T.cari}
+                icon="search-outline"
+              />
+            </View>
+          </Pressable>
         </View>
 
         <View style={styles.seksi}>
@@ -137,7 +144,7 @@ export default function ProdukScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.canvas },
   content: { paddingBottom: spacing.xl },
-  searchWrap: { paddingHorizontal: 14, paddingTop: spacing.md },
+  searchWrap: { paddingHorizontal: 14, paddingTop: spacing.xs, marginTop: spacing.sm },
   seksi: { marginTop: spacing.lg },
   produkTerlarisList: { paddingHorizontal: 14, gap: 10 },
   kartuGeser: { width: LEBAR_KARTU_GESER, marginBottom: 0 },
