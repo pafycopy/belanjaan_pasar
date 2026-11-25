@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "@/components/ui/button";
 import FooterBar from "@/components/ui/footerbar";
@@ -65,6 +65,7 @@ function BarisRincian({ label, nilai, tebal }: { label: string; nilai: string; t
 }
 
 function IsiDetail({ pesanan: p }: { pesanan: Pesanan }) {
+  const router = useRouter();
   const pesanUlang = usePesanUlang();
   const { tersalin, salin } = useSalin<"invoice">();
   const waktu = infoWaktu(p);
@@ -136,7 +137,7 @@ function IsiDetail({ pesanan: p }: { pesanan: Pesanan }) {
               label={TEKS.pesanan.aksi.nilai}
               variant="light"
               size="lg"
-              onPress={() => segera(TEKS.pesanan.segera.nilai)}
+              onPress={() => router.push({ pathname: "/penilaian/[id]", params: { id: p.invoice, jenis: "produk" } })}
               style={styles.footerTombol}
             />
             <Button

@@ -137,7 +137,7 @@ export default function PesananScreen() {
                 sekarang={sekarang}
                 onDetail={() => keDetail(item.data)}
                 onChat={() => segera(T.segera.chat)}
-                onNilai={() => segera(T.segera.nilai)}
+                onNilai={() => router.push({ pathname: "/penilaian/[id]", params: { id: item.data.invoice, jenis: "produk" } })}
                 onLihatFoto={() => segera(T.segera.foto)}
                 onPesanUlang={() => void pesanUlang(item.data)}
                 onMajukan={__DEV__ ? () => void majukan(item.data.invoice) : undefined}
@@ -147,7 +147,7 @@ export default function PesananScreen() {
                 key={item.data.nomor}
                 pesanan={item.data}
                 onDetail={() => keDetailNgebelanjain(item.data.nomor)}
-                onNilai={() => segera("Penilaian produk Ngebelanjain belum tersedia.")}
+                onNilai={() => router.push({ pathname: "/penilaian/[id]", params: { id: item.data.nomor, jenis: "ngebelanjain" } })}
                 onPesanUlang={() => router.push({ pathname: "/ngebelanjain/daftar", params: { isiUlang: item.data.daftar } })}
               />
             ))}

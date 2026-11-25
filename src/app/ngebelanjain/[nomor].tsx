@@ -100,7 +100,7 @@ export default function DetailNgebelanjain() {
               </> : null}
             </View>
           </ScrollView>
-          {selesai ? <View style={styles.footer}><Button label="Penilaian Produk" variant="light" size="lg" style={styles.footerButton} onPress={() => Alert.alert("Penilaian Produk", "Fitur penilaian produk Ngebelanjain belum tersedia.")} /><Button label="Ngebelanjain Lagi" size="lg" style={styles.footerButton} onPress={() => router.push({ pathname: "/ngebelanjain/daftar", params: { isiUlang: p.daftar } })} /></View> : p.status === "dibelanjain" ? <View style={styles.footer}><Button label={TEKS_NGEBELANJAIN.chatWa} size="lg" onPress={() => router.push("/ngebelanjain")} /></View> : null}
+          {selesai ? <View style={styles.footer}><Button label="Penilaian Produk" variant="light" size="lg" style={styles.footerButton} onPress={() => router.push({ pathname: "/penilaian/[id]", params: { id: p.nomor, jenis: "ngebelanjain" } })} /><Button label="Ngebelanjain Lagi" size="lg" style={styles.footerButton} onPress={() => router.push({ pathname: "/ngebelanjain/daftar", params: { isiUlang: p.daftar } })} /></View> : p.status === "dibelanjain" ? <View style={styles.footer}><Button label={TEKS_NGEBELANJAIN.chatWa} size="lg" onPress={() => router.push("/ngebelanjain")} /></View> : null}
         </>
       )}
     </View>
@@ -150,6 +150,6 @@ const styles = StyleSheet.create({
   pemisah: { height: 1, backgroundColor: colors.border, marginVertical: 2 },
   totalBaris: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
   totalLabel: { fontSize: 14, fontWeight: "800", color: colors.textStrong },
-  footer: { flexDirection: "row", gap: spacing.sm, paddingHorizontal: 14, paddingTop: spacing.sm, paddingBottom: spacing.xl, marginBottom: spacing.xl, backgroundColor: colors.barBg },
+  footer: { flexDirection: "row", gap: spacing.sm, paddingHorizontal: 14, paddingTop: spacing.sm, paddingBottom: spacing.xl, marginBottom: spacing.sm, backgroundColor: colors.barBg },
   footerButton: { flex: 1 },
 });
