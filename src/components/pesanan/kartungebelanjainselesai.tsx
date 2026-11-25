@@ -1,7 +1,6 @@
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Nominal from "@/components/ui/nominal";
-import DaftarRingkasan from "@/components/ngebelanjain/daftarringkasan";
-import { TEKS_NGEBELANJAIN } from "@/data/teksngebelanjain";
 import { colors, radius, spacing } from "@/theme";
 import { PesananNgebelanjain } from "@/types/ngebelanjain";
 import { pecahDaftar } from "@/utils/ngebelanjain";
@@ -21,7 +20,11 @@ export default function KartuNgebelanjainSelesai({
   onNilai,
   onPesanUlang,
 }: Props) {
+  const [daftarTerbuka, setDaftarTerbuka] = useState(false);
   const daftar = pecahDaftar(p.daftar);
+  const batasBaris = 3;
+  const terpotong = daftar.length > batasBaris;
+  const barisTampil = terpotong && !daftarTerbuka ? daftar.slice(0, batasBaris) : daftar;
   const waktu = p.selesaiPada ?? p.dibayarPada ?? p.dibuatPada;
   const metode =
     p.metode === "transfer"
@@ -34,41 +37,47 @@ export default function KartuNgebelanjainSelesai({
 
   return (
     <View style={styles.kartu}>
-      {/* Area isi kartu dapat ditekan untuk membuka detail pesanan. */}
-      <Pressable
-        onPress={onDetail}
-        style={styles.areaDetail}
-        accessibilityRole="button"
-        accessibilityLabel={`Lihat detail pesanan Ngebelanjain ${p.nomor}`}
-      >
-        <View style={styles.barisAtas}>
+      <View style={styles.atas}>
+        <View style={styles.atasKiri}>
           <View style={styles.badge}>
             <Text style={styles.badgeTeks}>Selesai</Text>
           </View>
-          <Text style={styles.judul}>Ngebelanjain</Text>
-        </View>
-
-        <View style={styles.barisInfo}>
           <Text style={styles.nomor}>No. Pesanan: #{p.nomor}</Text>
+        </View>
+        <View style={styles.atasKanan}>
+          <Text style={styles.jenis}>Ngebelanjain</Text>
           <Text style={styles.waktu}>{formatTanggalJamWib(waktu)}</Text>
         </View>
+      </View>
 
-        <View style={styles.daftarWrap}>
-          <Text style={styles.labelDaftar}>{TEKS_NGEBELANJAIN.pesananAnda}</Text>
-          <DaftarRingkasan baris={daftar} bacaLagi={TEKS_NGEBELANJAIN.bacaSelengkapnya} />
+      <Pressable onPress={onDetail} style={styles.isi} accessibilityRole="button">
+        <Text style={styles.judul}>Pesanan Anda</Text>
+        <View style={styles.daftar}>
+          {barisTampil.map((baris, index) => (
+            <Text key={`${baris.teks}-${index}`} style={styles.baris}>
+              {baris.teks}
+            </Text>
+          ))}
         </View>
-
-        <View style={styles.barisTotal}>
-          <Text style={styles.metode}>{metode}</Text>
-          <Nominal nilai={p.tagihan?.total ?? 0} ukuran={20} warna={colors.textStrong} />
-        </View>
-
-        <View style={styles.petunjuk}>
-          <Text style={styles.petunjukTeks}>Lihat detail pesanan</Text>
-        </View>
+        {terpotong ? (
+          <Pressable
+            onPress={() => setDaftarTerbuka((terbuka) => !terbuka)}
+            hitSlop={8}
+            style={styles.tautan}
+            accessibilityRole="button"
+          >
+            <Text style={styles.tautanTeks}>
+              {daftarTerbuka ? "Lebih sedikit" : "Baca selengkapnya…"}
+            </Text>
+          </Pressable>
+        ) : null}
       </Pressable>
 
-      {/* Tombol aksi dipisah agar tidak ikut memicu navigasi detail. */}
+      <View style={styles.bayar}>
+        <Text style={styles.metode}>{metode}</Text>
+        <Nominal nilai={p.tagihan?.total ?? 0} ukuran={20} warna={colors.textStrong} />
+      </View>
+
       <View style={styles.aksi}>
         <Pressable onPress={onNilai} style={[styles.tombol, styles.tombolLembut]} accessibilityRole="button">
           <Text style={[styles.tombolTeks, styles.teksGelap]}>Penilaian Produk</Text>
@@ -85,33 +94,35 @@ const styles = StyleSheet.create({
   kartu: {
     backgroundColor: colors.white,
     borderRadius: radius.xl,
-    padding: spacing.lg,
+    padding: spacing.md,
     gap: spacing.md,
     shadowColor: colors.shadow,
     shadowOpacity: 0.12,
-    shadowRadius: 5,
+    shadowRadius: 7,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    elevation: 3,
   },
-  areaDetail: { gap: spacing.md },
-  barisAtas: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  badge: { backgroundColor: colors.primaryDeep, borderRadius: radius.xl, paddingHorizontal: 10, paddingVertical: 4 },
+  atas: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing.md },
+  atasKiri: { gap: 6, flexShrink: 1 },
+  badge: { alignSelf: "flex-start", borderRadius: radius.xl, paddingHorizontal: spacing.md, paddingVertical: 3, backgroundColor: colors.primaryDeep },
   badgeTeks: { fontSize: 11, fontWeight: "800", color: colors.white },
-  judul: { fontSize: 14, fontWeight: "800", color: colors.textStrong },
-  barisInfo: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
-  nomor: { fontSize: 11, color: colors.textSoft, flex: 1 },
-  waktu: { fontSize: 14, fontWeight: "800", color: colors.textStrong },
-  daftarWrap: { gap: 6 },
-  labelDaftar: { fontSize: 14, fontWeight: "800", color: colors.textStrong },
-  barisTotal: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 1 },
-  metode: { fontSize: 12, color: colors.textSoft },
-  petunjuk: { alignItems: "flex-end" },
-  petunjukTeks: { fontSize: 11, fontWeight: "700", color: colors.primaryDeep },
-  aksi: { flexDirection: "row", gap: 7 },
-  tombol: { flex: 1, minHeight: 46, borderRadius: radius.lg, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.md },
-  tombolLembut: { backgroundColor: "#ECEEFF" },
+  nomor: { fontSize: 11, fontWeight: "600", color: colors.textSoft },
+  atasKanan: { alignItems: "flex-end", gap: 2, flexShrink: 1 },
+  jenis: { fontSize: 12, fontWeight: "800", color: colors.textStrong },
+  waktu: { fontSize: 14, fontWeight: "700", color: colors.textStrong, textAlign: "right" },
+  isi: { gap: 8 },
+  judul: { fontSize: 14, fontWeight: "800", color: colors.text },
+  daftar: { gap: 1 },
+  baris: { fontSize: 14, lineHeight: 18, color: colors.text },
+  tautan: { alignSelf: "flex-start", marginTop: 2 },
+  tautanTeks: { fontSize: 13, fontWeight: "800", color: colors.textStrong },
+  bayar: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: spacing.md, marginTop: 1 },
+  metode: { flexShrink: 1, fontSize: 12, color: colors.textSoft },
+  aksi: { flexDirection: "row", gap: spacing.sm },
+  tombol: { flex: 1, minHeight: 48, borderRadius: radius.lg, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.sm },
+  tombolLembut: { backgroundColor: colors.accentSoftStrong },
   tombolHijau: { backgroundColor: colors.primaryDeep },
-  tombolTeks: { fontSize: 13, fontWeight: "800", textAlign: "center" },
-  teksGelap: { color: colors.textStrong },
+  tombolTeks: { fontSize: 12, fontWeight: "700", textAlign: "center" },
+  teksGelap: { color: colors.dark },
   teksPutih: { color: colors.white },
 });
