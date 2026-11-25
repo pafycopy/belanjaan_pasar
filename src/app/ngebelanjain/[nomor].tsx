@@ -150,6 +150,6 @@ const styles = StyleSheet.create({
   pemisah: { height: 1, backgroundColor: colors.border, marginVertical: 2 },
   totalBaris: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
   totalLabel: { fontSize: 14, fontWeight: "800", color: colors.textStrong },
-  footer: { flexDirection: "row", gap: spacing.sm, paddingHorizontal: 14, paddingTop: spacing.sm, paddingBottom: spacing.xl, marginBottom: spacing.xl, backgroundColor: colors.barBg },
+  footer: { flexDirection: "row", gap: spacing.sm, paddingHorizontal: 14, paddingTop: spacing.sm, paddingBottom: spacing.xl, marginBottom: spacing.sm, backgroundColor: colors.barBg },
   footerButton: { flex: 1 },
 });

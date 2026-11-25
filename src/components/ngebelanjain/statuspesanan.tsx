@@ -9,14 +9,16 @@ type Props = {
   items: readonly TabNgebelanjain[];
   selectedId: StatusNgebelanjain;
   onSelect: (id: StatusNgebelanjain) => void;
+  counts: Partial<Record<StatusNgebelanjain, number>>;
 };
 
-// Empat tahapan pesanan sebagai tab: ikon di atas, label dua baris, garis bawah pada yang aktif
-export default function TabStatusNgebelanjain({ items, selectedId, onSelect }: Props) {
+// Empat tahapan pesanan sebagai tab dengan badge jumlah pesanan pada setiap tahap.
+export default function TabStatusNgebelanjain({ items, selectedId, onSelect, counts }: Props) {
   return (
     <View style={styles.baris} accessibilityRole="tablist">
       {items.map((it) => {
         const aktif = it.id === selectedId;
+        const jumlah = counts[it.id] ?? 0;
         return (
           <Pressable
             key={it.id}
@@ -24,20 +26,20 @@ export default function TabStatusNgebelanjain({ items, selectedId, onSelect }: P
             style={[styles.item, aktif && styles.itemAktif]}
             accessibilityRole="tab"
             accessibilityState={{ selected: aktif }}
+            accessibilityLabel={`${it.label.replace("\n", " ")}, ${jumlah} pesanan`}
           >
-            {it.ikonGambar ? (
-            <Image
-              source={it.ikonGambar}
-              style={styles.ikonGambar}
-              contentFit="contain"
-            />
-          ) : (
-            <Ionicons
-              name={it.ikon}
-              size={26}
-              color={aktif ? colors.dark : colors.textStrong}
-            />
-          )}
+            <View style={styles.ikonWadah}>
+              {it.ikonGambar ? (
+                <Image source={it.ikonGambar} style={styles.ikonGambar} contentFit="contain" />
+              ) : (
+                <Ionicons name={it.ikon} size={26} color={aktif ? colors.dark : colors.textStrong} />
+              )}
+              {jumlah > 0 ? (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeTeks}>{jumlah > 99 ? "99+" : jumlah}</Text>
+                </View>
+              ) : null}
+            </View>
             <Text style={[styles.label, aktif && styles.labelAktif]} numberOfLines={2}>
               {it.label}
             </Text>
@@ -50,10 +52,23 @@ export default function TabStatusNgebelanjain({ items, selectedId, onSelect }: P
 
 const styles = StyleSheet.create({
   baris: { flexDirection: "row", alignItems: "stretch" },
-  ikonGambar: {
-  width: 26,
-  height: 26,
+  ikonWadah: { width: 40, height: 30, alignItems: "center", justifyContent: "center", position: "relative" },
+  ikonGambar: { width: 26, height: 26 },
+  badge: {
+    position: "absolute",
+    top: -5,
+    right: -7,
+    minWidth: 18,
+    height: 18,
+    paddingHorizontal: 4,
+    borderRadius: 9,
+    backgroundColor: "#E53935",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: colors.white,
   },
+  badgeTeks: { color: colors.white, fontSize: 9, lineHeight: 12, fontWeight: "800", textAlign: "center" },
   item: {
     flex: 1,
     alignItems: "center",

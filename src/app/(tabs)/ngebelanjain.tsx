@@ -52,6 +52,12 @@ const alamatHeader = alamatMemuat
     [pesanan, tab]
   );
   const pertama: PesananNgebelanjain | undefined = daftar[0];
+  const jumlahPerTab = useMemo(() => ({
+    diproses: pesanan.filter((p) => p.status === "diproses").length,
+    dibelanjain: pesanan.filter((p) => p.status === "dibelanjain").length,
+    pembayaran: pesanan.filter((p) => p.status === "pembayaran").length,
+    dibayar: pesanan.filter((p) => p.status === "dibayar" || p.status === "selesai").length,
+  }), [pesanan]);
   const pesananAktif = cariPesananAktif(pesanan);
 
   useEffect(() => {
@@ -171,7 +177,7 @@ const alamatHeader = alamatMemuat
 
       <View style={styles.status}>
         <Text style={styles.statusJudul}>{T.pesananSaya}</Text>
-        <TabStatusNgebelanjain items={TAB_NGEBELANJAIN} selectedId={tab} onSelect={setTab} />
+        <TabStatusNgebelanjain items={TAB_NGEBELANJAIN} selectedId={tab} onSelect={setTab} counts={jumlahPerTab} />
       </View>
 
       {/* Hanya mode pengembangan: aslinya admin yang memindahkan pesanan ke tahap berikutnya */}
