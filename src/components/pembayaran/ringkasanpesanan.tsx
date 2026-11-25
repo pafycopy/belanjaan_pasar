@@ -9,6 +9,7 @@ import { cariProduk, formatHarga } from "@/utils/produk";
 
 type Props = {
   tagihan: Pick<TagihanTransfer, "invoice" | "baris" | "ongkir" | "labelOngkir" | "pengiriman" | "alamat">;
+  tampilkanBuktiPengantaran?: boolean;
 };
 
 const T = TEKS.pembayaran.ringkasan;
@@ -33,7 +34,7 @@ export function BarisProduk({ baris }: { baris: BarisTagihan }) {
 }
 
 // Kartu "Ringkasan Pesanan": daftar produk, ongkos kurir, dan info pengantaran / ambil di toko
-export default function RingkasanPesanan({ tagihan }: Props) {
+export default function RingkasanPesanan({ tagihan, tampilkanBuktiPengantaran = false }: Props) {
   const antar = tagihan.pengiriman === "antar";
 
   return (
@@ -73,6 +74,24 @@ export default function RingkasanPesanan({ tagihan }: Props) {
             <Text style={styles.antarAlamat}>{antar ? (tagihan.alamat ?? "") : T.ambilPesan}</Text>
           </View>
         </View>
+
+        {antar && tampilkanBuktiPengantaran ? (
+          <View style={styles.bukti}>
+            <View style={styles.buktiFoto}>
+              <Ionicons name="image-outline" size={25} color={colors.dark} />
+              <Text style={styles.buktiFotoLabel}>Foto</Text>
+            </View>
+            <View style={styles.buktiInfo}>
+              <Text style={styles.buktiJudul}>Pengantaran selesai</Text>
+              <Text style={styles.buktiPenerima}>Diterima Oleh Ardy</Text>
+              <Text style={styles.buktiCatatan}>Foto bukti belum tersedia.</Text>
+            </View>
+            <View style={styles.buktiStatus}>
+              <Ionicons name="checkmark-circle" size={20} color={colors.primaryDeep} />
+              <Text style={styles.buktiStatusTeks}>Terkirim</Text>
+            </View>
+          </View>
+        ) : null}
       </View>
     </View>
   );
@@ -110,4 +129,28 @@ const styles = StyleSheet.create({
   antarIkon: { marginTop: 1 },
   antarJudul: { fontSize: 13, fontWeight: "700", color: colors.text },
   antarAlamat: { fontSize: 12, lineHeight: 18, color: colors.textSoft },
+  bukti: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    backgroundColor: colors.accentSoft,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  buktiFoto: {
+    width: 58,
+    height: 58,
+    borderRadius: radius.sm,
+    backgroundColor: colors.accentSoftStrong,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 1,
+  },
+  buktiFotoLabel: { fontSize: 9, fontWeight: "700", color: colors.textSoft },
+  buktiInfo: { flex: 1, gap: 2 },
+  buktiJudul: { fontSize: 13, fontWeight: "800", color: colors.text },
+  buktiPenerima: { fontSize: 12, fontWeight: "700", color: colors.dark },
+  buktiCatatan: { fontSize: 11, color: colors.textSoft },
+  buktiStatus: { alignItems: "center", gap: 2 },
+  buktiStatusTeks: { fontSize: 10, fontWeight: "800", color: colors.primaryDeep },
 });

@@ -83,7 +83,7 @@ function IsiDetail({ pesanan: p }: { pesanan: Pesanan }) {
         </View>
 
         <View style={styles.seksi}>
-          <RingkasanPesanan tagihan={p} />
+          <RingkasanPesanan tagihan={p} tampilkanBuktiPengantaran={p.status === "selesai"} />
         </View>
 
         <View style={styles.seksi}>
