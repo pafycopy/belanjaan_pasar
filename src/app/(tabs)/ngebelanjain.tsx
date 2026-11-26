@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Button from "@/components/ui/button";
@@ -23,6 +24,7 @@ import { PesananNgebelanjain, StatusNgebelanjain } from "@/types/ngebelanjain";
 import { batalkanMetode, cariPesananAktif, kedaluwarsaMetode, majukanNgebelanjain } from "@/utils/ngebelanjain";
 
 const T = TEKS_NGEBELANJAIN;
+const KUNCI_TAB_DIBAYAR_DIBACA = "@belanjaan-pasar/ngebelanjain/tab-dibayar-dibaca";
 
 const adaStatus = (x: string | undefined): x is StatusNgebelanjain => TAB_NGEBELANJAIN.some((t) => t.id === x);
 
@@ -41,6 +43,42 @@ const alamatHeader = alamatMemuat
   const chat = useChatNgebelanjain();
 
   const [tab, setTab] = useState<StatusNgebelanjain>("diproses");
+  const [nomorDibayarDibaca, setNomorDibayarDibaca] = useState<string[]>([]);
+  const [statusBacaDimuat, setStatusBacaDimuat] = useState(false);
+
+  useEffect(() => {
+    let aktif = true;
+    AsyncStorage.getItem(KUNCI_TAB_DIBAYAR_DIBACA)
+      .then((raw) => {
+        if (!aktif || !raw) return;
+        try {
+          const tersimpan: unknown = JSON.parse(raw);
+          if (Array.isArray(tersimpan) && tersimpan.every((x) => typeof x === "string")) {
+            setNomorDibayarDibaca(tersimpan);
+          }
+        } catch {
+          // Abaikan data status baca yang tidak valid.
+        }
+      })
+      .finally(() => {
+        if (aktif) setStatusBacaDimuat(true);
+      });
+    return () => {
+      aktif = false;
+    };
+  }, []);
+
+  const pilihTab = (id: StatusNgebelanjain) => {
+    setTab(id);
+    if (id !== "dibayar" || !statusBacaDimuat) return;
+
+    const nomorSaatIni = pesanan
+      .filter((p) => p.status === "dibayar" || p.status === "selesai")
+      .map((p) => p.nomor);
+    const gabungan = [...new Set([...nomorDibayarDibaca, ...nomorSaatIni])];
+    setNomorDibayarDibaca(gabungan);
+    void AsyncStorage.setItem(KUNCI_TAB_DIBAYAR_DIBACA, JSON.stringify(gabungan));
+  };
 
   // Setelah mengirim permintaan, layar daftar membuka tab ini langsung di "Sedang Diproses"
   useEffect(() => {
@@ -56,8 +94,13 @@ const alamatHeader = alamatMemuat
     diproses: pesanan.filter((p) => p.status === "diproses").length,
     dibelanjain: pesanan.filter((p) => p.status === "dibelanjain").length,
     pembayaran: pesanan.filter((p) => p.status === "pembayaran").length,
-    dibayar: pesanan.filter((p) => p.status === "dibayar" || p.status === "selesai").length,
-  }), [pesanan]);
+    dibayar: statusBacaDimuat
+      ? pesanan.filter((p) =>
+          (p.status === "dibayar" || p.status === "selesai") &&
+          !nomorDibayarDibaca.includes(p.nomor)
+        ).length
+      : 0,
+  }), [pesanan, nomorDibayarDibaca, statusBacaDimuat]);
   const pesananAktif = cariPesananAktif(pesanan);
 
   useEffect(() => {
@@ -177,7 +220,7 @@ const alamatHeader = alamatMemuat
 
       <View style={styles.status}>
         <Text style={styles.statusJudul}>{T.pesananSaya}</Text>
-        <TabStatusNgebelanjain items={TAB_NGEBELANJAIN} selectedId={tab} onSelect={setTab} counts={jumlahPerTab} />
+        <TabStatusNgebelanjain items={TAB_NGEBELANJAIN} selectedId={tab} onSelect={pilihTab} counts={jumlahPerTab} />
       </View>
 
       {/* Hanya mode pengembangan: aslinya admin yang memindahkan pesanan ke tahap berikutnya */}
