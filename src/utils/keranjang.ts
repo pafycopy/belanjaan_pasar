@@ -2,9 +2,9 @@ import { ItemKeranjang, ItemKeranjangInput } from "@/types/keranjang";
 import { TARIF_ONGKIR, TarifOngkir } from "@/data/keranjang";
 import { Produk } from "@/types/produk";
 
-// Dua item dianggap sama bila produk, potongan, dan catatannya sama
+// Dua item dianggap sama bila produk dan catatannya sama
 export function kunciItem(i: ItemKeranjangInput): string {
-  return [i.produkId, i.potonganId ?? "", (i.catatan ?? "").trim().toLowerCase()].join("|");
+  return [i.produkId, (i.catatan ?? "").trim().toLowerCase()].join("|");
 }
 
 // Item yang sama digabung jumlahnya; selain itu menjadi baris baru

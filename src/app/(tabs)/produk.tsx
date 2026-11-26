@@ -144,7 +144,7 @@ export default function ProdukScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.canvas },
   content: { paddingBottom: spacing.xl },
-  searchWrap: { paddingHorizontal: 14, paddingTop: spacing.xs, marginTop: spacing.sm },
+  searchWrap: { paddingHorizontal: 14, paddingTop: spacing.xl, marginTop: spacing.sm },
   seksi: { marginTop: spacing.lg },
   produkTerlarisList: { paddingHorizontal: 14, gap: 10 },
   kartuGeser: { width: LEBAR_KARTU_GESER, marginBottom: 0 },

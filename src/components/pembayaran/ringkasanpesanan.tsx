@@ -23,7 +23,7 @@ export function BarisProduk({ baris }: { baris: BarisTagihan }) {
         <Text style={styles.nama} numberOfLines={2}>
           {baris.nama}
         </Text>
-        <Text style={styles.keterangan}>{baris.potongan ?? TEKS.keranjang.produkSegar}</Text>
+        <Text style={styles.keterangan}>{baris.catatan?.trim() ? `Catatan: ${baris.catatan.trim()}` : TEKS.keranjang.produkSegar}</Text>
         {baris.jumlah > 1 ? (
           <Text style={styles.jumlah}>{T.jumlah(baris.jumlah, formatHarga(baris.hargaSatuan))}</Text>
         ) : null}

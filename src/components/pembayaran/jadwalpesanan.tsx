@@ -5,16 +5,14 @@ import { JADWAL_PEMOTONGAN, JENDELA_ANTAR, KIOS_PEMOTONGAN } from "@/data/pembay
 import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { TagihanTransfer } from "@/types/pembayaran";
-import { potonganUnik } from "@/utils/pembayaran";
 
 type Props = { tagihan: TagihanTransfer };
 
 const T = TEKS.berhasil.jadwal;
 
-// Kartu "Jadwal Pesanan": jam pemotongan, kios, potongan terpilih, dan target tiba
+// Kartu "Jadwal Pesanan": jadwal persiapan, kios, dan target tiba
 export default function JadwalPesanan({ tagihan }: Props) {
   const antar = tagihan.pengiriman === "antar";
-  const potongan = potonganUnik(tagihan.baris);
 
   return (
     <View style={styles.kartu}>
@@ -33,20 +31,6 @@ export default function JadwalPesanan({ tagihan }: Props) {
           <Text style={styles.blokTeks}>{KIOS_PEMOTONGAN.blok}</Text>
         </View>
       </View>
-
-      {potongan.length > 0 ? (
-        <View style={styles.kustom}>
-          <Text style={styles.kustomLabel}>{T.kustomisasi}</Text>
-          <View style={styles.chipBaris}>
-            {potongan.map((p) => (
-              <View key={p} style={styles.chip}>
-                <Ionicons name="cut-outline" size={14} color={colors.white} />
-                <Text style={styles.chipTeks}>{p}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      ) : null}
 
       <View style={styles.target}>
         <TeksTebal

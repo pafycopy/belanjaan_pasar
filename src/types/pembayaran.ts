@@ -6,8 +6,6 @@ export type BarisTagihan = {
   nama: string;
   jumlah: number;
   hargaSatuan: number;
-  potongan?: string; // judul pilihan potongan, mis. "Potong 4"
-  potonganId?: string;
   catatan?: string;
 };
 

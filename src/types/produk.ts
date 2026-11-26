@@ -1,14 +1,4 @@
 import { ImageSource } from "expo-image";
-import { IconName } from "@/types/ui";
-
-// Pilihan potongan gratis (khusus produk yang bisa dipotong, mis. ayam)
-export type OpsiPotongan = {
-  id: string;
-  judul: string;
-  deskripsi: string;
-  ikon: IconName;
-  warna: "hijau" | "cokelat"; // warna ikon saat belum dipilih
-};
 
 export type Produk = {
   id: string;
@@ -27,6 +17,4 @@ export type Produk = {
   tag?: string[];                 // penanda untuk filter, mis. "promo", "ayam-bebek", "partingan"
   beratBersihGram?: number;       // estimasi berat bersih per satuan, untuk kapasitas keranjang
   pilihanJumlah?: number[];       // tombol jumlah cepat (selain "Custom")
-  opsiPotongan?: OpsiPotongan[];  // bila ada: tampilkan "Request Potongan" dan "Catatan Pemotong"
-  potonganBawaan?: string;        // id opsi yang terpilih di awal
 };

@@ -292,7 +292,6 @@ export const TEKS = {
     jadwal: {
       judul: "Jadwal Pesanan",
       pesanan: (urutan: number, jam: string) => `Pesanan ${urutan} (${jam})`,
-      kustomisasi: "Kustomisasi potongan terpilih:",
       targetTiba: "Target Tiba:",
       targetSiap: "Target Siap:",
       ambilDi: (kios: string) => `Ambil pesanan langsung di ${kios}.`,
@@ -477,12 +476,10 @@ export const TEKS = {
     deskripsi: "Deskripsi",
     lihatSelengkapnya: "Lihat Selengkapnya",
     lihatSedikit: "Lihat Lebih Sedikit",
-    potongan: "Request Potongan Gratis",
     catatan: {
-      judul: "Catatan Khusus Pemotong",
-      label: "Instruksi Khusus Dapur Anda",
-      placeholder:
-        "Contoh: Tolong potong kecil-kecil untuk kuah soto lamongan, ceker jangan dipotong kukunya terlalu pendek...",
+      judul: "Catatan Khusus Pelanggan",
+      label: "Catatan untuk produk ini",
+      placeholder: "Contoh: pilih yang masih segar, pisahkan kemasan, atau instruksi khusus lainnya...",
     },
     subtotal: "Subtotal",
     jumlahCustom: {

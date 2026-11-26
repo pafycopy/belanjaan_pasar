@@ -28,8 +28,6 @@ export function buatTagihanTransfer(b: BahanTagihan): TagihanTransfer {
     nama: produk.nama,
     jumlah: item.jumlah,
     hargaSatuan: item.hargaSatuan,
-    potongan: produk.opsiPotongan?.find((o) => o.id === item.potonganId)?.judul,
-    potonganId: item.potonganId,
     catatan: item.catatan,
   }));
 
@@ -71,18 +69,14 @@ export function pecahTebal(teks: string): PotonganTeks[] {
     .filter((p) => p.teks.length > 0);
 }
 
-// Pilihan potongan yang dipakai di pesanan, tanpa duplikat ("Potong 4" muncul sekali)
-export function potonganUnik(baris: readonly BarisTagihan[]): string[] {
-  return [...new Set(baris.map((b) => b.potongan).filter((p): p is string => !!p))];
-}
-
 type Rekening = { bank: string; nomor: string; namaAkun: string };
 
 // Bukti pembayaran berbentuk teks, dibagikan lewat menu Bagikan bawaan HP
 export function buatTeksBukti(t: TagihanTransfer, rek: Rekening): string {
   const baris = t.baris.map((b) => {
-    const nama = b.potongan ? `${b.nama} (${b.potongan})` : b.nama;
-    return `- ${nama}: ${b.jumlah} x ${formatHarga(b.hargaSatuan)} = ${formatHarga(b.hargaSatuan * b.jumlah)}`;
+    const nama = b.nama;
+    const catatan = b.catatan ? `\n  Catatan: ${b.catatan}` : "";
+    return `- ${nama}: ${b.jumlah} x ${formatHarga(b.hargaSatuan)} = ${formatHarga(b.hargaSatuan * b.jumlah)}${catatan}`;
   });
   return [
     "BUKTI PEMBAYARAN - Belanjaan Pasar",

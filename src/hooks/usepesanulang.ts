@@ -8,7 +8,7 @@ import { cariProduk } from "@/utils/produk";
 const T = TEKS.pesanan.gagalUlang;
 
 /**
- * "Pesan Ulang": masukkan lagi semua produk sebuah pesanan ke keranjang (harga terbaru, potongan
+ * "Pesan Ulang": masukkan lagi semua produk sebuah pesanan ke keranjang (harga terbaru
  * dan catatan sama), lalu buka keranjang. Produk yang sudah tidak ada dilewati.
  */
 export function usePesanUlang() {
@@ -25,7 +25,6 @@ export function usePesanUlang() {
           produkId: b.produkId,
           jumlah: b.jumlah,
           hargaSatuan: produk.harga,
-          potonganId: b.potonganId,
           catatan: b.catatan,
         });
         masuk += 1;

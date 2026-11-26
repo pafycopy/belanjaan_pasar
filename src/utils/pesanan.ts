@@ -77,7 +77,7 @@ export function ringkasanProduk(p: Pesanan): { nama: string; deskripsi: string }
   const satuan = cariProduk(pertama.produkId)?.satuan;
   const bagian = [
     `${pertama.jumlah}${satuan ? ` ${satuan}` : ""}`,
-    pertama.potongan,
+    pertama.catatan ? `Catatan: ${pertama.catatan}` : undefined,
     lain.length > 0 ? T.produkLain(lain.length) : undefined,
   ].filter((x): x is string => !!x);
   return { nama: pertama.nama, deskripsi: bagian.join(" \u2022 ") };

@@ -19,7 +19,6 @@ type Props = {
 };
 
 export default function ItemKeranjangCard({ item, produk, dipilih, onPilih, onKurang, onTambah, onHapus }: Props) {
-  const potongan = produk.opsiPotongan?.find((o) => o.id === item.potonganId);
 
   return (
     <Pressable
@@ -45,7 +44,7 @@ export default function ItemKeranjangCard({ item, produk, dipilih, onPilih, onKu
               <Ionicons name="close" size={20} color={colors.textSoft} />
             </Pressable>
           </View>
-          <Text style={styles.potongan}>{potongan ? potongan.judul : TEKS.keranjang.produkSegar}</Text>
+          <Text style={styles.potongan}>{item.catatan?.trim() ? `Catatan: ${item.catatan.trim()}` : TEKS.keranjang.produkSegar}</Text>
         </View>
 
         <View style={styles.bawah}>

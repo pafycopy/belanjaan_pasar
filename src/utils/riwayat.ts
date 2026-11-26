@@ -21,7 +21,7 @@ export function jumlahBarang(p: Pesanan): number {
 export function ringkasRiwayat(p: Pesanan): { nama: string; jumlah: number; keterangan: string } {
   const [pertama, ...lain] = p.baris;
   if (!pertama) return { nama: "-", jumlah: 0, keterangan: "" };
-  const keterangan = [pertama.potongan, lain.length > 0 ? TEKS.pesanan.produkLain(lain.length) : undefined]
+  const keterangan = [pertama.catatan ? `Catatan: ${pertama.catatan}` : undefined, lain.length > 0 ? TEKS.pesanan.produkLain(lain.length) : undefined]
     .filter((x): x is string => !!x)
     .join(" \u2022 ");
   return { nama: pertama.nama, jumlah: pertama.jumlah, keterangan };

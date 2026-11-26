@@ -3,7 +3,7 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } f
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { colors, radius, spacing } from "@/theme";
 import { TEKS } from "@/data/teks";
-import { PILIHAN_JUMLAH_BAWAAN, SARAN_CATATAN, SATUAN_BAWAAN } from "@/data/produk";
+import { PILIHAN_JUMLAH_BAWAAN, SATUAN_BAWAAN } from "@/data/produk";
 import { useKeranjang } from "@/context/keranjang";
 import { useFavorit } from "@/context/favorit";
 import { Produk } from "@/types/produk";
@@ -15,8 +15,7 @@ import GambarProduk from "@/components/produk/gambarproduk";
 import InfoProduk from "@/components/produk/infoproduk";
 import PilihJumlah from "@/components/produk/pilihjumlah";
 import DeskripsiProduk from "@/components/produk/deskripsiproduk";
-import OpsiPotonganProduk from "@/components/produk/opsipotongan";
-import CatatanPemotong from "@/components/produk/catatanpemotong";
+import CatatanPelanggan from "@/components/produk/catatanpelanggan";
 import BarKeranjang from "@/components/produk/barkeranjang";
 import JumlahCustomSheet from "@/components/produk/jumlahcustomsheet";
 import TombolBagikan from "@/components/produk/tombolbagikan";
@@ -42,10 +41,8 @@ function IsiDetail({ produk }: { produk: Produk }) {
 
   const satuan = produk.satuan ?? SATUAN_BAWAAN;
   const maks = produk.stok ?? 99;
-  const bisaDipotong = !!produk.opsiPotongan?.length;
 
   const [jumlah, setJumlah] = useState(1);
-  const [potonganId, setPotonganId] = useState<string | undefined>(produk.potonganBawaan);
   const [catatan, setCatatan] = useState("");
   const [sheetCustom, setSheetCustom] = useState(false);
   const [menambah, setMenambah] = useState(false);
@@ -58,8 +55,7 @@ function IsiDetail({ produk }: { produk: Produk }) {
         produkId: produk.id,
         jumlah,
         hargaSatuan: produk.harga,
-        potonganId: bisaDipotong ? potonganId : undefined,
-        catatan: bisaDipotong ? catatan.trim() || undefined : undefined,
+        catatan: catatan.trim() || undefined,
       });
       Alert.alert(T.keranjang.berhasil.judul, T.keranjang.berhasil.pesan(produk.nama, jumlah), [
         { text: T.keranjang.berhasil.lanjut, style: "cancel" },
@@ -90,12 +86,7 @@ function IsiDetail({ produk }: { produk: Produk }) {
           onCustom={() => setSheetCustom(true)}
         />
         {produk.deskripsi ? <DeskripsiProduk teks={produk.deskripsi} /> : null}
-        {bisaDipotong ? (
-          <>
-            <OpsiPotonganProduk opsi={produk.opsiPotongan ?? []} dipilihId={potonganId} onPilih={setPotonganId} />
-            <CatatanPemotong value={catatan} onChangeText={setCatatan} saran={SARAN_CATATAN} />
-          </>
-        ) : null}
+        <CatatanPelanggan value={catatan} onChangeText={setCatatan} />
       </ScrollView>
 
       <FooterBar bordered={false} background={colors.surface}>

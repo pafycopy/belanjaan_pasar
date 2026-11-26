@@ -3,8 +3,7 @@ export type ItemKeranjang = {
   produkId: string;
   jumlah: number;
   hargaSatuan: number;   // harga saat ditambahkan
-  potonganId?: string;   // pilihan potongan (bila produk bisa dipotong)
-  catatan?: string;      // catatan untuk pemotong
+  catatan?: string;      // catatan khusus pelanggan untuk produk
 };
 
 // Data yang dikirim dari layar produk. uid dibuat oleh repository (nanti: oleh server).
