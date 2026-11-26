@@ -19,63 +19,71 @@ type Props = {
 };
 
 export default function ItemKeranjangCard({ item, produk, dipilih, onPilih, onKurang, onTambah, onHapus }: Props) {
-
   return (
-    <Pressable
-      onPress={onPilih}
-      style={[styles.card, dipilih && styles.cardDipilih]}
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked: dipilih }}
-      accessibilityLabel={TEKS.keranjang.pilihProduk(produk.nama)}
-    >
-      <View style={styles.radio}>
+    <View style={styles.baris}>
+      <Pressable
+        onPress={onPilih}
+        style={styles.radio}
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: dipilih }}
+        accessibilityLabel={TEKS.keranjang.pilihProduk(produk.nama)}
+        hitSlop={6}
+      >
         <Radio dipilih={dipilih} />
-      </View>
+      </Pressable>
 
-      <GambarProduk gambar={produk.gambar} style={styles.gambar} fit="contain" />
+      <Pressable onPress={onPilih} style={styles.card}>
+        <GambarProduk gambar={produk.gambar} style={styles.gambar} fit="contain" />
 
-      <View style={styles.info}>
-        <View>
-          <View style={styles.namaRow}>
-            <Text style={styles.nama} numberOfLines={2}>
-              {produk.nama}
-            </Text>
-            <Pressable onPress={onHapus} hitSlop={8}>
-              <Ionicons name="close" size={20} color={colors.textSoft} />
-            </Pressable>
+        <View style={styles.info}>
+          <View>
+            <View style={styles.namaRow}>
+              <Text style={styles.nama} numberOfLines={2}>
+                {produk.nama}
+              </Text>
+              <Pressable onPress={onHapus} hitSlop={8}>
+                <Ionicons name="close" size={20} color={colors.textSoft} />
+              </Pressable>
+            </View>
+            <Text style={styles.potongan}>{item.catatan?.trim() ? `Catatan: ${item.catatan.trim()}` : TEKS.keranjang.produkSegar}</Text>
           </View>
-          <Text style={styles.potongan}>{item.catatan?.trim() ? `Catatan: ${item.catatan.trim()}` : TEKS.keranjang.produkSegar}</Text>
-        </View>
 
-        <View style={styles.bawah}>
-          <Text style={styles.harga}>{formatHarga(item.hargaSatuan)}</Text>
+          <View style={styles.bawah}>
+            <Text style={styles.harga}>{formatHarga(item.hargaSatuan)}</Text>
 
-          <View style={styles.stepper}>
-            <Pressable style={styles.stepButton} onPress={onKurang} hitSlop={4}>
-              <Ionicons name="remove" size={16} color={colors.textSoft} />
-            </Pressable>
-            <Text style={styles.jumlah}>{item.jumlah}</Text>
-            <Pressable style={styles.stepButton} onPress={onTambah} hitSlop={4}>
-              <Ionicons name="add" size={16} color={colors.textSoft} />
-            </Pressable>
+            <View style={styles.stepper}>
+              <Pressable style={styles.stepButton} onPress={onKurang} hitSlop={4}>
+                <Ionicons name="remove" size={16} color={colors.textSoft} />
+              </Pressable>
+              <Text style={styles.jumlah}>{item.jumlah}</Text>
+              <Pressable style={styles.stepButton} onPress={onTambah} hitSlop={4}>
+                <Ionicons name="add" size={16} color={colors.textSoft} />
+              </Pressable>
+            </View>
           </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  baris: { flexDirection: "row", alignItems: "stretch" },
+  radio: {
+    width: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.sm,
+  },
   card: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: "row",
     backgroundColor: colors.white,
     borderRadius: radius.lg,
     padding: spacing.md,
-    borderWidth: 1.5,
-    borderColor: colors.white, // ketebalan tetap agar kartu tidak bergeser saat dipilih
+    borderWidth: 0,
   },
-  cardDipilih: { borderColor: colors.dark },
-  radio: { justifyContent: "center", marginRight: spacing.md },
   gambar: { width: 72, height: 72, borderRadius: radius.sm, backgroundColor: colors.white },
   info: { flex: 1, marginLeft: spacing.md, justifyContent: "space-between", gap: spacing.sm },
   namaRow: { flexDirection: "row", alignItems: "flex-start", gap: spacing.xs },

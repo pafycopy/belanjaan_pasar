@@ -6,14 +6,14 @@ import { TEKS } from "@/data/teks";
 import { Alamat } from "@/types/alamat";
 import { formatAlamatLengkap, judulAlamat, samarkanNoHp } from "@/utils/alamat";
 
-type Props = { alamat: Alamat | null };
+type Props = { alamat: Alamat | null; fromCheckout?: boolean };
 
 const T = TEKS.keranjang.alamat;
 
 // Kartu alamat pengantaran: judul + "Ubah Alamat", lalu kotak ringkasan alamat terpilih
-export default function AlamatPengantaran({ alamat }: Props) {
+export default function AlamatPengantaran({ alamat, fromCheckout = false }: Props) {
   const router = useRouter();
-  const keAlamat = () => router.push("/alamat");
+  const keAlamat = () => router.push(fromCheckout ? { pathname: "/alamat", params: { fromCheckout: "1" } } : "/alamat");
   const tampilan = alamat ? judulAlamat(alamat) : null;
 
   return (

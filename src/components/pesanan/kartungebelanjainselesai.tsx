@@ -37,7 +37,7 @@ export default function KartuNgebelanjainSelesai({
 
   return (
     <View style={styles.kartu}>
-      <View style={styles.atas}>
+      <Pressable onPress={onDetail} style={styles.atas} accessibilityRole="button">
         <View style={styles.atasKiri}>
           <View style={styles.badge}>
             <Text style={styles.badgeTeks}>Selesai</Text>
@@ -48,7 +48,7 @@ export default function KartuNgebelanjainSelesai({
           <Text style={styles.jenis}>Ngebelanjain</Text>
           <Text style={styles.waktu}>{formatTanggalJamWib(waktu)}</Text>
         </View>
-      </View>
+      </Pressable>
 
       <Pressable onPress={onDetail} style={styles.isi} accessibilityRole="button">
         <Text style={styles.judul}>Pesanan Anda</Text>
@@ -61,7 +61,10 @@ export default function KartuNgebelanjainSelesai({
         </View>
         {terpotong ? (
           <Pressable
-            onPress={() => setDaftarTerbuka((terbuka) => !terbuka)}
+            onPress={(event) => {
+              event.stopPropagation();
+              setDaftarTerbuka((terbuka) => !terbuka);
+            }}
             hitSlop={8}
             style={styles.tautan}
             accessibilityRole="button"
@@ -73,10 +76,10 @@ export default function KartuNgebelanjainSelesai({
         ) : null}
       </Pressable>
 
-      <View style={styles.bayar}>
+      <Pressable onPress={onDetail} style={styles.bayar} accessibilityRole="button">
         <Text style={styles.metode}>{metode}</Text>
         <Nominal nilai={p.tagihan?.total ?? 0} ukuran={20} warna={colors.textStrong} />
-      </View>
+      </Pressable>
 
       <View style={styles.aksi}>
         <Pressable onPress={onNilai} style={[styles.tombol, styles.tombolLembut]} accessibilityRole="button">

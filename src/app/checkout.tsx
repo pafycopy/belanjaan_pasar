@@ -6,6 +6,10 @@ import FooterBar from "@/components/ui/footerbar";
 import ScreenState from "@/components/ui/screenstate";
 import MetodePembayaranList from "@/components/keranjang/metodepembayaran";
 import RincianPembayaran from "@/components/keranjang/rincianpembayaran";
+import KapasitasBerat from "@/components/keranjang/kapasitasberat";
+import AlamatPengantaran from "@/components/keranjang/alamatpengantaran";
+import OpsiPengiriman from "@/components/keranjang/pengiriman";
+import ProdukCheckout from "@/components/checkout/produkcheckout";
 import RingkasanPembayaran from "@/components/keranjang/ringkasanpembayaran";
 import { useAlamat } from "@/context/alamat";
 import { useKeranjang } from "@/context/keranjang";
@@ -13,32 +17,32 @@ import {
   IdMetode,
   METODE_BAWAAN,
   METODE_PEMBAYARAN,
-  OPSI_PENGIRIMAN,
   PENGIRIMAN_BAWAAN,
+  KAPASITAS_KERANJANG_KG,
 } from "@/data/keranjang";
 import { TEKS } from "@/data/teks";
 import { pembayaranRepository } from "@/services/pembayaranrepository";
 import { transaksiRepository } from "@/services/transaksirepository";
 import { colors, spacing } from "@/theme";
 import { formatAlamatLengkap } from "@/utils/alamat";
-import { barisDenganProduk, cariTarifOngkir, hitungSubtotal, hitungTagihan } from "@/utils/keranjang";
+import { barisDenganProduk, cariTarifOngkir, hitungBeratGram, hitungSubtotal, hitungTagihan } from "@/utils/keranjang";
 import { buatTagihanTransfer } from "@/utils/pembayaran";
 import { cariProduk, formatHarga } from "@/utils/produk";
 
 const T = TEKS.keranjang;
 
-type Params = { uids?: string; kirim?: string };
+type Params = { uids?: string };
 
 // Halaman Pembayaran: pilih metode bayar untuk produk yang dipilih di keranjang
 export default function Checkout() {
   const router = useRouter();
-  const { uids, kirim } = useLocalSearchParams<Params>();
+  const { uids } = useLocalSearchParams<Params>();
   const { item, memuat } = useKeranjang();
   const { terpilih } = useAlamat();
+  const [pengiriman, setPengiriman] = useState<"antar" | "ambil">(PENGIRIMAN_BAWAAN);
   const [metode, setMetode] = useState<IdMetode>(METODE_BAWAAN);
   const [membuatTagihan, setMembuatTagihan] = useState(false);
 
-  const pengiriman = OPSI_PENGIRIMAN.find((o) => o.id === kirim)?.id ?? PENGIRIMAN_BAWAAN;
   const antar = pengiriman === "antar";
 
   // Hanya produk yang dipilih di keranjang (daftar uid dikirim lewat parameter halaman)
@@ -48,11 +52,19 @@ export default function Checkout() {
     [item, daftarUid]
   );
 
-  const tarif = antar ? cariTarifOngkir(terpilih?.jarakKm) : null;
+  const beratGram = hitungBeratGram(baris);
+  const tarif = antar && terpilih ? cariTarifOngkir(terpilih.jarakKm) : null;
   const tagihan = hitungTagihan(hitungSubtotal(baris), tarif);
 
   const bayar = async () => {
     if (membuatTagihan || baris.length === 0) return;
+    if (antar && !terpilih) {
+      Alert.alert("Alamat belum dipilih", "Pilih alamat pengantaran terlebih dahulu.", [
+        { text: "Pilih alamat", onPress: () => router.push({ pathname: "/alamat", params: { fromCheckout: "1" } }) },
+        { text: TEKS.batal, style: "cancel" },
+      ]);
+      return;
+    }
 
     // Sementara hanya transfer BCA (manual) yang punya halaman petunjuk. QRIS dan COD menyusul.
     if (metode !== "bca") {
@@ -92,6 +104,24 @@ export default function Checkout() {
       ) : (
         <>
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+            <View style={[styles.section, styles.sectionBerat]}>
+              <KapasitasBerat beratGram={beratGram} kapasitasKg={KAPASITAS_KERANJANG_KG} />
+            </View>
+
+            <View style={styles.section}>
+              <OpsiPengiriman dipilih={pengiriman} onChange={setPengiriman} />
+            </View>
+
+            {antar ? (
+              <View style={styles.section}>
+                <AlamatPengantaran alamat={terpilih} fromCheckout />
+              </View>
+            ) : null}
+
+            <View style={styles.section}>
+              <ProdukCheckout baris={baris} />
+            </View>
+
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>{T.metode}</Text>
               <MetodePembayaranList dipilih={metode} onPilih={setMetode} />
@@ -124,6 +154,7 @@ export default function Checkout() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.canvas },
   content: { paddingBottom: spacing.lg },
-  section: { paddingHorizontal: spacing.lg, marginTop: spacing.xl },
+  section: { paddingHorizontal: spacing.lg, marginTop: spacing.md },
+  sectionBerat: { paddingHorizontal: 0, marginTop: spacing.md },
   sectionTitle: { fontSize: 14, fontWeight: "700", color: colors.text },
 });

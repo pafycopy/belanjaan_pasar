@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAlamat } from "@/context/alamat";
 import { koordinatDariTeks } from "@/services/lokasi";
 import { TEKS } from "@/data/teks";
@@ -13,6 +13,7 @@ import FooterBar from "@/components/ui/footerbar";
 
 export default function PilihLokasi() {
   const router = useRouter();
+  const { fromCheckout } = useLocalSearchParams<{ fromCheckout?: string }>();
   const { daftar, terpilihId, memuat, pilih } = useAlamat();
   const [cari, setCari] = useState("");
   const [mencari, setMencari] = useState(false);
@@ -91,7 +92,10 @@ export default function PilihLokasi() {
               alamat={a}
               terpilih={a.id === terpilihId}
               onPress={() => keUbah(a)}
-              onGunakan={() => pilih(a.id)}
+              onGunakan={() => {
+                pilih(a.id);
+                if (fromCheckout === "1") router.back();
+              }}
             />
           ))}
         </View>
