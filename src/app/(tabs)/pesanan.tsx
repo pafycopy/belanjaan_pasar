@@ -7,6 +7,7 @@ import { JUMLAH_NOTIFIKASI_BARU } from "@/data/notifikasi";
 import SearchField from "@/components/ui/searchfield";
 import ScreenState from "@/components/ui/screenstate";
 import KartuPesanan from "@/components/pesanan/kartupesanan";
+import KeadaanPesananKosong from "@/components/pesanan/keadaanpesanankosong";
 import KartuNgebelanjainSelesai from "@/components/pesanan/kartungebelanjainselesai";
 import SegmenStatus from "@/components/pesanan/segmenstatus";
 import PilihBulanSheet, { OpsiBulan } from "@/components/riwayat/pilihbulansheet";
@@ -152,9 +153,13 @@ export default function PesananScreen() {
               />
             ))}
           </View>
+        ) : kata.trim() || bulan ? (
+          <View style={styles.kosong}>
+            <ScreenState message={T.kosong.cari} />
+          </View>
         ) : (
           <View style={styles.kosong}>
-            <ScreenState message={kata.trim() || bulan ? T.kosong.cari : T.kosong[tab]} />
+            <KeadaanPesananKosong status="selesai" onLihatProduk={() => router.push("/produk")} />
           </View>
         ) : daftar.length > 0 ? (
           <View style={styles.daftar}>
@@ -174,7 +179,7 @@ export default function PesananScreen() {
           </View>
         ) : (
           <View style={styles.kosong}>
-            <ScreenState message={kata.trim() || bulan ? T.kosong.cari : T.kosong[tab]} />
+            <KeadaanPesananKosong status={tab} onLihatProduk={() => router.push("/produk")} />
           </View>
         )}
       </ScrollView>
@@ -199,5 +204,5 @@ const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xl },
   atas: { paddingHorizontal: 14, paddingTop: spacing.md, gap: spacing.md },
   daftar: { paddingHorizontal: 14, paddingTop: spacing.md, gap: spacing.md },
-  kosong: { minHeight: 240 },
+  kosong: { minHeight: 240},
 });
