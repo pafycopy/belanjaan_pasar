@@ -1,6 +1,6 @@
-
 import { Tabs } from "expo-router";
 import { Image } from "expo-image";
+import { Pressable } from "react-native";
 import { colors } from "@/theme";
 
 export default function TabsLayout() {
@@ -13,6 +13,12 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 11,
         },
+        tabBarButton: (props) => (
+          <Pressable
+            {...props}
+            android_ripple={null}
+          />
+        ),
       }}
     >
       <Tabs.Screen

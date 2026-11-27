@@ -21,7 +21,7 @@ type Props = {
 /**
  * Kartu katalog bersama untuk katalog reguler, Promo Hari Ini, dan Produk Terlaris.
  * Urutan konten dijaga konsisten: gambar, nama/favorit, varian, harga, lalu toko/rating.
- * Rating ditampilkan hanya jika sudah ada penilaian dari user — tidak ada nilai hardcoded.
+ * Rating hanya tampil setelah ada penilaian dari user — tidak ada nilai hardcoded.
  */
 export default function KartuProduk({
   produk,
@@ -34,7 +34,6 @@ export default function KartuProduk({
   const { ringkasan } = usePenilaian();
   const penilaianAktif = ringkasan(produk.id);
 
-  // Fallback data demo untuk katalog Ayam Broiler selama backend belum tersedia.
   const varianProduk = produk.varian?.length
     ? produk.varian
     : ["ayam-bakar", "ayam-kfc", "ayam-potong-8", "ayam-jumbo"].includes(produk.id)
@@ -68,6 +67,7 @@ export default function KartuProduk({
             }}
             hitSlop={8}
             style={styles.tombolFavorit}
+            android_ripple={null}
             accessibilityRole="button"
             accessibilityLabel={favorit ? TEKS.katalog.favoritHapus(produk.nama) : TEKS.katalog.favoritTambah(produk.nama)}
           >
@@ -126,11 +126,13 @@ export default function KartuProduk({
         <Text style={styles.toko} numberOfLines={1}>
           {produk.toko ?? ""}
         </Text>
-        {penilaianAktif ? (
+        {penilaianAktif != null ? (
           <View style={styles.rating}>
             <Ionicons name="star" size={16} color={colors.gold} />
             <Text style={styles.ratingTeks}>{penilaianAktif.rating.toFixed(1)}</Text>
-            <Text style={styles.jumlahUlasan}>({penilaianAktif.jumlahUlasan} ulasan)</Text>
+            {penilaianAktif.jumlahUlasan != null ? (
+              <Text style={styles.jumlahUlasan}>({penilaianAktif.jumlahUlasan} ulasan)</Text>
+            ) : null}
           </View>
         ) : null}
       </View>

@@ -21,7 +21,13 @@ export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) 
     <View style={styles.wrap}>
       <View style={styles.baris}>
         <Text style={styles.nama}>{produk.nama}</Text>
-        <Pressable onPress={onToggleFavorit} hitSlop={10} accessibilityRole="button" accessibilityLabel={favorit ? "Hapus dari favorit" : "Tambah ke favorit"}>
+        <Pressable
+          onPress={onToggleFavorit}
+          hitSlop={10}
+          android_ripple={null}
+          accessibilityRole="button"
+          accessibilityLabel={favorit ? "Hapus dari favorit" : "Tambah ke favorit"}
+        >
           <Ionicons name={favorit ? "heart" : "heart-outline"} size={26} color={colors.danger} />
         </Pressable>
       </View>
@@ -42,7 +48,7 @@ export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) 
 
       <Text style={styles.harga}>{formatHarga(produk.harga)}</Text>
 
-      {penilaianAktif ? (
+      {penilaianAktif != null ? (
         <View style={styles.ratingWrap}>
           <View style={styles.bintang}>
             {[1, 2, 3, 4, 5].map((n) => (
