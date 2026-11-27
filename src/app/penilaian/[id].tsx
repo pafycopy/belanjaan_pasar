@@ -9,6 +9,7 @@ import GambarProduk from "@/components/produk/gambarproduk";
 import ScreenState from "@/components/ui/screenstate";
 import { usePesanan } from "@/context/pesanan";
 import { useNgebelanjain } from "@/context/ngebelanjain";
+import { usePenilaian } from "@/context/penilaian";
 import { colors, radius, spacing } from "@/theme";
 import { pecahDaftar } from "@/utils/ngebelanjain";
 import { cariProduk } from "@/utils/produk";
@@ -20,6 +21,7 @@ export default function HalamanPenilaian() {
   const router = useRouter();
   const { pesanan } = usePesanan();
   const { pesanan: pesananNgebelanjain } = useNgebelanjain();
+  const { simpan } = usePenilaian();
   const [rating, setRating] = useState<Record<string, number>>({});
   const [ulasan, setUlasan] = useState<Record<string, string>>({});
   const pesananProduk = pesanan.find((p) => p.invoice === id);
@@ -30,12 +32,28 @@ export default function HalamanPenilaian() {
   }, [jenis, pesananHelper, pesananProduk]);
   const valid = item.length > 0;
 
-  const kirim = () => {
+  const [mengirim, setMengirim] = useState(false);
+
+  const kirim = async () => {
     if (item.some((x) => !rating[x.id])) {
       Alert.alert("Penilaian belum lengkap", "Berikan bintang untuk setiap produk sebelum mengirim penilaian.");
       return;
     }
-    Alert.alert("Terima kasih!", "Penilaian kamu sudah diterima pada sesi ini.", [{ text: "Selesai", onPress: () => router.back() }]);
+    if (mengirim) return;
+    setMengirim(true);
+    try {
+      await simpan(item.map((produk) => ({
+        pesananId: String(id ?? ""),
+        produkId: produk.id,
+        rating: rating[produk.id],
+        ulasan: (ulasan[produk.id] ?? "").trim(),
+      })));
+      Alert.alert("Terima kasih!", "Penilaian berhasil disimpan dan rating katalog telah diperbarui.", [{ text: "Selesai", onPress: () => router.back() }]);
+    } catch {
+      Alert.alert("Gagal menyimpan", "Penilaian belum berhasil disimpan. Silakan coba lagi.");
+    } finally {
+      setMengirim(false);
+    }
   };
 
   return (
@@ -60,7 +78,7 @@ export default function HalamanPenilaian() {
             </View>
           ))}
         </ScrollView>
-        <FooterBar><Button label="Kirim Penilaian" size="lg" onPress={kirim} /></FooterBar>
+        <FooterBar><Button label={mengirim ? "Menyimpan..." : "Kirim Penilaian"} size="lg" onPress={kirim} disabled={mengirim} /></FooterBar>
       </>}
     </View>
   );

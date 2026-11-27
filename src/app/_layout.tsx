@@ -4,6 +4,7 @@ import { FavoritProvider } from "@/context/favorit";
 import { KeranjangProvider } from "@/context/keranjang";
 import { NgebelanjainProvider } from "@/context/ngebelanjain";
 import { PesananProvider } from "@/context/pesanan";
+import { PenilaianProvider } from "@/context/penilaian";
 import { PoinProvider } from "@/context/poin";
 import { ProfilProvider } from "@/context/profil";
 import { VoucherProvider } from "@/context/voucher";
@@ -17,9 +18,11 @@ export default function RootLayout() {
             <KeranjangProvider>
               <FavoritProvider>
                 <PesananProvider>
-                  <NgebelanjainProvider>
-                    <Stack screenOptions={{ headerShown: false }} />
-                  </NgebelanjainProvider>
+                  <PenilaianProvider>
+                    <NgebelanjainProvider>
+                      <Stack screenOptions={{ headerShown: false }} />
+                    </NgebelanjainProvider>
+                  </PenilaianProvider>
                 </PesananProvider>
               </FavoritProvider>
             </KeranjangProvider>

@@ -5,6 +5,7 @@ import { TEKS } from "@/data/teks";
 import { colors, radius, spacing } from "@/theme";
 import { Produk } from "@/types/produk";
 import { adaPromo, formatHarga, hematRupiah } from "@/utils/produk";
+import { usePenilaian } from "@/context/penilaian";
 
 // Lebar kartu bila ditaruh di daftar yang digeser ke samping (Terlaris, Promo Hari Ini).
 export const LEBAR_KARTU_GESER = 190;
@@ -29,6 +30,10 @@ export default function KartuProduk({
   style,
 }: Props) {
   const promo = adaPromo(produk);
+  const { ringkasan } = usePenilaian();
+  const penilaianAktif = ringkasan(produk.id);
+  const ratingTampil = penilaianAktif?.rating ?? produk.rating;
+  const jumlahUlasanTampil = penilaianAktif?.jumlahUlasan ?? produk.jumlahUlasan;
   // Fallback data demo untuk katalog Ayam Broiler selama backend belum tersedia.
   const varianProduk = produk.varian?.length
     ? produk.varian
@@ -121,12 +126,12 @@ export default function KartuProduk({
         <Text style={styles.toko} numberOfLines={1}>
           {produk.toko ?? ""}
         </Text>
-        {produk.rating != null ? (
+        {ratingTampil != null ? (
           <View style={styles.rating}>
             <Ionicons name="star" size={16} color={colors.gold} />
-            <Text style={styles.ratingTeks}>{produk.rating.toFixed(1)}</Text>
-            {produk.jumlahUlasan != null ? (
-              <Text style={styles.jumlahUlasan}>({produk.jumlahUlasan} ulasan)</Text>
+            <Text style={styles.ratingTeks}>{ratingTampil.toFixed(1)}</Text>
+            {jumlahUlasanTampil != null ? (
+              <Text style={styles.jumlahUlasan}>({jumlahUlasanTampil} ulasan)</Text>
             ) : null}
           </View>
         ) : null}
