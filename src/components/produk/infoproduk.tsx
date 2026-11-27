@@ -24,7 +24,7 @@ export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) 
         <Pressable
           onPress={onToggleFavorit}
           hitSlop={10}
-          android_ripple={null}
+          
           accessibilityRole="button"
           accessibilityLabel={favorit ? "Hapus dari favorit" : "Tambah ke favorit"}
         >

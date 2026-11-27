@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: colors.text,
   },
-  footer: { paddingHorizontal: 14, paddingTop: spacing.sm, paddingBottom: spacing.lg, gap: spacing.sm },
+  footer: { paddingHorizontal: 14, paddingTop: spacing.sm, paddingBottom: spacing.lg, gap: spacing.sm, marginBottom: 32 },
   terkunci: { flex: 1, justifyContent: "center", padding: spacing.xl, gap: spacing.md },
   terkunciJudul: { fontSize: 17, fontWeight: "800", color: colors.textStrong, textAlign: "center" },
   terkunciPesan: { fontSize: 13, lineHeight: 20, color: colors.textSoft, textAlign: "center" },

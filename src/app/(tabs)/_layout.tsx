@@ -16,7 +16,7 @@ export default function TabsLayout() {
         tabBarButton: (props) => (
           <Pressable
             {...props}
-            android_ripple={null}
+            
           />
         ),
       }}

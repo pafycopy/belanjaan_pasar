@@ -67,7 +67,7 @@ export default function KartuProduk({
             }}
             hitSlop={8}
             style={styles.tombolFavorit}
-            android_ripple={null}
+            
             accessibilityRole="button"
             accessibilityLabel={favorit ? TEKS.katalog.favoritHapus(produk.nama) : TEKS.katalog.favoritTambah(produk.nama)}
           >
