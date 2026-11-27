@@ -5,6 +5,7 @@ import { SATUAN_BAWAAN } from "@/data/produk";
 import { TEKS } from "@/data/teks";
 import { Produk } from "@/types/produk";
 import { formatHarga } from "@/utils/produk";
+import { usePenilaian } from "@/context/penilaian";
 
 type Props = {
   produk: Produk;
@@ -13,6 +14,9 @@ type Props = {
 };
 
 export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) {
+  const { ringkasan } = usePenilaian();
+  const penilaianAktif = ringkasan(produk.id);
+
   return (
     <View style={styles.wrap}>
       <View style={styles.baris}>
@@ -35,7 +39,25 @@ export default function InfoProduk({ produk, favorit, onToggleFavorit }: Props) 
           </View>
         ) : null}
       </View>
+
       <Text style={styles.harga}>{formatHarga(produk.harga)}</Text>
+
+      {penilaianAktif ? (
+        <View style={styles.ratingWrap}>
+          <View style={styles.bintang}>
+            {[1, 2, 3, 4, 5].map((n) => (
+              <Ionicons
+                key={n}
+                name={n <= Math.round(penilaianAktif.rating) ? "star" : "star-outline"}
+                size={16}
+                color={colors.gold}
+              />
+            ))}
+          </View>
+          <Text style={styles.ratingAngka}>{penilaianAktif.rating.toFixed(1)}</Text>
+          <Text style={styles.jumlahUlasan}>({penilaianAktif.jumlahUlasan} ulasan)</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -49,4 +71,8 @@ const styles = StyleSheet.create({
   stok: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: spacing.xs },
   stokText: { fontSize: 14, color: colors.textSoft },
   harga: { fontSize: 26, fontWeight: "700", color: colors.dark, marginTop: spacing.md },
+  ratingWrap: { flexDirection: "row", alignItems: "center", gap: 6 },
+  bintang: { flexDirection: "row", gap: 2 },
+  ratingAngka: { fontSize: 13, fontWeight: "800", color: colors.textStrong },
+  jumlahUlasan: { fontSize: 12, color: colors.textSoft },
 });
